@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 3%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 95%;
+    --border: 0 0% 11%;
+    --input: 0 0% 11%;
+    --primary: 158 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 158 100% 50%;
+    --accent-foreground: 0 0% 0%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: #070707;
+    color: #f0f0f0;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #222;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #333;
+  }
+}
+
+/* Markdown prose styles for agent output */
+.agent-output h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 1.2rem;
+  margin-bottom: 0.4rem;
+  font-family: system-ui, sans-serif;
+}
+.agent-output h3 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 1rem;
+  margin-bottom: 0.3rem;
+}
+.agent-output p {
+  font-size: 0.875rem;
+  color: #bbb;
+  line-height: 1.7;
+  margin-bottom: 0.4rem;
+}
+.agent-output strong {
+  color: #fff;
+  font-weight: 600;
+}
+.agent-output ul, .agent-output ol {
+  padding-left: 1.2rem;
+  margin-bottom: 0.6rem;
+}
+.agent-output li {
+  font-size: 0.875rem;
+  color: #bbb;
+  line-height: 1.7;
+  margin-bottom: 0.2rem;
+}
+.agent-output code {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.8rem;
+  color: #00FFB2;
+  font-family: monospace;
+}
