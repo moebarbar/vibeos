@@ -3,8 +3,6 @@ import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/prisma";
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
 const SYSTEM = `You are Element Forge — an expert UI/UX prompt engineer for vibe coders using Cursor, Claude Code, and v0.
 
 When given a component type, style vibe, and description, generate a detailed production-ready prompt that will produce an exceptional UI component.
@@ -33,7 +31,7 @@ export async function POST(req: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        const s = anthropic.messages.stream({
+        const s = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }).messages.stream({
           model: "claude-sonnet-4-20250514",
           max_tokens: 800,
           system: SYSTEM,

@@ -4,8 +4,6 @@ import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/prisma";
 import { AGENT_SYSTEM_PROMPTS, getUsageLimit, type AgentId } from "@/lib/agents";
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
 export async function POST(req: NextRequest, { params }: { params: { agentId: string } }) {
   const { userId } = await auth();
   if (!userId) return new Response("Unauthorized", { status: 401 });
@@ -62,7 +60,7 @@ export async function POST(req: NextRequest, { params }: { params: { agentId: st
       try {
         let fullText = "";
 
-        const anthropicStream = anthropic.messages.stream({
+        const anthropicStream = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }).messages.stream({
           model: "claude-sonnet-4-20250514",
           max_tokens: 1024,
           system: AGENT_SYSTEM_PROMPTS[agentId],
