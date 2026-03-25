@@ -53,6 +53,9 @@ export default function ForgePage() {
   // Copy
   const [copied, setCopied] = useState(false);
 
+  // Full-page preview overlay
+  const [fullPreview, setFullPreview] = useState(false);
+
   // AI Generator
   const [showGen,   setShowGen]   = useState(false);
   const [genDesc,   setGenDesc]   = useState("");
@@ -178,7 +181,7 @@ export default function ForgePage() {
             {(["elements", "templates"] as const).map(s => (
               <button key={s} onClick={() => { setSection(s); closeDetail(); setShowBuildKit(false); }} style={{
                 flex: 1, background: section === s ? "rgba(255,255,255,0.06)" : "transparent",
-                border: "none", borderRadius: 7, color: section === s ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.18)",
+                border: "none", borderRadius: 7, color: section === s ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.48)",
                 fontSize: 9.5, fontWeight: section === s ? 600 : 400, padding: "5px 0",
                 cursor: "pointer", fontFamily: "inherit",
                 letterSpacing: "0.06em", textTransform: "uppercase" as const,
@@ -192,7 +195,7 @@ export default function ForgePage() {
 
         {/* Category list */}
         <div style={{ flex: 1, padding: "4px 8px", overflowY: "auto" }}>
-          <div style={{ fontSize: 8, color: "rgba(255,255,255,0.1)", letterSpacing: "0.14em", marginBottom: 6, paddingLeft: 6, fontWeight: 600 }}>
+          <div style={{ fontSize: 8, color: "rgba(255,255,255,0.38)", letterSpacing: "0.14em", marginBottom: 6, paddingLeft: 6, fontWeight: 600 }}>
             {section === "elements" ? "CATEGORIES" : "TEMPLATES"}
           </div>
 
@@ -249,8 +252,8 @@ export default function ForgePage() {
           }}>
             <span style={{ fontSize: 15 }}>🗂</span>
             <div style={{ flex: 1, textAlign: "left" as const }}>
-              <div style={{ fontSize: 10, fontWeight: 600, color: showBuildKit ? "#00FFB2" : "rgba(255,255,255,0.25)" }}>Build Kit</div>
-              <div style={{ fontSize: 8.5, color: showBuildKit ? "rgba(0,255,178,0.45)" : "rgba(255,255,255,0.12)", marginTop: 1 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: showBuildKit ? "#00FFB2" : "rgba(255,255,255,0.55)" }}>Build Kit</div>
+              <div style={{ fontSize: 8.5, color: showBuildKit ? "rgba(0,255,178,0.45)" : "rgba(255,255,255,0.3)", marginTop: 1 }}>
                 {buildKit.length === 0 ? "Save elements here" : `${buildKit.length} saved`}
               </div>
             </div>
@@ -293,8 +296,8 @@ export default function ForgePage() {
             {VIBES.map(v => (
               <button key={v} onClick={() => setVibe(v)} style={{
                 background: vibe === v ? "rgba(0,255,178,0.06)" : "transparent",
-                border: `1px solid ${vibe === v ? "rgba(0,255,178,0.18)" : "rgba(255,255,255,0.04)"}`,
-                borderRadius: 20, color: vibe === v ? "#00FFB2" : "rgba(255,255,255,0.2)",
+                border: `1px solid ${vibe === v ? "rgba(0,255,178,0.18)" : "rgba(255,255,255,0.08)"}`,
+                borderRadius: 20, color: vibe === v ? "#00FFB2" : "rgba(255,255,255,0.48)",
                 padding: "3px 9px", fontSize: 9, cursor: "pointer",
                 fontFamily: "inherit", whiteSpace: "nowrap" as const, transition: "all 0.15s",
               }}>{v}</button>
@@ -305,7 +308,7 @@ export default function ForgePage() {
           <button onClick={() => setShowGen(p => !p)} style={{
             background: showGen ? "rgba(255,255,255,0.06)" : "transparent",
             border: "1px solid rgba(255,255,255,0.06)", borderRadius: 7,
-            color: showGen ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.18)",
+            color: showGen ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.45)",
             padding: "5px 10px", fontSize: 9.5, cursor: "pointer",
             fontFamily: "inherit", whiteSpace: "nowrap" as const,
             letterSpacing: "0.04em",
@@ -625,6 +628,11 @@ export default function ForgePage() {
                         }}>
                           {inKit(selectedEl.id) ? "✓ In Kit" : "+ Kit"}
                         </button>
+                        <button onClick={() => setFullPreview(true)} title="Full page preview" style={{
+                          background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)",
+                          borderRadius: 6, color: "rgba(255,255,255,0.35)", padding: "4px 8px",
+                          fontSize: 11, cursor: "pointer", lineHeight: 1, transition: "all 0.15s",
+                        }}>⛶</button>
                         <button onClick={closeDetail} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.2)", cursor: "pointer", fontSize: 16, lineHeight: 1 }}>✕</button>
                       </div>
                     </div>
@@ -741,70 +749,121 @@ export default function ForgePage() {
               {/* ── TEMPLATE detail ── */}
               {selectedTmpl && (
                 <>
+                  {/* Header */}
                   <div style={{ padding: "14px 14px 10px", borderBottom: "1px solid rgba(255,255,255,0.03)", flexShrink: 0 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: 13, color: "rgba(255,255,255,0.75)", marginBottom: 3 }}>{selectedTmpl.name}</div>
-                        <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.2)" }}>{selectedTmpl.vibe} · {selectedTmpl.difficulty} · {selectedTmpl.vars.length} vars</div>
+                        <div style={{ fontWeight: 700, fontSize: 13, color: "rgba(255,255,255,0.85)", marginBottom: 3 }}>{selectedTmpl.name}</div>
+                        <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.35)" }}>{selectedTmpl.vibe} · {selectedTmpl.difficulty} · {selectedTmpl.vars.length} variables</div>
                       </div>
-                      <button onClick={closeDetail} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.2)", cursor: "pointer", fontSize: 16, lineHeight: 1 }}>✕</button>
+                      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                        <button onClick={() => setFullPreview(true)} title="Full page preview" style={{
+                          background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)",
+                          borderRadius: 6, color: "rgba(255,255,255,0.35)", padding: "4px 8px",
+                          fontSize: 11, cursor: "pointer", lineHeight: 1,
+                        }}>⛶</button>
+                        <button onClick={closeDetail} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.3)", cursor: "pointer", fontSize: 16, lineHeight: 1 }}>✕</button>
+                      </div>
                     </div>
-                    <p style={{ margin: "8px 0 0", fontSize: 10.5, color: "rgba(255,255,255,0.2)", lineHeight: 1.6 }}>{selectedTmpl.desc}</p>
+                    <p style={{ margin: 0, fontSize: 10.5, color: "rgba(255,255,255,0.3)", lineHeight: 1.6 }}>{selectedTmpl.desc}</p>
                   </div>
 
-                  {/* Vars */}
-                  <div style={{ padding: "12px 14px", borderBottom: "1px solid rgba(255,255,255,0.03)", flexShrink: 0 }}>
-                    <div style={{ fontSize: 8.5, color: "rgba(255,255,255,0.15)", letterSpacing: "0.12em", fontWeight: 600, marginBottom: 10 }}>CUSTOMIZE</div>
-                    <div style={{ display: "flex", flexDirection: "column" as const, gap: 7 }}>
-                      {selectedTmpl.vars.map(v => (
-                        <div key={v.key}>
-                          <label style={{ fontSize: 9, color: "rgba(255,255,255,0.2)", display: "block", marginBottom: 3 }}>{v.label}</label>
-                          <input
-                            value={tmplVars[v.key] ?? v.default}
-                            onChange={e => setTmplVars(prev => ({ ...prev, [v.key]: e.target.value }))}
-                            style={{
-                              width: "100%", background: "rgba(0,0,0,0.35)",
-                              border: "1px solid rgba(255,255,255,0.06)", borderRadius: 6,
-                              color: "rgba(255,255,255,0.55)", fontSize: 11, padding: "5px 8px",
-                              outline: "none", fontFamily: "inherit", boxSizing: "border-box" as const,
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                  {/* Tabs — same as elements */}
+                  <div style={{ display: "flex", gap: 3, padding: "8px 14px 0", flexShrink: 0 }}>
+                    {([
+                      { id: "preview", label: "👁  Preview" },
+                      { id: "code",    label: "{ }  Code"  },
+                      { id: "prompt",  label: "✎  Vars"   },
+                    ] as const).map(m => (
+                      <button key={m.id} onClick={() => setTab(m.id)} style={{
+                        background: tab === m.id
+                          ? m.id === "code" ? "rgba(0,255,178,0.06)" : "rgba(255,255,255,0.05)"
+                          : "transparent",
+                        border: tab === m.id && m.id === "code"
+                          ? "1px solid rgba(0,255,178,0.12)" : "none",
+                        color: tab === m.id
+                          ? m.id === "code" ? "#00FFB2" : "rgba(255,255,255,0.7)"
+                          : "rgba(255,255,255,0.3)",
+                        fontSize: 10, padding: "5px 10px", borderRadius: 6,
+                        cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s",
+                      }}>{m.label}</button>
+                    ))}
                   </div>
 
-                  {/* Code */}
+                  {/* Tab content */}
                   <div style={{ flex: 1, overflow: "auto", padding: 14 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 9 }}>
-                      <span style={{ fontSize: 8.5, color: "rgba(255,255,255,0.15)", letterSpacing: "0.12em", fontWeight: 600 }}>GENERATED CODE</span>
-                      <button onClick={() => copy(selectedTmpl.codeTemplate(tmplVars))} style={{
-                        background: copied ? "rgba(0,255,178,0.08)" : "rgba(0,0,0,0.4)",
-                        border: copied ? "1px solid rgba(0,255,178,0.22)" : "1px solid rgba(255,255,255,0.06)",
-                        borderRadius: 5, color: copied ? "#00FFB2" : "rgba(255,255,255,0.3)",
-                        padding: "3px 9px", fontSize: 9, cursor: "pointer", fontFamily: "monospace",
-                        transition: "all 0.2s",
-                      }}>{copied ? "✓ Copied!" : "⎘ Copy Code"}</button>
-                    </div>
-                    <div style={{
-                      background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.04)",
-                      borderRadius: 9, padding: "12px 14px",
-                      fontSize: 10.5, color: "#6dbfa4", lineHeight: 1.9,
-                      fontFamily: "'JetBrains Mono','Fira Code','Courier New',monospace",
-                      whiteSpace: "pre-wrap" as const, overflowX: "auto", maxHeight: 320, overflowY: "auto",
-                    }}>
-                      {selectedTmpl.codeTemplate(tmplVars)}
-                    </div>
-                  </div>
-
-                  {/* Live preview */}
-                  <div style={{ padding: "0 14px 14px", borderTop: "1px solid rgba(255,255,255,0.03)", flexShrink: 0 }}>
-                    <div style={{ fontSize: 8.5, color: "rgba(255,255,255,0.15)", letterSpacing: "0.12em", fontWeight: 600, margin: "12px 0 8px" }}>LIVE PREVIEW</div>
-                    <div style={{ border: "1px solid rgba(255,255,255,0.04)", borderRadius: 8, overflow: "hidden", height: 120, position: "relative" }}>
-                      <div style={{ position: "absolute", inset: 0, transform: "scale(0.55)", transformOrigin: "top left", width: "182%", height: "182%" }}>
+                    {/* Preview — full live component */}
+                    {tab === "preview" && (
+                      <div style={{
+                        border: "1px solid rgba(255,255,255,0.04)", borderRadius: 10,
+                        overflow: "auto", maxHeight: 500, background: "rgba(0,0,0,0.2)",
+                      }}>
                         {(() => { const C = selectedTmpl.component(tmplVars); return <C />; })()}
                       </div>
-                    </div>
+                    )}
+
+                    {/* Code */}
+                    {tab === "code" && (
+                      <div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#00FFB2", display: "inline-block", boxShadow: "0 0 8px #00FFB244" }} />
+                            <span style={{ fontSize: 8.5, color: "#00FFB2", letterSpacing: "0.1em", fontFamily: "monospace", fontWeight: 600 }}>READY-TO-USE CODE</span>
+                          </div>
+                          <button onClick={() => copy(selectedTmpl.codeTemplate(tmplVars))} style={{
+                            background: copied ? "rgba(0,255,178,0.08)" : "rgba(0,0,0,0.4)",
+                            border: copied ? "1px solid rgba(0,255,178,0.22)" : "1px solid rgba(255,255,255,0.06)",
+                            borderRadius: 6, color: copied ? "#00FFB2" : "rgba(255,255,255,0.4)",
+                            padding: "4px 10px", fontSize: 9, cursor: "pointer", fontFamily: "monospace",
+                            transition: "all 0.2s",
+                          }}>{copied ? "✓ Copied!" : "⎘ Copy"}</button>
+                        </div>
+                        <div style={{
+                          background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.04)",
+                          borderRadius: 9, padding: "12px 14px",
+                          fontSize: 10.5, color: "#6dbfa4", lineHeight: 1.9,
+                          fontFamily: "'JetBrains Mono','Fira Code','Courier New',monospace",
+                          whiteSpace: "pre-wrap" as const, overflowX: "auto",
+                        }}>
+                          {selectedTmpl.codeTemplate(tmplVars)}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Vars customizer */}
+                    {tab === "prompt" && (
+                      <div>
+                        <div style={{ fontSize: 8.5, color: "rgba(255,255,255,0.35)", letterSpacing: "0.12em", fontWeight: 600, marginBottom: 12 }}>CUSTOMIZE VARIABLES</div>
+                        <div style={{ display: "flex", flexDirection: "column" as const, gap: 10 }}>
+                          {selectedTmpl.vars.map(v => (
+                            <div key={v.key}>
+                              <label style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", display: "block", marginBottom: 4, fontFamily: "inherit" }}>{v.label}</label>
+                              <input
+                                value={tmplVars[v.key] ?? v.default}
+                                onChange={e => setTmplVars(prev => ({ ...prev, [v.key]: e.target.value }))}
+                                style={{
+                                  width: "100%", background: "rgba(0,0,0,0.35)",
+                                  border: "1px solid rgba(255,255,255,0.08)", borderRadius: 7,
+                                  color: "rgba(255,255,255,0.65)", fontSize: 12, padding: "7px 10px",
+                                  outline: "none", fontFamily: "inherit", boxSizing: "border-box" as const,
+                                  transition: "border-color 0.15s",
+                                }}
+                                onFocus={e => (e.currentTarget.style.borderColor = "rgba(0,255,178,0.3)")}
+                                onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                        <button onClick={() => setTab("preview")} style={{
+                          width: "100%", marginTop: 16, background: "#00FFB2",
+                          border: "none", borderRadius: 7, color: "#000",
+                          padding: "8px", fontSize: 11, fontWeight: 700,
+                          cursor: "pointer", fontFamily: "inherit",
+                        }}>
+                          👁 Preview with these variables →
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </>
               )}
@@ -813,6 +872,46 @@ export default function ForgePage() {
         </div>
       </div>
     </div>
+
+    {/* ── FULL PAGE PREVIEW OVERLAY ─────────────────────────────────────── */}
+    {fullPreview && (selectedEl || selectedTmpl) && (
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 9999,
+        background: "rgba(0,0,0,0.92)",
+        display: "flex", flexDirection: "column",
+        animation: "vibe-slide-up 0.18s ease both",
+      }}>
+        {/* Overlay header */}
+        <div style={{
+          height: 52, display: "flex", alignItems: "center",
+          padding: "0 20px", borderBottom: "1px solid rgba(255,255,255,0.06)",
+          background: "rgba(0,0,0,0.6)", backdropFilter: "blur(12px)",
+          flexShrink: 0,
+        }}>
+          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginRight: 10, letterSpacing: "0.08em" }}>FULL PREVIEW</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.8)", flex: 1 }}>
+            {selectedEl?.name ?? selectedTmpl?.name}
+          </span>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <span style={{ fontSize: 10, color: "rgba(255,255,255,0.25)", fontFamily: "monospace" }}>
+              {selectedEl?.vibe ?? ""}{selectedEl ? " · " : ""}{selectedEl?.difficulty ?? ""}
+            </span>
+            <button onClick={() => setFullPreview(false)} style={{
+              background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: 7, color: "rgba(255,255,255,0.5)", padding: "5px 14px",
+              fontSize: 11, cursor: "pointer", fontFamily: "inherit",
+            }}>✕ Close</button>
+          </div>
+        </div>
+        {/* Overlay content */}
+        <div style={{ flex: 1, overflow: "auto", display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
+          <div style={{ width: "100%", minHeight: "100%" }}>
+            {selectedEl && <selectedEl.preview />}
+            {selectedTmpl && (() => { const C = selectedTmpl.component(tmplVars); return <C />; })()}
+          </div>
+        </div>
+      </div>
+    )}
   );
 }
 
@@ -832,11 +931,11 @@ function SidebarBtn({ icon, label, count, active, onClick }: {
       onMouseOut={e => { if (!active) e.currentTarget.style.background = "transparent"; }}
     >
       <span style={{ fontSize: 12, width: 16, textAlign: "center" as const }}>{icon}</span>
-      <span style={{ flex: 1, fontSize: 11, color: active ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.22)", fontWeight: active ? 600 : 400 }}>{label}</span>
+      <span style={{ flex: 1, fontSize: 11, color: active ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.52)", fontWeight: active ? 600 : 400 }}>{label}</span>
       {count > 0 && (
         <span style={{
-          fontSize: 9, color: active ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)",
-          background: active ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
+          fontSize: 9, color: active ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.28)",
+          background: active ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.06)",
           borderRadius: 10, padding: "1px 6px", fontFamily: "monospace",
         }}>{count}</span>
       )}
