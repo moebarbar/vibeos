@@ -37,14 +37,16 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   });
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#070707", color: "#fff", fontFamily: "system-ui, sans-serif", overflow: "hidden" }}>
+    <div style={{ display: "flex", height: "100vh", background: "#030305", color: "#fff", fontFamily: "system-ui,-apple-system,sans-serif", overflow: "hidden", position: "relative" }}>
+      {/* Ambient glow behind sidebar */}
+      <div style={{ position: "fixed", top: 0, left: 0, width: 300, height: "100vh", background: "radial-gradient(ellipse at 0% 50%, rgba(0,255,178,0.025) 0%, transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
       <Sidebar
         user={{ id: user.id, name: user.name, email: user.email, plan: user.plan }}
         projects={projects}
         activeProject={activeProject}
         usageCount={usageCount}
       />
-      <main style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
+      <main style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
         {children}
       </main>
     </div>

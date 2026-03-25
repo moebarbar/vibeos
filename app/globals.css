@@ -24,13 +24,12 @@
   }
 
   * { border-color: hsl(var(--border)); }
-
   html { scroll-behavior: smooth; }
 
   body {
     background-color: var(--color-bg);
     color: #f0f0f0;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -41,21 +40,9 @@
   ::-webkit-scrollbar-thumb:hover { background: #2a2a2a; }
 }
 
-/* ═══════════════════════════════════════════════════════
-   KEYFRAME ANIMATIONS
-   ═══════════════════════════════════════════════════════ */
-
-@keyframes vibe-float {
-  0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-  33% { transform: translateY(-18px) rotate(1.5deg) scale(1.02); }
-  66% { transform: translateY(-9px) rotate(-0.8deg) scale(0.99); }
-}
-
-@keyframes vibe-float-2 {
-  0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-  40% { transform: translateY(14px) rotate(-1.2deg) scale(1.01); }
-  70% { transform: translateY(7px) rotate(0.6deg) scale(0.98); }
-}
+/* ═══════════════════════════════════════════════════════════
+   KEYFRAMES
+   ═══════════════════════════════════════════════════════════ */
 
 @keyframes vibe-orb-drift {
   0%, 100% { transform: translate(0, 0) scale(1); }
@@ -63,7 +50,6 @@
   50% { transform: translate(9%, 3%) scale(0.96); }
   75% { transform: translate(-4%, 6%) scale(1.02); }
 }
-
 @keyframes vibe-orb-drift-2 {
   0%, 100% { transform: translate(0, 0) scale(1); }
   25% { transform: translate(-7%, -4%) scale(1.03); }
@@ -80,20 +66,17 @@
   from { opacity: 0; transform: translateY(28px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
+@keyframes vibe-slide-up-sm {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 @keyframes vibe-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
 @keyframes vibe-scale-in {
   from { opacity: 0; transform: scale(0.92); }
   to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes vibe-shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
 }
 
 @keyframes vibe-pulse-dot {
@@ -111,28 +94,112 @@
   to { transform: rotate(360deg); }
 }
 
+@keyframes vibe-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
 @keyframes vibe-loading-sweep {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(400%); }
 }
 
-@keyframes vibe-bounce-light {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+/* 3D grid floor scrolling */
+@keyframes vibe-grid-scroll {
+  from { background-position: 0 0; }
+  to { background-position: 0 80px; }
 }
 
-@keyframes vibe-typing-cursor {
+/* Beam sweep across hero */
+@keyframes vibe-beam {
+  0% { transform: translateX(-100%) skewX(-20deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateX(1200px) skewX(-20deg); opacity: 0; }
+}
+
+/* Particle float */
+@keyframes vibe-particle-1 {
+  0%, 100% { transform: translate(0,0) scale(1); opacity: 0.4; }
+  33% { transform: translate(6px, -18px) scale(1.1); opacity: 0.7; }
+  66% { transform: translate(-4px, -10px) scale(0.9); opacity: 0.5; }
+}
+@keyframes vibe-particle-2 {
+  0%, 100% { transform: translate(0,0) scale(1); opacity: 0.3; }
+  40% { transform: translate(-8px, 14px) scale(1.2); opacity: 0.6; }
+  70% { transform: translate(5px, 8px) scale(0.8); opacity: 0.4; }
+}
+@keyframes vibe-particle-3 {
+  0%, 100% { transform: translate(0,0) scale(1); opacity: 0.5; }
+  50% { transform: translate(12px, -22px) scale(1.15); opacity: 0.2; }
+}
+
+/* Hex ring spin */
+@keyframes vibe-hex-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes vibe-hex-spin-rev {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Typing cursor */
+@keyframes vibe-cursor {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
 
-/* ═══════════════════════════════════════════════════════
-   SCROLL REVEAL SYSTEM
-   ═══════════════════════════════════════════════════════ */
+/* Mockup scan line */
+@keyframes vibe-scan {
+  0% { top: 0%; opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Card shimmer on hover */
+@keyframes vibe-card-shine {
+  from { left: -100%; }
+  to { left: 150%; }
+}
+
+/* Float gentle */
+@keyframes vibe-float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Logo pulse ring */
+@keyframes vibe-ring-pulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Number tick */
+@keyframes vibe-tick {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Section reveal */
+@keyframes vibe-section-reveal {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0% 0); }
+}
+
+/* Gradient border rotate */
+@keyframes vibe-grad-rotate {
+  from { --grad-angle: 0deg; }
+  to { --grad-angle: 360deg; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLL REVEAL
+   ═══════════════════════════════════════════════════════════ */
 
 .vibe-reveal {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translateY(24px);
   transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -143,9 +210,25 @@
 .vibe-reveal-delay-4 { transition-delay: 0.32s; }
 .vibe-reveal-delay-5 { transition-delay: 0.40s; }
 
-/* ═══════════════════════════════════════════════════════
+.vibe-reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.vibe-reveal-left.vibe-visible { opacity: 1; transform: translateX(0); }
+
+.vibe-reveal-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.vibe-reveal-right.vibe-visible { opacity: 1; transform: translateX(0); }
+
+/* ═══════════════════════════════════════════════════════════
    GRADIENT TEXT
-   ═══════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════ */
 
 .vibe-gradient-text {
   background: linear-gradient(135deg, #00FFB2 0%, #38BDF8 45%, #A78BFA 100%);
@@ -155,7 +238,6 @@
   background-clip: text;
   animation: vibe-gradient-shift 5s ease infinite;
 }
-
 .vibe-gradient-text-gb {
   background: linear-gradient(90deg, #00FFB2, #38BDF8);
   -webkit-background-clip: text;
@@ -163,9 +245,9 @@
   background-clip: text;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
    GLASSMORPHISM
-   ═══════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════ */
 
 .vibe-glass {
   background: rgba(10, 10, 12, 0.65);
@@ -173,7 +255,6 @@
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
-
 .vibe-glass-strong {
   background: rgba(6, 6, 8, 0.88);
   backdrop-filter: blur(32px);
@@ -181,9 +262,35 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
+   3D GRID FLOOR
+   ═══════════════════════════════════════════════════════════ */
+
+.vibe-grid-3d {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 280px;
+  perspective: 600px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.vibe-grid-3d-inner {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(70deg);
+  transform-origin: bottom center;
+  background-image:
+    linear-gradient(rgba(0,255,178,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,178,0.06) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: vibe-grid-scroll 4s linear infinite;
+  mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 80%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 80%);
+}
+
+/* ═══════════════════════════════════════════════════════════
    BUTTONS
-   ═══════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════ */
 
 .vibe-btn-primary {
   display: inline-flex;
@@ -204,15 +311,14 @@
   content: '';
   position: absolute;
   top: 0; left: -100%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-  transition: left 0.4s ease;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s ease;
 }
 .vibe-btn-primary:hover::before { left: 160%; }
 .vibe-btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(0, 255, 178, 0.38), 0 2px 8px rgba(0, 255, 178, 0.18);
+  box-shadow: 0 8px 28px rgba(0, 255, 178, 0.4), 0 2px 8px rgba(0, 255, 178, 0.2);
 }
 .vibe-btn-primary:active { transform: translateY(0); }
 
@@ -236,21 +342,20 @@
   transform: translateY(-1px);
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
    FEATURE CARDS
-   ═══════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════ */
 
 .vibe-feature-card {
   background: rgba(8, 8, 10, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: 16px;
-  padding: 24px;
+  padding: 26px;
   cursor: default;
   position: relative;
   overflow: hidden;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s ease,
-              border-color 0.3s ease;
+              box-shadow 0.3s ease, border-color 0.3s ease;
 }
 .vibe-feature-card::after {
   content: '';
@@ -264,45 +369,46 @@
 .vibe-feature-card:hover { transform: translateY(-6px); }
 .vibe-feature-card:hover::after { opacity: 1; }
 
-/* ═══════════════════════════════════════════════════════
+/* Shine effect on card hover */
+.vibe-feature-card .vibe-shine {
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  pointer-events: none;
+  transition: none;
+}
+.vibe-feature-card:hover .vibe-shine {
+  animation: vibe-card-shine 0.6s ease forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════
    SIDEBAR NAV
-   ═══════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════ */
 
 .vibe-nav-link {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 8px 10px;
-  border-radius: 9px;
-  margin-bottom: 2px;
-  border: 1px solid transparent;
-  text-decoration: none;
-  transition: all 0.15s ease;
-  position: relative;
-  overflow: hidden;
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: 9px; margin-bottom: 2px;
+  border: 1px solid transparent; text-decoration: none;
+  transition: all 0.15s ease; position: relative; overflow: hidden;
 }
 .vibe-nav-link:hover { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); }
 .vibe-nav-link.active { background: rgba(0,255,178,0.05); border-color: rgba(0,255,178,0.12); }
 .vibe-nav-link.active::before {
   content: '';
-  position: absolute;
-  left: 0; top: 20%; height: 60%; width: 2px;
-  background: #00FFB2;
-  border-radius: 0 2px 2px 0;
+  position: absolute; left: 0; top: 20%; height: 60%; width: 2px;
+  background: #00FFB2; border-radius: 0 2px 2px 0;
   box-shadow: 0 0 8px rgba(0,255,178,0.6);
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
    INPUTS
-   ═══════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════ */
 
 .vibe-input {
   background: rgba(255,255,255,0.02);
   border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 10px;
-  color: #fff;
-  width: 100%;
-  outline: none;
+  border-radius: 10px; color: #fff; width: 100%; outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .vibe-input:focus {
@@ -311,52 +417,48 @@
 }
 .vibe-input::placeholder { color: rgba(255,255,255,0.17); }
 
-/* ═══════════════════════════════════════════════════════
-   MISC UTILITIES
-   ═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   MISC
+   ═══════════════════════════════════════════════════════════ */
 
 .vibe-dot-pulse {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: #00FFB2;
-  display: inline-block;
-  flex-shrink: 0;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #00FFB2; display: inline-block; flex-shrink: 0;
   animation: vibe-pulse-dot 2.2s ease-in-out infinite;
   box-shadow: 0 0 8px rgba(0,255,178,0.7);
 }
 
 .vibe-loading-bar {
-  position: relative;
-  overflow: hidden;
-  height: 2px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 1px;
+  position: relative; overflow: hidden;
+  height: 2px; background: rgba(255,255,255,0.04); border-radius: 1px;
 }
 .vibe-loading-bar::after {
   content: '';
-  position: absolute;
-  top: 0; left: 0;
+  position: absolute; top: 0; left: 0;
   height: 100%; width: 25%;
   background: linear-gradient(90deg, transparent, #00FFB2, #38BDF8, transparent);
   animation: vibe-loading-sweep 1.4s ease-in-out infinite;
 }
 
-/* ═══════════════════════════════════════════════════════
-   AGENT OUTPUT PROSE
-   ═══════════════════════════════════════════════════════ */
+.vibe-agent-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px; padding: 9px 10px;
+  cursor: pointer; text-align: left; width: 100%;
+  transition: all 0.18s ease;
+  display: flex; align-items: center; gap: 8px;
+  font-family: inherit;
+}
+.vibe-agent-btn:hover { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
+.vibe-agent-btn.active { border-color: var(--agent-color, rgba(0,255,178,0.3)); background: rgba(0,0,0,0.4); }
 
-.agent-output h2 {
-  font-size: 0.95rem; font-weight: 700; color: #fff;
-  margin-top: 1.2rem; margin-bottom: 0.4rem;
-}
-.agent-output h3 {
-  font-size: 0.82rem; font-weight: 700; color: #888;
-  text-transform: uppercase; letter-spacing: 0.05em;
-  margin-top: 1rem; margin-bottom: 0.3rem;
-}
-.agent-output p {
-  font-size: 0.875rem; color: #bbb; line-height: 1.75; margin-bottom: 0.4rem;
-}
+/* ═══════════════════════════════════════════════════════════
+   AGENT OUTPUT PROSE
+   ═══════════════════════════════════════════════════════════ */
+
+.agent-output h2 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 1.2rem; margin-bottom: 0.4rem; }
+.agent-output h3 { font-size: 0.82rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1rem; margin-bottom: 0.3rem; }
+.agent-output p { font-size: 0.875rem; color: #bbb; line-height: 1.75; margin-bottom: 0.4rem; }
 .agent-output strong { color: #fff; font-weight: 600; }
 .agent-output ul, .agent-output ol { padding-left: 1.2rem; margin-bottom: 0.6rem; }
 .agent-output li { font-size: 0.875rem; color: #bbb; line-height: 1.7; margin-bottom: 0.2rem; }
@@ -366,22 +468,34 @@
   font-size: 0.8rem; color: #00FFB2; font-family: monospace;
 }
 
-/* ═══════════════════════════════════════════════════════
-   AGENT CARD (sidebar selector)
-   ═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   TESTIMONIAL CARDS
+   ═══════════════════════════════════════════════════════════ */
 
-.vibe-agent-btn {
-  background: transparent;
+.vibe-testimonial {
+  background: rgba(8,8,10,0.8);
   border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 10px;
-  padding: 9px 10px;
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
-  transition: all 0.18s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  border-radius: 16px; padding: 24px;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative; overflow: hidden;
 }
-.vibe-agent-btn:hover { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
-.vibe-agent-btn.active { border-color: var(--agent-color, rgba(0,255,178,0.3)); background: rgba(0,0,0,0.4); }
+.vibe-testimonial:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.1);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MARQUEE / TICKER
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes vibe-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.vibe-marquee-track {
+  display: flex; gap: 32px;
+  animation: vibe-marquee 28s linear infinite;
+  width: max-content;
+}
+.vibe-marquee-track:hover { animation-play-state: paused; }
