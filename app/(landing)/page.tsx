@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 
@@ -282,9 +282,9 @@ function HexBadge({ size = 80, color = "#00FFB2", opacity = 0.12, rotate = 0, st
 }
 
 /* ── Circuit node SVG ──────────────────────────────────────────────────── */
-let _cdgCounter = 0;
 function CircuitDots({ color = "#00FFB2" }: { color?: string }) {
-  const gradId = `cdg-${++_cdgCounter}`;
+  const uid = useId();
+  const gradId = `cdg-${uid.replace(/:/g, "")}`;
   return (
     <svg width="200" height="200" viewBox="0 0 200 200" style={{ opacity: 0.07 }}>
       <defs>
