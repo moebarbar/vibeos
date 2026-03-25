@@ -1003,6 +1003,179 @@ export default function FloatingInputDemo() {
         )
       ),
     },
+    {
+      id: "form-split-signup",
+      name: "Split Screen Signup",
+      vibe: "Dark & Minimal",
+      difficulty: "Medium",
+      desc: "Two-panel signup: dark brand panel left, light form right. Email/password validation, glass blur strips, and orange accent.",
+      prompt: `Create a split-screen React signup form. Two equal halves side by side. LEFT HALF: black background, white text brand tagline (font-size 22px, weight 500, line-height 1.4, max-width 280px), 6 vertical glass blur strip overlays (each 64px wide, backdrop-filter blur(20px), gradient fill black 60%, opacity 0.3, absolute positioned), gradient overlay from black to transparent top-down, large orange circle blob (200px, border-radius 50%, bottom-left absolute, overflow hidden). RIGHT HALF: #f9f9f9 background, flex column, padding 48px 40px. Content: orange sun/burst icon (36px), "Get Started" heading (28px weight 500 tight tracking), subtitle text, email input (white bg, border #d1d5db, border-radius 8px, focus border accent + ring), password input same, red inline error messages, submit button full-width (orange bg, white text, hover opacity). "Already have account? Login" link below. Props: brandName, tagline, accentColor (default #f97316). Export as default function SplitSignup.`,
+      code: `import { useState } from "react";
+import { Sun } from "lucide-react";
+
+interface SplitSignupProps {
+  brandName?: string;
+  tagline?: string;
+  accentColor?: string;
+  onSubmit?: (email: string, password: string) => void;
+}
+
+export default function SplitSignup({
+  brandName = "YourBrand",
+  tagline = "Design and dev partner for startups and founders.",
+  accentColor = "#f97316",
+  onSubmit,
+}: SplitSignupProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    let valid = true;
+    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+      setEmailError("Please enter a valid email address.");
+      valid = false;
+    } else setEmailError("");
+    if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters.");
+      valid = false;
+    } else setPasswordError("");
+    if (valid) onSubmit?.(email, password);
+  };
+
+  const inputStyle = (hasError: boolean): React.CSSProperties => ({
+    width: "100%", padding: "9px 12px", fontSize: 13,
+    background: "white", color: "#111",
+    border: \`1px solid \${hasError ? "#ef4444" : "#d1d5db"}\`,
+    borderRadius: 8, outline: "none",
+    boxSizing: "border-box", fontFamily: "inherit",
+    transition: "border-color 0.15s, box-shadow 0.15s",
+  });
+
+  const focusInput = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.style.borderColor = accentColor;
+    e.currentTarget.style.boxShadow = \`0 0 0 3px \${accentColor}22\`;
+  };
+  const blurInput = (e: React.FocusEvent<HTMLInputElement>, hasError: boolean) => {
+    e.currentTarget.style.borderColor = hasError ? "#ef4444" : "#d1d5db";
+    e.currentTarget.style.boxShadow = "none";
+  };
+
+  return (
+    <div style={{ display: "flex", minHeight: "100vh", alignItems: "center", justifyContent: "center", background: "#f0f0f0", padding: 24 }}>
+      <div style={{ display: "flex", width: "100%", maxWidth: 900, borderRadius: 20, overflow: "hidden", boxShadow: "0 24px 80px rgba(0,0,0,0.18)" }}>
+
+        {/* ── Left dark panel ── */}
+        <div style={{ flex: 1, background: "#000", padding: "48px 40px", position: "relative", overflow: "hidden", minHeight: 480 }}>
+          {/* Glass blur strips */}
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} style={{
+              position: "absolute", top: 0, left: i * 64, width: 64, height: "100%",
+              backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+              background: "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 69%, rgba(255,255,255,0.05) 100%)",
+              opacity: 0.3,
+            }} />
+          ))}
+          {/* Top gradient overlay */}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%)" }} />
+          {/* Orange blob */}
+          <div style={{ position: "absolute", bottom: -40, left: -20, width: 220, height: 220, background: accentColor, borderRadius: "50%" }} />
+          <div style={{ position: "absolute", bottom: -10, left: 30, width: 110, height: 75, background: "white", borderRadius: "50%", opacity: 0.1 }} />
+          {/* Tagline */}
+          <p style={{ position: "relative", zIndex: 1, fontSize: 22, fontWeight: 500, color: "#fff", lineHeight: 1.4, letterSpacing: "-0.02em", maxWidth: 280, margin: 0 }}>
+            {tagline}
+          </p>
+        </div>
+
+        {/* ── Right form panel ── */}
+        <div style={{ flex: 1, background: "#f9f9f9", padding: "48px 40px", display: "flex", flexDirection: "column" as const }}>
+          <div style={{ marginBottom: 28 }}>
+            <div style={{ color: accentColor, marginBottom: 14 }}>
+              <Sun size={36} strokeWidth={1.5} />
+            </div>
+            <h2 style={{ fontSize: 28, fontWeight: 500, letterSpacing: "-0.025em", margin: "0 0 6px", color: "#111" }}>
+              Get Started
+            </h2>
+            <p style={{ fontSize: 13, color: "#777", margin: 0 }}>
+              Welcome to {brandName} — Let's get started
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column" as const, gap: 14 }}>
+            <div>
+              <label style={{ display: "block", fontSize: 12, color: "#444", marginBottom: 5, fontFamily: "inherit" }}>
+                Your email
+              </label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                style={inputStyle(!!emailError)}
+                onFocus={focusInput}
+                onBlur={e => blurInput(e, !!emailError)}
+              />
+              {emailError && <p style={{ fontSize: 11, color: "#ef4444", margin: "4px 0 0" }}>{emailError}</p>}
+            </div>
+
+            <div>
+              <label style={{ display: "block", fontSize: 12, color: "#444", marginBottom: 5, fontFamily: "inherit" }}>
+                Create new password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                style={inputStyle(!!passwordError)}
+                onFocus={focusInput}
+                onBlur={e => blurInput(e, !!passwordError)}
+              />
+              {passwordError && <p style={{ fontSize: 11, color: "#ef4444", margin: "4px 0 0" }}>{passwordError}</p>}
+            </div>
+
+            <button type="submit" style={{
+              width: "100%", background: accentColor, color: "#fff",
+              border: "none", borderRadius: 8, padding: "10px 16px",
+              fontSize: 14, fontWeight: 500, cursor: "pointer",
+              fontFamily: "inherit", transition: "opacity 0.15s",
+            }}
+              onMouseOver={e => (e.currentTarget.style.opacity = "0.88")}
+              onMouseOut={e => (e.currentTarget.style.opacity = "1")}
+            >
+              Create a new account
+            </button>
+
+            <p style={{ textAlign: "center", fontSize: 13, color: "#999", margin: 0 }}>
+              Already have an account?{" "}
+              <a href="/login" style={{ color: "#333", fontWeight: 500, textDecoration: "underline" }}>
+                Login
+              </a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { display: "flex", width: "100%", borderRadius: 8, overflow: "hidden", boxShadow: "0 8px 28px rgba(0,0,0,0.3)" } },
+        // Left dark panel
+        React.createElement("div", { style: { flex: 1, background: "#000", padding: "14px 12px", position: "relative", overflow: "hidden", minHeight: 130 } },
+          React.createElement("div", { style: { position: "absolute", bottom: -14, left: -6, width: 64, height: 64, background: "#f97316", borderRadius: "50%" } }),
+          React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%)" } }),
+          React.createElement("p", { style: { position: "relative", zIndex: 1, fontSize: 8.5, color: "#fff", fontWeight: 500, lineHeight: 1.45, margin: 0, maxWidth: 90 } }, "Design partner for startups and founders.")
+        ),
+        // Right form panel
+        React.createElement("div", { style: { flex: 1, background: "#f9f9f9", padding: "14px 12px", display: "flex", flexDirection: "column" } },
+          React.createElement("div", { style: { width: 16, height: 16, borderRadius: "50%", background: "#f97316", marginBottom: 7 } }),
+          React.createElement("div", { style: { fontSize: 10.5, fontWeight: 600, color: "#111", marginBottom: 10, letterSpacing: "-0.01em" } }, "Get Started"),
+          React.createElement("div", { style: { background: "white", border: "1px solid #e5e7eb", borderRadius: 5, padding: "3px 7px", fontSize: 7.5, color: "#bbb", marginBottom: 5 } }, "you@example.com"),
+          React.createElement("div", { style: { background: "white", border: "1px solid #e5e7eb", borderRadius: 5, padding: "3px 7px", fontSize: 7.5, color: "#bbb", marginBottom: 7 } }, "••••••••"),
+          React.createElement("div", { style: { background: "#f97316", borderRadius: 5, padding: "3px 7px", textAlign: "center" as const, fontSize: 7.5, color: "#fff", fontWeight: 600 } }, "Create Account")
+        )
+      ),
+    },
   ],
 
   dashboards: [
