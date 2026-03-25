@@ -234,16 +234,19 @@ function AppMockup() {
             borderRadius: 8, padding: "10px 12px", overflow: "hidden",
             fontFamily: "monospace",
           }}>
-            {typedLines.map((line, i) => (
-              <div key={i} style={{
-                fontSize: 10, lineHeight: 1.7,
-                color: line.startsWith("##") ? "#fff" : line.startsWith("**") ? "#bbb" : "rgba(255,255,255,0.5)",
-                fontWeight: line.startsWith("##") ? 700 : 400,
-                animation: "vibe-slide-up-sm 0.2s ease both",
-              }}>
-                {line === "" ? "\u00A0" : line}
-              </div>
-            ))}
+            {typedLines.map((line, i) => {
+              const l = line ?? "";
+              return (
+                <div key={i} style={{
+                  fontSize: 10, lineHeight: 1.7,
+                  color: l.startsWith("##") ? "#fff" : l.startsWith("**") ? "#bbb" : "rgba(255,255,255,0.5)",
+                  fontWeight: l.startsWith("##") ? 700 : 400,
+                  animation: "vibe-slide-up-sm 0.2s ease both",
+                }}>
+                  {l === "" ? "\u00A0" : l}
+                </div>
+              );
+            })}
             {typedLines.length < 12 && (
               <span style={{ fontSize: 10, color: "#00FFB2", animation: "vibe-cursor 1s step-end infinite" }}>█</span>
             )}

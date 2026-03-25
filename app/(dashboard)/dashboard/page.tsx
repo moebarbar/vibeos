@@ -11,7 +11,7 @@ function formatOutput(text: string) {
     if (line.startsWith("### "))
       return <h3 key={i} style={{ color: "#888", fontSize: "0.78rem", fontWeight: 700, marginTop: "0.9rem", marginBottom: "0.25rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{line.slice(4)}</h3>;
     if (line.trim() === "") return <br key={i} />;
-    const parts = line.split(/(\*\*.*?\*\*)/g);
+    const parts = line.split(/(\*\*.*?\*\*)/g).filter((p): p is string => p != null);
     return (
       <p key={i} style={{ margin: "0.12rem 0", fontSize: "0.875rem", color: "#bbb", lineHeight: 1.75 }}>
         {parts.map((p, j) =>
