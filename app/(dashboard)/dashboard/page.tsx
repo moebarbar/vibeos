@@ -13,7 +13,7 @@ function formatOutput(text: string) {
     if (line.trim() === "") return <br key={i} />;
     const parts = line.split(/(\*\*.*?\*\*)/g);
     return (
-      <p key={i} style={{ margin: "0.12rem 0", fontSize: "0.875rem", color: "#bbb", lineHeight: 1.7 }}>
+      <p key={i} style={{ margin: "0.12rem 0", fontSize: "0.875rem", color: "#bbb", lineHeight: 1.75 }}>
         {parts.map((p, j) =>
           p.startsWith("**") ? <strong key={j} style={{ color: "#fff" }}>{p.slice(2, -2)}</strong> : p
         )}
@@ -32,7 +32,6 @@ export default function AgentsPage() {
   const outputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Check if project brain is active by pinging projects API
     fetch("/api/projects/active")
       .then(r => r.json())
       .then(d => setProjectBrainActive(!!d?.contextBrief))
@@ -44,41 +43,33 @@ export default function AgentsPage() {
     setLoading(true);
     setOutput("");
     setCopied(false);
-
     try {
       const res = await fetch(`/api/agents/${activeAgent.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: input }),
       });
-
       if (!res.ok) {
         const err = await res.json();
-        if (res.status === 429) {
-          setOutput("## Usage Limit Reached\n\nYou've reached your monthly agent call limit. Upgrade to Pro for 500 calls/month.");
-        } else {
-          setOutput(`Error: ${err.error ?? "Something went wrong"}`);
-        }
+        setOutput(res.status === 429
+          ? "## Usage Limit Reached\n\nYou've reached your monthly agent call limit. Upgrade to Pro for 500 calls/month."
+          : `Error: ${err.error ?? "Something went wrong"}`);
         setLoading(false);
         return;
       }
-
       const reader = res.body?.getReader();
       const decoder = new TextDecoder();
       if (!reader) { setLoading(false); return; }
-
       let full = "";
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        full += chunk;
+        full += decoder.decode(value, { stream: true });
         setOutput(full);
         if (outputRef.current) outputRef.current.scrollTop = outputRef.current.scrollHeight;
       }
-
       if (activeAgent.id === "brain") setProjectBrainActive(true);
-    } catch (e) {
+    } catch {
       setOutput("Connection error. Please try again.");
     }
     setLoading(false);
@@ -93,36 +84,67 @@ export default function AgentsPage() {
 
   return (
     <div style={{ display: "flex", flex: 1, overflow: "hidden", height: "100%" }}>
-      {/* Agent Selector Sidebar */}
-      <div style={{ width: 200, borderRight: "1px solid #0f0f0f", padding: "12px 10px", display: "flex", flexDirection: "column", gap: 3, flexShrink: 0, overflowY: "auto" }}>
-        <div style={{ fontSize: 9, color: "#2a2a2a", letterSpacing: "0.14em", paddingLeft: 4, marginBottom: 4 }}>AGENTS</div>
-        {AGENTS.map(agent => (
-          <button key={agent.id} onClick={() => selectAgent(agent)}
-            style={{ background: activeAgent?.id === agent.id ? "#111" : "transparent", border: `1px solid ${activeAgent?.id === agent.id ? agent.color + "44" : "#111"}`, borderRadius: 8, padding: "8px 10px", cursor: "pointer", textAlign: "left", fontFamily: "inherit", transition: "all 0.15s", display: "flex", alignItems: "center", gap: 7 }}>
-            <span style={{ fontSize: 14 }}>{agent.icon}</span>
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 600, color: activeAgent?.id === agent.id ? agent.color : "#777" }}>{agent.name}</div>
-              <div style={{ fontSize: 9, color: "#333", lineHeight: 1.3, marginTop: 1 }}>{agent.tagline}</div>
-            </div>
-          </button>
-        ))}
+
+      {/* ── AGENT SELECTOR ─────────────────────────────────── */}
+      <div style={{
+        width: 208, borderRight: "1px solid rgba(255,255,255,0.04)",
+        padding: "14px 10px", display: "flex", flexDirection: "column",
+        gap: 3, flexShrink: 0, overflowY: "auto",
+        background: "rgba(0,0,0,0.2)",
+      }}>
+        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.2)", letterSpacing: "0.14em", paddingLeft: 4, marginBottom: 6, fontWeight: 600 }}>AGENTS</div>
+        {AGENTS.map(agent => {
+          const active = activeAgent?.id === agent.id;
+          return (
+            <button key={agent.id} onClick={() => selectAgent(agent)}
+              className="vibe-agent-btn"
+              style={{ "--agent-color": active ? agent.color : "transparent" } as React.CSSProperties}
+              onMouseOver={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.025)"; }}
+              onMouseOut={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}>
+              <span style={{
+                fontSize: 16, flexShrink: 0, width: 26, height: 26,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                borderRadius: 8, background: active ? `${agent.color}14` : "transparent",
+                transition: "background 0.2s",
+              }}>{agent.icon}</span>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: active ? agent.color : "rgba(255,255,255,0.55)", lineHeight: 1.2 }}>{agent.name}</div>
+                <div style={{ fontSize: 9, color: "rgba(255,255,255,0.2)", lineHeight: 1.4, marginTop: 2 }}>{agent.tagline}</div>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Main Area */}
+      {/* ── MAIN AREA ──────────────────────────────────────── */}
       {!activeAgent ? (
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20, padding: 40 }}>
-          <div style={{ fontSize: "clamp(22px,3vw,36px)", fontWeight: 800, textAlign: "center", lineHeight: 1.1, letterSpacing: "-0.03em" }}>
-            Your AI Chief of Staff<br />
-            <span style={{ background: "linear-gradient(90deg,#00FFB2,#38BDF8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>for vibe coding.</span>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 24, padding: 48 }}>
+          {/* Hero text */}
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: "clamp(24px,3vw,38px)", fontWeight: 800, letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: 14 }}>
+              Your AI Chief of Staff<br />
+              <span className="vibe-gradient-text">for vibe coding.</span>
+            </div>
+            <p style={{ color: "rgba(255,255,255,0.3)", maxWidth: 400, lineHeight: 1.75, fontSize: 13, margin: "0 auto" }}>
+              Pick an agent from the sidebar. Start with{" "}
+              <strong style={{ color: "rgba(255,255,255,0.6)" }}>Project Brain</strong>{" "}
+              — set it up once and every other agent will know your project.
+            </p>
           </div>
-          <p style={{ color: "#444", textAlign: "center", maxWidth: 420, lineHeight: 1.7, fontSize: 13 }}>
-            Pick an agent from the sidebar. Start with <strong style={{ color: "#888" }}>Project Brain</strong> — set it up once and every other agent will know your project.
-          </p>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", maxWidth: 500 }}>
+
+          {/* Agent chips */}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", maxWidth: 520 }}>
             {AGENTS.map(a => (
-              <div key={a.id} onClick={() => selectAgent(a)} style={{ padding: "5px 12px", borderRadius: 20, background: "#0d0d0d", border: `1px solid ${a.color}33`, fontSize: 11, color: a.color, cursor: "pointer", transition: "border-color 0.15s" }}
-                onMouseOver={e => (e.currentTarget.style.borderColor = a.color + "88")}
-                onMouseOut={e => (e.currentTarget.style.borderColor = a.color + "33")}>
+              <div key={a.id} onClick={() => selectAgent(a)}
+                style={{
+                  padding: "6px 14px", borderRadius: 20,
+                  background: `${a.color}08`,
+                  border: `1px solid ${a.color}22`,
+                  fontSize: 11, color: a.color, cursor: "pointer",
+                  transition: "all 0.18s ease", fontWeight: 500,
+                }}
+                onMouseOver={e => { (e.currentTarget as HTMLElement).style.background = `${a.color}14`; (e.currentTarget as HTMLElement).style.borderColor = `${a.color}44`; (e.currentTarget as HTMLElement).style.boxShadow = `0 0 16px ${a.color}14`; }}
+                onMouseOut={e => { (e.currentTarget as HTMLElement).style.background = `${a.color}08`; (e.currentTarget as HTMLElement).style.borderColor = `${a.color}22`; (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}>
                 {a.icon} {a.name}
               </div>
             ))}
@@ -130,23 +152,44 @@ export default function AgentsPage() {
         </div>
       ) : (
         <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+
           {/* Input Panel */}
-          <div style={{ width: "45%", borderRight: "1px solid #0f0f0f", padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-              <span style={{ fontSize: 22, filter: `drop-shadow(0 0 8px ${activeAgent.color}55)` }}>{activeAgent.icon}</span>
+          <div style={{
+            width: "44%", borderRight: "1px solid rgba(255,255,255,0.04)",
+            padding: "22px 20px", display: "flex", flexDirection: "column", gap: 14,
+          }}>
+            {/* Agent header */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{
+                width: 40, height: 40, borderRadius: 11,
+                background: `${activeAgent.color}10`,
+                border: `1px solid ${activeAgent.color}24`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 20, flexShrink: 0,
+                boxShadow: `0 0 20px ${activeAgent.color}14`,
+              }}>{activeAgent.icon}</div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: "1rem", color: activeAgent.color }}>{activeAgent.name}</div>
-                <div style={{ fontSize: 11, color: "#444" }}>{activeAgent.tagline}</div>
+                <div style={{ fontWeight: 800, fontSize: "0.95rem", color: activeAgent.color, letterSpacing: "-0.01em" }}>{activeAgent.name}</div>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.28)", marginTop: 1 }}>{activeAgent.tagline}</div>
               </div>
             </div>
 
+            {/* Brain status */}
             {projectBrainActive && activeAgent.id !== "brain" && (
-              <div style={{ background: "#0d1f17", border: "1px solid #1a3a2a", borderRadius: 7, padding: "7px 10px", fontSize: 11, color: "#00FFB2", display: "flex", alignItems: "center", gap: 6 }}>
-                <span>🧠</span> Project context loaded — this agent knows your project
+              <div style={{
+                background: "rgba(0,255,178,0.04)",
+                border: "1px solid rgba(0,255,178,0.14)",
+                borderRadius: 9, padding: "8px 12px",
+                fontSize: 11, color: "#00FFB2",
+                display: "flex", alignItems: "center", gap: 7,
+                animation: "vibe-slide-up 0.3s ease both",
+              }}>
+                <span className="vibe-dot-pulse" />
+                Project context loaded — this agent knows your project
               </div>
             )}
 
-            <label style={{ fontSize: 10, color: "#444", letterSpacing: "0.08em", textTransform: "uppercase" }}>{activeAgent.inputLabel}</label>
+            <label style={{ fontSize: 9, color: "rgba(255,255,255,0.25)", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600 }}>{activeAgent.inputLabel}</label>
 
             <textarea
               rows={9}
@@ -154,42 +197,74 @@ export default function AgentsPage() {
               onChange={e => setInput(e.target.value)}
               placeholder={activeAgent.placeholder}
               onKeyDown={e => { if (e.metaKey && e.key === "Enter") runAgent(); }}
-              style={{ flex: 1, minHeight: 180, background: "#0a0a0a", border: "1px solid #151515", borderRadius: 8, color: "#ccc", fontFamily: "system-ui, sans-serif", fontSize: 13, padding: "10px 12px", resize: "none", outline: "none", lineHeight: 1.6, transition: "border-color 0.2s" }}
-              onFocus={e => (e.target.style.borderColor = "#2a2a2a")}
-              onBlur={e => (e.target.style.borderColor = "#151515")}
+              className="vibe-input"
+              style={{
+                flex: 1, minHeight: 180,
+                fontFamily: "system-ui, -apple-system, sans-serif",
+                fontSize: 13, padding: "12px 14px",
+                resize: "none", lineHeight: 1.65,
+                boxSizing: "border-box",
+              }}
             />
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: 10, color: "#2a2a2a", fontFamily: "monospace" }}>⌘ + Enter to run</span>
+              <span style={{ fontSize: 10, color: "rgba(255,255,255,0.18)", fontFamily: "monospace" }}>⌘ + Enter to run</span>
               <button onClick={runAgent} disabled={loading || !input.trim()}
-                style={{ background: activeAgent.color, color: "#000", border: "none", borderRadius: 8, padding: "9px 20px", fontWeight: 700, fontSize: 12, cursor: "pointer", opacity: loading || !input.trim() ? 0.4 : 1, letterSpacing: "0.03em", fontFamily: "inherit", transition: "opacity 0.2s" }}>
-                {loading ? "⟳ Running..." : `Run ${activeAgent.name} →`}
+                className="vibe-btn-primary"
+                style={{
+                  padding: "9px 22px", fontSize: 12, borderRadius: 9,
+                  opacity: loading || !input.trim() ? 0.35 : 1,
+                  background: activeAgent.color,
+                  pointerEvents: loading || !input.trim() ? "none" : "auto",
+                }}>
+                {loading ? (
+                  <span style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                    <span style={{ width: 11, height: 11, border: "2px solid rgba(0,0,0,0.25)", borderTopColor: "#000", borderRadius: "50%", display: "inline-block", animation: "vibe-spin-slow 0.65s linear infinite" }} />
+                    Running...
+                  </span>
+                ) : `Run ${activeAgent.name} →`}
               </button>
             </div>
           </div>
 
           {/* Output Panel */}
-          <div style={{ flex: 1, padding: 20, display: "flex", flexDirection: "column", gap: 10, overflow: "hidden" }}>
+          <div style={{ flex: 1, padding: "22px 20px", display: "flex", flexDirection: "column", gap: 12, overflow: "hidden" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: 9, color: "#333", letterSpacing: "0.12em" }}>OUTPUT</span>
+              <span style={{ fontSize: 9, color: "rgba(255,255,255,0.2)", letterSpacing: "0.14em", fontWeight: 600 }}>OUTPUT</span>
               {output && (
-                <button onClick={() => { navigator.clipboard.writeText(output); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-                  style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: 6, color: "#666", padding: "4px 10px", fontSize: 10, cursor: "pointer", fontFamily: "monospace" }}>
+                <button
+                  onClick={() => { navigator.clipboard.writeText(output); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+                  style={{
+                    background: copied ? "rgba(0,255,178,0.08)" : "rgba(255,255,255,0.04)",
+                    border: copied ? "1px solid rgba(0,255,178,0.2)" : "1px solid rgba(255,255,255,0.07)",
+                    borderRadius: 7,
+                    color: copied ? "#00FFB2" : "rgba(255,255,255,0.4)",
+                    padding: "5px 12px", fontSize: 10, cursor: "pointer",
+                    fontFamily: "monospace", transition: "all 0.2s ease",
+                  }}>
                   {copied ? "✓ Copied!" : "⎘ Copy"}
                 </button>
               )}
             </div>
 
-            <div ref={outputRef} style={{ flex: 1, overflowY: "auto", background: "#0a0a0a", border: "1px solid #111", borderRadius: 10, padding: "14px 16px" }}>
+            {/* Loading bar */}
+            {loading && <div className="vibe-loading-bar" />}
+
+            <div ref={outputRef} style={{
+              flex: 1, overflowY: "auto",
+              background: "rgba(0,0,0,0.25)",
+              border: "1px solid rgba(255,255,255,0.05)",
+              borderRadius: 12, padding: "16px 18px",
+            }}>
               {loading && !output && (
-                <div style={{ display: "flex", gap: 8, alignItems: "center", color: "#444", fontSize: 12 }}>
-                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: activeAgent.color, display: "inline-block", animation: "pulse 1s infinite" }} />
+                <div style={{ display: "flex", gap: 10, alignItems: "center", color: "rgba(255,255,255,0.3)", fontSize: 12 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: activeAgent.color, display: "inline-block", animation: "vibe-pulse-dot 1.2s infinite", boxShadow: `0 0 10px ${activeAgent.color}` }} />
                   {activeAgent.name} is thinking...
                 </div>
               )}
               {!loading && !output && (
-                <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#1e1e1e", fontSize: 13, textAlign: "center", flexDirection: "column", gap: 8 }}>
-                  <span style={{ fontSize: 28 }}>{activeAgent.icon}</span>
+                <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.1)", fontSize: 13, textAlign: "center", flexDirection: "column", gap: 10 }}>
+                  <span style={{ fontSize: 32, opacity: 0.3 }}>{activeAgent.icon}</span>
                   <span>Output will appear here</span>
                 </div>
               )}
@@ -198,8 +273,6 @@ export default function AgentsPage() {
           </div>
         </div>
       )}
-
-      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
     </div>
   );
 }
