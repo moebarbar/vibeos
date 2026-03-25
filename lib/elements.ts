@@ -7,6 +7,7 @@ export interface Element {
   difficulty: "Simple" | "Medium" | "Advanced";
   desc: string;
   prompt: string;
+  code: string;
   preview: React.FC;
 }
 
@@ -30,6 +31,37 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Simple",
       desc: "Pulsing neon green button with glow animation on hover.",
       prompt: `Create a React button component with a neon green glow effect. Style: dark background #0a0a0a, bright green text #00ff88, box-shadow glow that pulses on hover using CSS keyframe animation (0 0 12px #00ff8855 at rest, 0 0 28px #00ff88aa on hover), border 1px solid #00ff88, border-radius 6px, font-family monospace, padding 12px 28px, letter-spacing 0.08em. On hover: increase glow and scale(1.02). On active: scale(0.98). Export as default function GlowButton. Use only inline styles and React.`,
+      code: `import { useState } from "react";
+
+export default function GlowButton({ children = "LAUNCH APP →" }: { children?: React.ReactNode }) {
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
+
+  return (
+    <button
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { setHovered(false); setPressed(false); }}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      style={{
+        background: "#0a0a0a",
+        color: "#00ff88",
+        border: "1px solid #00ff88",
+        borderRadius: 6,
+        padding: "12px 28px",
+        fontFamily: "monospace",
+        fontSize: 14,
+        letterSpacing: "0.08em",
+        cursor: "pointer",
+        boxShadow: hovered ? "0 0 28px #00ff88aa, 0 0 8px #00ff8844" : "0 0 12px #00ff8855",
+        transform: pressed ? "scale(0.98)" : hovered ? "scale(1.02)" : "scale(1)",
+        transition: "all 0.2s ease",
+      }}
+    >
+      {children}
+    </button>
+  );
+}`,
       preview: () => React.createElement("div", { style: { padding: 20 } },
         React.createElement("button", { style: { background: "#0a0a0a", color: "#00ff88", border: "1px solid #00ff88", borderRadius: 6, padding: "10px 22px", fontFamily: "monospace", fontSize: 13, cursor: "pointer", boxShadow: "0 0 12px #00ff8844", letterSpacing: "0.08em" } }, "LAUNCH APP →")
       ),
@@ -41,6 +73,36 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Simple",
       desc: "Smooth gradient pill button with hover lift effect.",
       prompt: `Create a React pill button with pastel gradient. Background linear-gradient(135deg, #f9a8d4, #a78bfa), white text, no border, border-radius 50px, padding 14px 32px, font-weight 600, font-size 15px. Hover: scale(1.03) with box-shadow 0 8px 25px rgba(167,139,250,0.4). Active: scale(0.97). Smooth 0.2s transitions. Export as default function SoftButton.`,
+      code: `import { useState } from "react";
+
+export default function SoftButton({ children = "Get Started Free" }: { children?: React.ReactNode }) {
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
+
+  return (
+    <button
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { setHovered(false); setPressed(false); }}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      style={{
+        background: "linear-gradient(135deg, #f9a8d4, #a78bfa)",
+        color: "white",
+        border: "none",
+        borderRadius: 50,
+        padding: "14px 32px",
+        fontWeight: 600,
+        fontSize: 15,
+        cursor: "pointer",
+        boxShadow: hovered ? "0 8px 25px rgba(167,139,250,0.4)" : "0 4px 15px rgba(249,168,212,0.3)",
+        transform: pressed ? "scale(0.97)" : hovered ? "scale(1.03)" : "scale(1)",
+        transition: "all 0.2s ease",
+      }}
+    >
+      {children}
+    </button>
+  );
+}`,
       preview: () => React.createElement("div", { style: { padding: 20 } },
         React.createElement("button", { style: { background: "linear-gradient(135deg,#f9a8d4,#a78bfa)", color: "white", border: "none", borderRadius: 50, padding: "11px 26px", fontWeight: 600, fontSize: 14, cursor: "pointer", boxShadow: "0 4px 15px rgba(249,168,212,0.35)" } }, "Get Started Free")
       ),
@@ -52,6 +114,39 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Simple",
       desc: "Raw black button with solid shadow and press effect.",
       prompt: `Create a brutalist React button. Black background #111, white text, NO border-radius (border-radius: 0), thick 2px solid white border, bold uppercase text, padding 12px 24px, font-size 13px, letter-spacing 0.1em. Box-shadow: 4px 4px 0 #fff. On hover: invert colors (white bg, black text). On active: translate(2px 2px) and box-shadow none to simulate pressing. Export as default function BrutalistButton.`,
+      code: `import { useState } from "react";
+
+export default function BrutalistButton({ children = "SUBMIT FORM" }: { children?: React.ReactNode }) {
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
+
+  return (
+    <button
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { setHovered(false); setPressed(false); }}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      style={{
+        background: hovered ? "#fff" : "#111",
+        color: hovered ? "#111" : "#fff",
+        border: "2px solid #fff",
+        borderRadius: 0,
+        padding: "12px 24px",
+        fontWeight: 700,
+        fontSize: 13,
+        letterSpacing: "0.1em",
+        textTransform: "uppercase",
+        cursor: "pointer",
+        boxShadow: pressed ? "none" : "4px 4px 0 #fff",
+        transform: pressed ? "translate(2px, 2px)" : "none",
+        transition: "background 0.15s, color 0.15s",
+        fontFamily: "inherit",
+      }}
+    >
+      {children}
+    </button>
+  );
+}`,
       preview: () => React.createElement("div", { style: { padding: 20 } },
         React.createElement("button", { style: { background: "#111", color: "#fff", border: "2px solid #fff", borderRadius: 0, padding: "11px 22px", fontWeight: 700, fontSize: 12, cursor: "pointer", letterSpacing: "0.1em", textTransform: "uppercase", boxShadow: "4px 4px 0 #555" } }, "SUBMIT FORM")
       ),
@@ -63,6 +158,36 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Simple",
       desc: "Frosted glass button over gradient background.",
       prompt: `Create a React glassmorphism button. Requires a colorful gradient parent. Button style: backdrop-filter blur(12px), background rgba(255,255,255,0.1), border 1px solid rgba(255,255,255,0.25), border-radius 12px, white text, padding 12px 28px, font-size 14px. On hover: background rgba(255,255,255,0.2), border rgba(255,255,255,0.4). Wrap in a demo div with gradient background to show the effect. Export as default function GlassButton.`,
+      code: `import { useState } from "react";
+
+export default function GlassButton({ children = "Learn More" }: { children?: React.ReactNode }) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    // Wrap in a gradient background to see the glass effect
+    <div style={{ background: "linear-gradient(135deg, #667eea, #764ba2)", padding: "40px 48px", borderRadius: 16 }}>
+      <button
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          background: hovered ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)",
+          border: hovered ? "1px solid rgba(255,255,255,0.4)" : "1px solid rgba(255,255,255,0.25)",
+          borderRadius: 12,
+          color: "white",
+          padding: "12px 28px",
+          fontSize: 14,
+          cursor: "pointer",
+          transition: "all 0.2s ease",
+          fontFamily: "inherit",
+        }}
+      >
+        {children}
+      </button>
+    </div>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "linear-gradient(135deg,#667eea,#764ba2)", padding: "28px 24px", borderRadius: 10 } },
         React.createElement("button", { style: { backdropFilter: "blur(10px)", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.28)", borderRadius: 10, color: "white", padding: "10px 22px", fontSize: 13, cursor: "pointer" } }, "Learn More")
       ),
@@ -77,6 +202,65 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Simple",
       desc: "SaaS pricing card with popular badge, features, and CTA.",
       prompt: `Create a React pricing card component. Dark theme: background #111, border 1px solid #222, border-radius 16px, padding 32px, max-width 260px. Include: plan name (small caps, muted color #555), large price (white, 36px, bold, with /month), horizontal divider, feature list with green ✓ checkmarks (each feature in a flex row), primary CTA button (full-width, bg #00FFB2, black text). Popular variant: border-color #00FFB2 with "MOST POPULAR" pill badge (absolute positioned, top -11px, centered, bg #00FFB2). Props: planName, price, features (array), isPopular, onSelect. Export as default function PricingCard.`,
+      code: `interface PricingCardProps {
+  planName?: string;
+  price?: string;
+  features?: string[];
+  isPopular?: boolean;
+  onSelect?: () => void;
+}
+
+export default function PricingCard({
+  planName = "Pro Plan",
+  price = "$29",
+  features = ["Unlimited projects", "All 6 AI agents", "Priority support", "Custom integrations"],
+  isPopular = false,
+  onSelect,
+}: PricingCardProps) {
+  return (
+    <div style={{ position: "relative", display: "inline-block" }}>
+      {isPopular && (
+        <div style={{
+          position: "absolute", top: -11, left: "50%", transform: "translateX(-50%)",
+          background: "#00FFB2", color: "#000", fontSize: 9, fontWeight: 700,
+          letterSpacing: "0.1em", padding: "3px 10px", borderRadius: 20,
+          whiteSpace: "nowrap",
+        }}>
+          MOST POPULAR
+        </div>
+      )}
+      <div style={{
+        background: "#111",
+        border: \`1px solid \${isPopular ? "#00FFB2" : "#222"}\`,
+        borderRadius: 16, padding: 32, maxWidth: 260, width: "100%",
+        boxShadow: isPopular ? "0 0 40px rgba(0,255,178,0.08)" : "none",
+      }}>
+        <div style={{ fontSize: 10, letterSpacing: "0.12em", color: "#555", textTransform: "uppercase" as const, marginBottom: 10 }}>
+          {planName}
+        </div>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 4, marginBottom: 20 }}>
+          <span style={{ fontSize: 36, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{price}</span>
+          <span style={{ fontSize: 12, color: "#444", marginBottom: 4 }}>/month</span>
+        </div>
+        <div style={{ borderTop: "1px solid #1a1a1a", marginBottom: 20 }} />
+        <div style={{ display: "flex", flexDirection: "column" as const, gap: 10, marginBottom: 24 }}>
+          {features.map(f => (
+            <div key={f} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ color: "#00FFB2", fontSize: 12 }}>✓</span>
+              <span style={{ fontSize: 13, color: "#aaa" }}>{f}</span>
+            </div>
+          ))}
+        </div>
+        <button onClick={onSelect} style={{
+          width: "100%", background: "#00FFB2", border: "none", borderRadius: 8,
+          padding: "11px", fontWeight: 700, fontSize: 13, color: "#000", cursor: "pointer",
+        }}>
+          Get Started →
+        </button>
+      </div>
+    </div>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "#111", border: "1px solid #333", borderRadius: 14, padding: 20, width: 180 } },
         React.createElement("div", { style: { fontSize: 10, letterSpacing: "0.1em", color: "#555", textTransform: "uppercase", marginBottom: 6 } }, "Pro Plan"),
         React.createElement("div", { style: { fontSize: 28, fontWeight: 700, color: "#fff", marginBottom: 12 } }, "$29", React.createElement("span", { style: { fontSize: 12, color: "#555", fontWeight: 400 } }, "/mo")),
@@ -93,6 +277,40 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Medium",
       desc: "Frosted glass card over gradient with icon, title, and description.",
       prompt: `Create a React feature card with glassmorphism effect over a dark gradient. Card: backdrop-filter blur(16px), background rgba(255,255,255,0.07), border 1px solid rgba(255,255,255,0.12), border-radius 20px, padding 28px. Content: 44px icon container (background rgba(255,255,255,0.1), border-radius 12px, emoji icon), title (white, 17px, weight 600), description (rgba(255,255,255,0.6), 13px, line-height 1.6). Wrap in gradient container (background linear-gradient(135deg, #0f0c29, #302b63, #24243e)) to show glass effect. Props: icon, title, description. Export as default function FeatureCard.`,
+      code: `interface FeatureCardProps {
+  icon?: string;
+  title?: string;
+  description?: string;
+}
+
+export default function FeatureCard({
+  icon = "🧠",
+  title = "Project Brain",
+  description = "Remembers everything about your project. Context loaded for every agent, every time.",
+}: FeatureCardProps) {
+  return (
+    // Gradient background wrapper — required for glass effect
+    <div style={{ background: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)", padding: 40, borderRadius: 24 }}>
+      <div style={{
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        background: "rgba(255,255,255,0.07)",
+        border: "1px solid rgba(255,255,255,0.12)",
+        borderRadius: 20, padding: 28, maxWidth: 280,
+      }}>
+        <div style={{
+          width: 44, height: 44, background: "rgba(255,255,255,0.1)",
+          borderRadius: 12, display: "flex", alignItems: "center",
+          justifyContent: "center", fontSize: 22, marginBottom: 16,
+        }}>
+          {icon}
+        </div>
+        <div style={{ color: "#fff", fontSize: 17, fontWeight: 600, marginBottom: 8 }}>{title}</div>
+        <div style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, lineHeight: 1.6 }}>{description}</div>
+      </div>
+    </div>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "linear-gradient(135deg,#0f0c29,#302b63)", padding: "24px 20px", borderRadius: 14 } },
         React.createElement("div", { style: { backdropFilter: "blur(14px)", background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 16, padding: 18, width: 180 } },
           React.createElement("div", { style: { width: 38, height: 38, background: "rgba(255,255,255,0.1)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, marginBottom: 12 } }, "🧠"),
@@ -108,6 +326,60 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Simple",
       desc: "Dashboard KPI card with metric, trend badge, and accent bar.",
       prompt: `Create a React dashboard stat card. Background #0f0f0f, border 1px solid #1a1a1a, border-radius 12px, padding 20px 24px, min-width 160px. Content: label (12px uppercase #555 letter-spacing 0.1em), large metric value (32px white weight 700), trend badge (small pill: green bg #0d1f17 + #00ff88 text for positive, red for negative, showing ↑/↓ and percentage). Optional: tiny sparkline SVG at bottom (8-point line in accent color). Props: label, value, trend, trendValue, positive. Export as default function StatCard.`,
+      code: `interface StatCardProps {
+  label?: string;
+  value?: string;
+  trendValue?: string;
+  positive?: boolean;
+  sparkline?: number[];
+}
+
+export default function StatCard({
+  label = "Monthly Revenue",
+  value = "$4,280",
+  trendValue = "18%",
+  positive = true,
+  sparkline = [30, 45, 35, 60, 50, 75, 55, 85],
+}: StatCardProps) {
+  const max = Math.max(...sparkline);
+  const pts = sparkline
+    .map((v, i) => \`\${(i / (sparkline.length - 1)) * 120},\${32 - (v / max) * 28}\`)
+    .join(" ");
+
+  return (
+    <div style={{
+      background: "#0f0f0f", border: "1px solid #1a1a1a",
+      borderRadius: 12, padding: "20px 24px", minWidth: 180,
+      display: "inline-flex", flexDirection: "column" as const, gap: 8,
+    }}>
+      <div style={{ fontSize: 11, color: "#555", textTransform: "uppercase" as const, letterSpacing: "0.1em" }}>
+        {label}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <span style={{ fontSize: 32, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{value}</span>
+        <span style={{
+          display: "inline-flex", alignItems: "center", gap: 3,
+          background: positive ? "#0d1f17" : "#1f0d0d",
+          border: \`1px solid \${positive ? "#1a3a2a" : "#3a1a1a"}\`,
+          borderRadius: 20, padding: "3px 8px",
+          fontSize: 11, color: positive ? "#00ff88" : "#f87171",
+        }}>
+          {positive ? "↑" : "↓"} {trendValue}
+        </span>
+      </div>
+      <svg viewBox="0 0 120 32" style={{ width: "100%", height: 28, marginTop: 4 }}>
+        <defs>
+          <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={positive ? "#00ff88" : "#f87171"} stopOpacity={0.3} />
+            <stop offset="100%" stopColor={positive ? "#00ff88" : "#f87171"} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <polygon points={\`0,32 \${pts} 120,32\`} fill="url(#sg)" />
+        <polyline points={pts} fill="none" stroke={positive ? "#00ff88" : "#f87171"} strokeWidth={1.5} />
+      </svg>
+    </div>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 11, padding: "16px 20px", width: 160 } },
         React.createElement("div", { style: { fontSize: 10, color: "#444", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 } }, "Monthly Revenue"),
         React.createElement("div", { style: { fontSize: 28, fontWeight: 700, color: "#fff", marginBottom: 7 } }, "$4,280"),
@@ -121,6 +393,49 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Simple",
       desc: "Soft white card with colorful icon, hover lift, and subtle shadow.",
       prompt: `Create a soft pastel React feature card. Background white, border 1px solid #f0e6ff, border-radius 20px, padding 28px, box-shadow 0 4px 20px rgba(167,139,250,0.1). Content: 48px icon container (background #f3e8ff, border-radius 14px, emoji icon 24px), title (#1a1a2e 17px weight 600), description (#6b7280 13px line-height 1.6). On hover: translateY(-4px) and box-shadow 0 12px 30px rgba(167,139,250,0.2), transition 0.2s ease. Props: icon, title, description. Export as default function PastelCard.`,
+      code: `import { useState } from "react";
+
+interface PastelCardProps {
+  icon?: string;
+  title?: string;
+  description?: string;
+}
+
+export default function PastelCard({
+  icon = "✨",
+  title = "AI Powered",
+  description = "Every feature is backed by Claude for insane quality results, every single time.",
+}: PastelCardProps) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: "white",
+        border: "1px solid #f0e6ff",
+        borderRadius: 20,
+        padding: 28,
+        maxWidth: 280,
+        boxShadow: hovered ? "0 12px 30px rgba(167,139,250,0.2)" : "0 4px 20px rgba(167,139,250,0.1)",
+        transform: hovered ? "translateY(-4px)" : "translateY(0)",
+        transition: "all 0.2s ease",
+        cursor: "default",
+      }}
+    >
+      <div style={{
+        width: 48, height: 48, background: "#f3e8ff",
+        borderRadius: 14, display: "flex", alignItems: "center",
+        justifyContent: "center", fontSize: 24, marginBottom: 16,
+      }}>
+        {icon}
+      </div>
+      <div style={{ fontSize: 17, fontWeight: 600, color: "#1a1a2e", marginBottom: 8 }}>{title}</div>
+      <div style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.6 }}>{description}</div>
+    </div>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "white", border: "1px solid #f0e6ff", borderRadius: 16, padding: 20, width: 180, boxShadow: "0 4px 16px rgba(167,139,250,0.1)" } },
         React.createElement("div", { style: { width: 40, height: 40, background: "#f3e8ff", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, marginBottom: 12 } }, "✨"),
         React.createElement("div", { style: { fontSize: 14, fontWeight: 600, color: "#1a1a2e", marginBottom: 6 } }, "AI Powered"),
@@ -137,6 +452,98 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Medium",
       desc: "Full-viewport dark hero with dot grid, gradient glow, badge, and social proof.",
       prompt: `Create a full-viewport React hero section for a SaaS product. Background #070707 with radial-gradient dot pattern (radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), background-size 36px 36px). Radial glow overlay (rgba(0,255,178,0.05) at top center). Content max-width 700px centered. Elements top to bottom: small badge pill (bg rgba(0,255,178,0.1), border rgba(0,255,178,0.25), accent dot + "Now in public beta"), headline clamp(38px,6vw,70px) weight 800 white tight letter-spacing -0.035em (split across two lines with second line in accent color #00FFB2), subtitle 18px rgba(255,255,255,0.42) line-height 1.75, two CTAs (primary: accent color bg + black text, secondary: transparent + muted border), stats row (3 metrics, separated by thin border-top). Fade-in + translateY animation on load using useState + useEffect. Export as default function HeroSection.`,
+      code: `import { useState, useEffect } from "react";
+
+export default function HeroSection() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setTimeout(() => setVisible(true), 50); }, []);
+
+  return (
+    <div style={{
+      background: "#070707",
+      backgroundImage: "radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px)",
+      backgroundSize: "36px 36px",
+      minHeight: "100vh",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      position: "relative", overflow: "hidden",
+    }}>
+      {/* Glow overlay */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0,255,178,0.05) 0%, transparent 60%)",
+        pointerEvents: "none",
+      }} />
+
+      <div style={{
+        maxWidth: 700, textAlign: "center", padding: "0 24px",
+        position: "relative",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(20px)",
+        transition: "opacity 0.7s ease, transform 0.7s ease",
+      }}>
+        {/* Badge */}
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          background: "rgba(0,255,178,0.08)", border: "1px solid rgba(0,255,178,0.2)",
+          borderRadius: 20, padding: "5px 14px", fontSize: 12, color: "#00FFB2",
+          marginBottom: 28,
+        }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#00FFB2", display: "inline-block" }} />
+          Now in public beta
+        </div>
+
+        {/* Headline */}
+        <h1 style={{
+          fontSize: "clamp(38px, 6vw, 70px)", fontWeight: 800, color: "#fff",
+          letterSpacing: "-0.035em", lineHeight: 1.05, margin: "0 0 20px",
+        }}>
+          Ship your SaaS<br />
+          <span style={{ color: "#00FFB2" }}>10x faster.</span>
+        </h1>
+
+        {/* Subtitle */}
+        <p style={{
+          fontSize: 18, color: "rgba(255,255,255,0.42)",
+          lineHeight: 1.75, margin: "0 auto 36px", maxWidth: 520,
+        }}>
+          The AI chief of staff for founders who vibe code. Stop getting stuck — start shipping.
+        </p>
+
+        {/* CTAs */}
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 56 }}>
+          <a href="#" style={{
+            background: "#00FFB2", color: "#000", border: "none",
+            borderRadius: 10, padding: "13px 28px", fontWeight: 700, fontSize: 14,
+            cursor: "pointer", textDecoration: "none", display: "inline-block",
+          }}>
+            Start Free →
+          </a>
+          <a href="#" style={{
+            background: "transparent", color: "rgba(255,255,255,0.5)",
+            border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10,
+            padding: "13px 28px", fontWeight: 500, fontSize: 14,
+            cursor: "pointer", textDecoration: "none", display: "inline-block",
+          }}>
+            Watch Demo
+          </a>
+        </div>
+
+        {/* Stats */}
+        <div style={{
+          borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 32,
+          display: "flex", justifyContent: "center", gap: 48,
+        }}>
+          {[["500+", "Founders"], ["10x", "Faster shipping"], ["$0", "to start"]].map(([val, label]) => (
+            <div key={label} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 24, fontWeight: 700, color: "#fff" }}>{val}</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 4 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "#070707", backgroundImage: "radial-gradient(rgba(255,255,255,0.035) 1px,transparent 1px)", backgroundSize: "16px 16px", padding: "20px 16px", minHeight: 130, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" } },
         React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "radial-gradient(ellipse at top,rgba(0,255,178,0.06) 0%,transparent 60%)" } }),
         React.createElement("div", { style: { background: "rgba(0,255,178,0.1)", border: "1px solid rgba(0,255,178,0.25)", borderRadius: 10, padding: "2px 8px", fontSize: 7, color: "#00FFB2", marginBottom: 8, position: "relative" } }, "● Now in public beta"),
@@ -155,6 +562,73 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Medium",
       desc: "Centered hero with radial gradient background, badge, and gradient CTA.",
       prompt: `Create a centered React hero section with pastel gradient. Background radial-gradient(ellipse at center, #f3e8ff 0%, #fce7f3 40%, #fff 100%), min-height 80vh flex column centered. Content: pill badge (white bg, #e9d5ff border, purple text "✨ Loved by 1,200+ founders"), headline clamp(36px,5vw,60px) weight 800 dark #1a1a2e tight letter-spacing, subtitle 18px #6b7280, gradient pill CTA button (gradient linear-gradient(135deg, #7c3aed, #db2777), white text, border-radius 50px, padding 14px 32px, box-shadow), ghost secondary CTA. Below buttons: social proof row "Trusted by teams at [company names]". All inline styles. Export as default function GradientHero.`,
+      code: `export default function GradientHero() {
+  return (
+    <div style={{
+      background: "radial-gradient(ellipse at center, #f3e8ff 0%, #fce7f3 40%, #fff 100%)",
+      minHeight: "80vh",
+      display: "flex", flexDirection: "column" as const,
+      alignItems: "center", justifyContent: "center",
+      textAlign: "center", padding: "0 24px",
+    }}>
+      {/* Badge */}
+      <div style={{
+        background: "white", border: "1px solid #e9d5ff",
+        borderRadius: 20, padding: "5px 14px", fontSize: 13,
+        color: "#7c3aed", marginBottom: 24, display: "inline-block",
+      }}>
+        ✨ Loved by 1,200+ founders
+      </div>
+
+      {/* Headline */}
+      <h1 style={{
+        fontSize: "clamp(36px, 5vw, 60px)", fontWeight: 800, color: "#1a1a2e",
+        letterSpacing: "-0.03em", lineHeight: 1.1, margin: "0 0 20px",
+        maxWidth: 640,
+      }}>
+        Build beautiful products,<br />faster than ever.
+      </h1>
+
+      {/* Subtitle */}
+      <p style={{
+        fontSize: 18, color: "#6b7280",
+        lineHeight: 1.7, margin: "0 auto 36px", maxWidth: 480,
+      }}>
+        The design toolkit that turns ideas into stunning interfaces in minutes, not days.
+      </p>
+
+      {/* CTAs */}
+      <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 48 }}>
+        <button style={{
+          background: "linear-gradient(135deg, #7c3aed, #db2777)",
+          color: "white", border: "none", borderRadius: 50,
+          padding: "14px 32px", fontWeight: 600, fontSize: 15,
+          cursor: "pointer", boxShadow: "0 8px 25px rgba(124,58,237,0.3)",
+        }}>
+          Get Started Free →
+        </button>
+        <button style={{
+          background: "transparent", color: "#7c3aed",
+          border: "1px solid #e9d5ff", borderRadius: 50,
+          padding: "14px 32px", fontWeight: 500, fontSize: 15, cursor: "pointer",
+        }}>
+          See Examples
+        </button>
+      </div>
+
+      {/* Social proof */}
+      <div style={{ fontSize: 12, color: "#9ca3af" }}>
+        Trusted by teams at{" "}
+        {["Linear", "Vercel", "Loom", "Notion"].map((c, i, arr) => (
+          <span key={c}>
+            <strong style={{ color: "#6b7280" }}>{c}</strong>
+            {i < arr.length - 1 ? ", " : ""}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "radial-gradient(ellipse at center,#f3e8ff 0%,#fce7f3 50%,#fff 100%)", padding: "24px 16px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6 } },
         React.createElement("div", { style: { background: "white", border: "1px solid #e9d5ff", borderRadius: 20, padding: "3px 10px", fontSize: 8, color: "#7c3aed" } }, "✨ Loved by founders"),
         React.createElement("div", { style: { fontSize: 16, fontWeight: 800, color: "#1a1a2e", textAlign: "center", lineHeight: 1.1 } }, "Build beautiful", React.createElement("br"), "products, faster"),
@@ -171,6 +645,76 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Simple",
       desc: "Sticky dark navbar with blur backdrop, center links, and CTA button.",
       prompt: `Create a React navbar component for a dark SaaS product. Sticky top, background rgba(7,7,7,0.92) with backdrop-filter blur(12px), border-bottom 1px solid #111, height 60px, padding 0 40px. Three sections: Left: logo (gradient square div 28x28 with emoji ⚡ + product name text 14px weight 700 white). Center: nav links (4 links, 13px #555, hover #fff, no underline, gap 28px). Right: "Sign in" text link #555 + CTA button (bg #00FFB2, black text, 13px, weight 700, border-radius 8px, padding 7px 16px). Use sticky top-0 z-50. Props: productName, links, ctaText, ctaHref. Export as default function Navbar.`,
+      code: `interface NavbarProps {
+  productName?: string;
+  links?: { label: string; href: string }[];
+  ctaText?: string;
+  ctaHref?: string;
+}
+
+export default function Navbar({
+  productName = "Vibe OS",
+  links = [
+    { label: "Features", href: "#" },
+    { label: "Pricing", href: "#" },
+    { label: "Docs", href: "#" },
+    { label: "Blog", href: "#" },
+  ],
+  ctaText = "Get Started",
+  ctaHref = "#",
+}: NavbarProps) {
+  return (
+    <nav style={{
+      position: "sticky", top: 0, zIndex: 50,
+      background: "rgba(7,7,7,0.92)",
+      backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
+      borderBottom: "1px solid #111",
+      height: 60, padding: "0 40px",
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+    }}>
+      {/* Logo */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{
+          width: 28, height: 28,
+          background: "linear-gradient(135deg, #00FFB2, #38BDF8)",
+          borderRadius: 7, display: "flex", alignItems: "center",
+          justifyContent: "center", fontSize: 14,
+        }}>
+          ⚡
+        </div>
+        <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{productName}</span>
+      </div>
+
+      {/* Links */}
+      <div style={{ display: "flex", gap: 28 }}>
+        {links.map(l => (
+          <a key={l.label} href={l.href} style={{
+            fontSize: 13, color: "#555", textDecoration: "none",
+            transition: "color 0.15s",
+          }}
+            onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
+            onMouseLeave={e => (e.currentTarget.style.color = "#555")}
+          >
+            {l.label}
+          </a>
+        ))}
+      </div>
+
+      {/* Right */}
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <a href="#" style={{ fontSize: 13, color: "#555", textDecoration: "none" }}>Sign in</a>
+        <a href={ctaHref} style={{
+          background: "#00FFB2", color: "#000",
+          borderRadius: 8, padding: "7px 16px",
+          fontSize: 13, fontWeight: 700, textDecoration: "none",
+        }}>
+          {ctaText}
+        </a>
+      </div>
+    </nav>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "rgba(7,7,7,0.95)", borderBottom: "1px solid #111", padding: "0 16px", height: 50, display: "flex", alignItems: "center", justifyContent: "space-between" } },
         React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 7 } },
           React.createElement("div", { style: { width: 22, height: 22, background: "linear-gradient(135deg,#00FFB2,#38BDF8)", borderRadius: 5 } }),
@@ -189,6 +733,63 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Simple",
       desc: "Clean white navbar with pill-shaped active nav items and avatar.",
       prompt: `Create a minimal React navbar for a light-themed product. White background, border-bottom 1px solid #f0f0f0, height 64px, max-width 1200px centered. Left: wordmark logo (dark #1a1a2e, 20px, weight 700). Center: 4-5 pill-style navigation items using useState for active item — active item: background #f3e8ff, color #7c3aed, font-weight 500. Inactive: no background, color #6b7280. Each pill: border-radius 20px, padding 6px 14px, font-size 13px, cursor pointer. Right: notification bell icon (relative positioned with dot badge) + user avatar circle (36px, initials, bg #f3e8ff, color #7c3aed). Export as default function MinimalNav.`,
+      code: `import { useState } from "react";
+
+const NAV_ITEMS = ["Elements", "Prompts", "Templates", "Settings"];
+
+export default function MinimalNav({ logoText = "forge.", initials = "MO" }: { logoText?: string; initials?: string }) {
+  const [active, setActive] = useState("Elements");
+
+  return (
+    <nav style={{
+      background: "white", borderBottom: "1px solid #f0f0f0",
+      height: 64, display: "flex", alignItems: "center",
+      justifyContent: "space-between", padding: "0 24px",
+      maxWidth: 1200, margin: "0 auto",
+    }}>
+      {/* Logo */}
+      <div style={{ fontSize: 20, fontWeight: 700, color: "#1a1a2e" }}>{logoText}</div>
+
+      {/* Pill nav */}
+      <div style={{ display: "flex", gap: 4 }}>
+        {NAV_ITEMS.map(item => (
+          <button key={item} onClick={() => setActive(item)} style={{
+            background: active === item ? "#f3e8ff" : "transparent",
+            color: active === item ? "#7c3aed" : "#6b7280",
+            fontWeight: active === item ? 500 : 400,
+            border: "none", borderRadius: 20,
+            padding: "6px 14px", fontSize: 13, cursor: "pointer",
+            fontFamily: "inherit", transition: "all 0.15s",
+          }}>
+            {item}
+          </button>
+        ))}
+      </div>
+
+      {/* Right */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {/* Bell */}
+        <div style={{ position: "relative", cursor: "pointer" }}>
+          <span style={{ fontSize: 18, color: "#9ca3af" }}>🔔</span>
+          <span style={{
+            position: "absolute", top: 0, right: 0,
+            width: 7, height: 7, background: "#7c3aed",
+            borderRadius: "50%", border: "1.5px solid white",
+          }} />
+        </div>
+        {/* Avatar */}
+        <div style={{
+          width: 36, height: 36, borderRadius: "50%",
+          background: "#f3e8ff", color: "#7c3aed",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 12, fontWeight: 700, cursor: "pointer",
+        }}>
+          {initials}
+        </div>
+      </div>
+    </nav>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "white", borderBottom: "1px solid #f0f0f0", padding: "0 16px", height: 54, display: "flex", alignItems: "center", justifyContent: "space-between" } },
         React.createElement("div", { style: { fontWeight: 700, fontSize: 15, color: "#1a1a2e" } }, "forge."),
         React.createElement("div", { style: { display: "flex", gap: 3 } },
@@ -208,6 +809,101 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Medium",
       desc: "Complete dark login form with show/hide password and Google OAuth.",
       prompt: `Create a React dark login form component. Card: background #111, border 1px solid #1e1e1e, border-radius 20px, padding 40px, max-width 400px centered on dark #0a0a0a background. Content: logo icon (gradient 42x42 border-radius 11px) + product name centered. Heading "Welcome back" + subtitle. Email input (full-width, bg #0d0d0d, border #1e1e1e, br 8px, white text, padding 11px 14px). Password input with eye show/hide toggle button (absolute right 12px). "Forgot password?" right-aligned link. Primary submit button (full-width, bg #00FFB2, black bold text). Divider "or". Google OAuth button (full-width, transparent, border #1e1e1e, gray text). "No account? Sign up" footer. Use useState for showPassword and screen state (login/signup/forgot). Export as default function AuthForm.`,
+      code: `import { useState } from "react";
+
+const inputStyle = {
+  width: "100%", background: "#0d0d0d",
+  border: "1px solid #1e1e1e", borderRadius: 8,
+  color: "#fff", padding: "11px 14px",
+  fontSize: 14, outline: "none",
+  boxSizing: "border-box" as const,
+  fontFamily: "inherit",
+};
+
+export default function AuthForm() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [screen, setScreen] = useState<"login" | "signup">("login");
+
+  return (
+    <div style={{ background: "#0a0a0a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div style={{
+        background: "#111", border: "1px solid #1e1e1e",
+        borderRadius: 20, padding: 40, width: "100%", maxWidth: 400,
+      }}>
+        {/* Logo */}
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{
+            width: 42, height: 42, background: "linear-gradient(135deg, #00FFB2, #38BDF8)",
+            borderRadius: 11, display: "inline-flex", alignItems: "center",
+            justifyContent: "center", fontSize: 20, marginBottom: 10,
+          }}>
+            ⚡
+          </div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Vibe OS</div>
+        </div>
+
+        <h2 style={{ color: "#fff", fontSize: 22, fontWeight: 700, margin: "0 0 6px", textAlign: "center" }}>
+          {screen === "login" ? "Welcome back" : "Create account"}
+        </h2>
+        <p style={{ color: "#444", fontSize: 13, textAlign: "center", margin: "0 0 28px" }}>
+          {screen === "login" ? "Sign in to your account" : "Start for free, no card needed"}
+        </p>
+
+        <div style={{ display: "flex", flexDirection: "column" as const, gap: 12 }}>
+          <input type="email" placeholder="you@example.com" style={inputStyle} />
+
+          <div style={{ position: "relative" }}>
+            <input type={showPassword ? "text" : "password"} placeholder="Password" style={{ ...inputStyle, paddingRight: 44 }} />
+            <button onClick={() => setShowPassword(p => !p)} style={{
+              position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+              background: "none", border: "none", color: "#444", cursor: "pointer", fontSize: 14,
+            }}>
+              {showPassword ? "🙈" : "👁"}
+            </button>
+          </div>
+
+          {screen === "login" && (
+            <div style={{ textAlign: "right" }}>
+              <a href="#" style={{ fontSize: 12, color: "#444", textDecoration: "none" }}>Forgot password?</a>
+            </div>
+          )}
+
+          <button style={{
+            width: "100%", background: "#00FFB2", border: "none",
+            borderRadius: 8, padding: 12, fontWeight: 700,
+            fontSize: 14, color: "#000", cursor: "pointer",
+          }}>
+            {screen === "login" ? "Sign In →" : "Create Account →"}
+          </button>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ flex: 1, height: 1, background: "#1e1e1e" }} />
+            <span style={{ fontSize: 11, color: "#333" }}>or</span>
+            <div style={{ flex: 1, height: 1, background: "#1e1e1e" }} />
+          </div>
+
+          <button style={{
+            width: "100%", background: "transparent",
+            border: "1px solid #1e1e1e", borderRadius: 8,
+            padding: 11, fontSize: 13, color: "#666", cursor: "pointer", fontFamily: "inherit",
+          }}>
+            🔵 Continue with Google
+          </button>
+        </div>
+
+        <p style={{ textAlign: "center", fontSize: 12, color: "#444", marginTop: 20 }}>
+          {screen === "login" ? "No account? " : "Already have an account? "}
+          <button onClick={() => setScreen(s => s === "login" ? "signup" : "login")} style={{
+            background: "none", border: "none", color: "#00FFB2",
+            cursor: "pointer", fontSize: 12, fontFamily: "inherit",
+          }}>
+            {screen === "login" ? "Sign up" : "Sign in"}
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "#0a0a0a", padding: 16, display: "flex", justifyContent: "center" } },
         React.createElement("div", { style: { background: "#111", border: "1px solid #1e1e1e", borderRadius: 14, padding: 18, width: 190 } },
           React.createElement("div", { style: { textAlign: "center", marginBottom: 14 } },
@@ -227,6 +923,74 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Medium",
       desc: "Input with animated floating label — label rises to top on focus.",
       prompt: `Create a React floating label input component using useState. When input is focused or has value, the label floats above the input (top position, smaller font, colored). When empty and unfocused, label sits centered in the input like a placeholder. Style: white bg, border 1.5px solid #e5e7eb, border-radius 12px, focus border 1.5px solid #a78bfa. Label starts at vertical center (font-size 14px, color #9ca3af), on focus/value: float to top (font-size 11px, color #a78bfa, background white padding 0 4px to cover border). Include error variant (red border + error message below). Include success variant (green border). Export as default function FloatingInput with props: label, type, error, success.`,
+      code: `import { useState } from "react";
+
+interface FloatingInputProps {
+  label?: string;
+  type?: string;
+  error?: string;
+  success?: boolean;
+}
+
+export function FloatingInput({ label = "Email address", type = "text", error, success }: FloatingInputProps) {
+  const [focused, setFocused] = useState(false);
+  const [value, setValue] = useState("");
+  const floated = focused || value.length > 0;
+
+  const borderColor = error ? "#f87171" : success ? "#4ade80" : focused ? "#a78bfa" : "#e5e7eb";
+  const labelColor = error ? "#f87171" : success ? "#4ade80" : "#a78bfa";
+
+  return (
+    <div style={{ marginBottom: 4 }}>
+      <div style={{ position: "relative" }}>
+        <input
+          type={type}
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          style={{
+            width: "100%", background: "white",
+            border: \`1.5px solid \${borderColor}\`,
+            borderRadius: 12, padding: "18px 13px 7px",
+            fontSize: 14, outline: "none", color: "#1a1a2e",
+            boxSizing: "border-box" as const, fontFamily: "inherit",
+            transition: "border-color 0.2s",
+          }}
+        />
+        <label style={{
+          position: "absolute",
+          left: 13,
+          top: floated ? 7 : "50%",
+          transform: floated ? "none" : "translateY(-50%)",
+          fontSize: floated ? 11 : 14,
+          color: floated ? labelColor : "#9ca3af",
+          background: floated ? "white" : "transparent",
+          padding: floated ? "0 3px" : "0",
+          pointerEvents: "none",
+          transition: "all 0.18s ease",
+        }}>
+          {label}
+        </label>
+      </div>
+      {error && <p style={{ fontSize: 11, color: "#f87171", margin: "5px 0 0 3px" }}>⚠ {error}</p>}
+      {success && !error && <p style={{ fontSize: 11, color: "#4ade80", margin: "5px 0 0 3px" }}>✓ Looks good!</p>}
+    </div>
+  );
+}
+
+// Demo export showing multiple states
+export default function FloatingInputDemo() {
+  return (
+    <div style={{ background: "white", padding: 24, borderRadius: 16, maxWidth: 340 }}>
+      <FloatingInput label="Email address" />
+      <div style={{ marginTop: 12 }} />
+      <FloatingInput label="Username" error="Username already taken" />
+      <div style={{ marginTop: 12 }} />
+      <FloatingInput label="Website" success />
+    </div>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "white", padding: 16, borderRadius: 10, border: "1px solid #f0e6ff" } },
         React.createElement("div", { style: { position: "relative", marginBottom: 12 } },
           React.createElement("input", { type: "text", placeholder: " ", style: { width: "100%", border: "1.5px solid #a78bfa", borderRadius: 10, padding: "17px 13px 7px", fontSize: 14, outline: "none", color: "#1a1a2e", background: "white", boxSizing: "border-box" as const } }),
@@ -249,6 +1013,162 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Advanced",
       desc: "Full dark SaaS dashboard with sidebar, KPI cards, SVG revenue chart, and activity feed.",
       prompt: `Create a complete React SaaS metrics dashboard. Dark theme #080808. Use useState for range selection. LAYOUT: left sidebar (200px, #0d0d0d, border-right #111) + main content area. SIDEBAR: logo, nav items with emoji icons (Dashboard, Analytics, Customers, Billing, Settings), active item highlighted. MAIN: header row (greeting + date + "New Report" button in accent color #00FFB2), 4 KPI cards in grid (MRR $8,420 ↑12%, Active Users 1,284 ↑8%, Churn Rate 2.4% ↑0.2%, NPS 68 ↑4pts — green for positive, red for negative), full-width SVG line chart (responsive, smooth path, gradient fill below line, time range tabs 7d/30d/90d), 2-column bottom section (recent activity timeline + top customers table with plan badges). All inline styles, no external deps. Export as default function Dashboard.`,
+      code: `import { useState } from "react";
+
+const NAV = [
+  { icon: "📊", label: "Dashboard" },
+  { icon: "📈", label: "Analytics" },
+  { icon: "👥", label: "Customers" },
+  { icon: "💳", label: "Billing" },
+  { icon: "⚙️", label: "Settings" },
+];
+
+const KPI = [
+  { label: "MRR", value: "$8,420", trend: "+12%", positive: true },
+  { label: "Active Users", value: "1,284", trend: "+8%", positive: true },
+  { label: "Churn Rate", value: "2.4%", trend: "+0.2%", positive: false },
+  { label: "NPS", value: "68", trend: "+4 pts", positive: true },
+];
+
+const CHART_DATA = [30, 42, 38, 58, 52, 70, 60, 82, 74, 88, 80, 100];
+
+const ACTIVITY = [
+  { icon: "🆕", text: "Sarah K. upgraded to Pro", time: "2m ago" },
+  { icon: "💰", text: "New payment $290 received", time: "14m ago" },
+  { icon: "👋", text: "Alex M. signed up", time: "1h ago" },
+  { icon: "❌", text: "Plan cancelled by J. Torres", time: "3h ago" },
+];
+
+const CUSTOMERS = [
+  { name: "Acme Corp", plan: "FOUNDER", mrr: "$490" },
+  { name: "StartupXYZ", plan: "PRO", mrr: "$29" },
+  { name: "DevTools Inc", plan: "PRO", mrr: "$29" },
+];
+
+const PLAN_COLORS: Record<string, string> = { FOUNDER: "#00FFB2", PRO: "#38BDF8", FREE: "#555" };
+
+export default function Dashboard() {
+  const [activeNav, setActiveNav] = useState("Dashboard");
+  const [range, setRange] = useState("30d");
+  const max = Math.max(...CHART_DATA);
+  const pts = CHART_DATA
+    .map((v, i) => \`\${(i / (CHART_DATA.length - 1)) * 100}%,\${100 - (v / max) * 80}%\`)
+    .join(" ");
+
+  return (
+    <div style={{ display: "flex", height: "100vh", background: "#080808", fontFamily: "system-ui, sans-serif", color: "#fff" }}>
+      {/* Sidebar */}
+      <div style={{ width: 200, background: "#0d0d0d", borderRight: "1px solid #111", padding: "20px 12px", display: "flex", flexDirection: "column" as const, gap: 4 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 8px", marginBottom: 20 }}>
+          <div style={{ width: 28, height: 28, background: "linear-gradient(135deg,#00FFB2,#38BDF8)", borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 }}>⚡</div>
+          <span style={{ fontWeight: 700, fontSize: 13 }}>Vibe OS</span>
+        </div>
+        {NAV.map(n => (
+          <button key={n.label} onClick={() => setActiveNav(n.label)} style={{
+            display: "flex", alignItems: "center", gap: 8, padding: "8px 10px",
+            background: activeNav === n.label ? "#1a1a1a" : "transparent",
+            border: "none", borderRadius: 7, color: activeNav === n.label ? "#fff" : "#444",
+            fontSize: 12, cursor: "pointer", fontFamily: "inherit", textAlign: "left" as const,
+            transition: "all 0.15s",
+          }}>
+            <span>{n.icon}</span> {n.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Main */}
+      <div style={{ flex: 1, padding: 24, overflowY: "auto" }}>
+        {/* Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+          <div>
+            <div style={{ fontSize: 18, fontWeight: 700 }}>Good morning 👋</div>
+            <div style={{ fontSize: 12, color: "#444", marginTop: 2 }}>{new Date().toDateString()}</div>
+          </div>
+          <button style={{ background: "#00FFB2", border: "none", borderRadius: 8, padding: "8px 16px", fontWeight: 700, fontSize: 12, color: "#000", cursor: "pointer" }}>
+            + New Report
+          </button>
+        </div>
+
+        {/* KPI Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 20 }}>
+          {KPI.map(k => (
+            <div key={k.label} style={{ background: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 10, padding: "16px 18px" }}>
+              <div style={{ fontSize: 10, color: "#444", textTransform: "uppercase" as const, letterSpacing: "0.1em", marginBottom: 8 }}>{k.label}</div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                <span style={{ fontSize: 22, fontWeight: 700 }}>{k.value}</span>
+                <span style={{
+                  fontSize: 10, color: k.positive ? "#00ff88" : "#f87171",
+                  background: k.positive ? "#0d1f17" : "#1f0d0d",
+                  borderRadius: 20, padding: "2px 7px",
+                }}>
+                  {k.positive ? "↑" : "↓"} {k.trend}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Chart */}
+        <div style={{ background: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, padding: 20, marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <span style={{ fontSize: 13, fontWeight: 600 }}>Revenue</span>
+            <div style={{ display: "flex", gap: 4 }}>
+              {["7d", "30d", "90d"].map(r => (
+                <button key={r} onClick={() => setRange(r)} style={{
+                  background: range === r ? "#1a1a1a" : "transparent",
+                  border: \`1px solid \${range === r ? "#333" : "transparent"}\`,
+                  borderRadius: 6, color: range === r ? "#fff" : "#444",
+                  fontSize: 10, padding: "3px 8px", cursor: "pointer", fontFamily: "inherit",
+                }}>{r}</button>
+              ))}
+            </div>
+          </div>
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none" style={{ width: "100%", height: 120 }}>
+            <defs>
+              <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#00FFB2" stopOpacity={0.25} />
+                <stop offset="100%" stopColor="#00FFB2" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <polygon points={\`0,100 \${pts} 100,100\`} fill="url(#cg)" />
+            <polyline points={pts} fill="none" stroke="#00FFB2" strokeWidth={0.8} />
+          </svg>
+        </div>
+
+        {/* Bottom grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          {/* Activity */}
+          <div style={{ background: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, padding: 18 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 14 }}>Recent Activity</div>
+            {ACTIVITY.map((a, i) => (
+              <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: i < ACTIVITY.length - 1 ? 12 : 0 }}>
+                <span style={{ fontSize: 14 }}>{a.icon}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 12, color: "#ccc" }}>{a.text}</div>
+                  <div style={{ fontSize: 10, color: "#333", marginTop: 2 }}>{a.time}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Customers */}
+          <div style={{ background: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, padding: 18 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 14 }}>Top Customers</div>
+            {CUSTOMERS.map((c, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: i < CUSTOMERS.length - 1 ? 10 : 0 }}>
+                <span style={{ fontSize: 12, color: "#ccc" }}>{c.name}</span>
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <span style={{ fontSize: 10, color: PLAN_COLORS[c.plan] ?? "#555", background: \`\${PLAN_COLORS[c.plan] ?? "#555"}11\`, borderRadius: 20, padding: "2px 7px" }}>{c.plan}</span>
+                  <span style={{ fontSize: 12, color: "#fff", fontFamily: "monospace" }}>{c.mrr}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "#080808", padding: 8, borderRadius: 10, width: "100%" } },
         React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 5, marginBottom: 8 } },
           ...[["MRR", "$8.4K", "#00ff88"], ["Users", "1.2K", "#00ff88"], ["Churn", "2.4%", "#f87171"], ["NPS", "68", "#00ff88"]].map(([l, v, c]) =>
@@ -276,6 +1196,119 @@ export const ELEMENTS: Record<string, Element[]> = {
       difficulty: "Medium",
       desc: "Pastel analytics dashboard with metric cards, SVG engagement chart, and funnel.",
       prompt: `Create a React analytics dashboard with soft pastel theme. Background #fafafa. Use useState for date range. HEADER: title + date range toggle (7d/30d/90d as pill buttons, active = white bg). 4 METRIC CARDS in grid: each has colored background (purple #faf5ff, pink #fdf2f8, teal #f0fdf4, amber #fffbeb), colored label, large metric, % change with direction. SVG CHART: full-width area chart with smooth polyline in primary color #7c3aed, gradient fill, week labels. BOTTOM GRID: left = conversion funnel (Visited→Signed Up→Activated→Paid as horizontal bars, each shorter), right = traffic sources (4 items with colored dot, source name, %, horizontal mini bar). All inline styles. Export as default function AnalyticsDashboard.`,
+      code: `import { useState } from "react";
+
+const METRICS = [
+  { label: "Page Views", value: "48,291", change: "+14%", positive: true, bg: "#faf5ff", color: "#7c3aed" },
+  { label: "Visitors", value: "12,450", change: "+9%", positive: true, bg: "#fdf2f8", color: "#ec4899" },
+  { label: "Bounce Rate", value: "38.2%", change: "-3%", positive: true, bg: "#f0fdf4", color: "#16a34a" },
+  { label: "Avg. Session", value: "3m 42s", change: "+21s", positive: true, bg: "#fffbeb", color: "#d97706" },
+];
+
+const CHART_PTS = [60, 45, 72, 58, 80, 65, 90, 75, 88, 95, 82, 100];
+const FUNNEL = [
+  { label: "Visited", count: 12450, pct: 100 },
+  { label: "Signed Up", count: 2890, pct: 23 },
+  { label: "Activated", count: 1240, pct: 10 },
+  { label: "Paid", count: 380, pct: 3 },
+];
+const SOURCES = [
+  { label: "Organic Search", pct: 42, color: "#7c3aed" },
+  { label: "Direct", pct: 28, color: "#ec4899" },
+  { label: "Social Media", pct: 18, color: "#16a34a" },
+  { label: "Referral", pct: 12, color: "#d97706" },
+];
+
+export default function AnalyticsDashboard() {
+  const [range, setRange] = useState("30d");
+  const max = Math.max(...CHART_PTS);
+  const pts = CHART_PTS.map((v, i) => \`\${(i / (CHART_PTS.length - 1)) * 100}%,\${100 - (v / max) * 80}%\`).join(" ");
+
+  return (
+    <div style={{ background: "#fafafa", minHeight: "100vh", padding: 28, fontFamily: "system-ui, sans-serif", color: "#1a1a2e" }}>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <div>
+          <div style={{ fontSize: 20, fontWeight: 700 }}>Analytics</div>
+          <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 2 }}>Track your growth in real time</div>
+        </div>
+        <div style={{ display: "flex", background: "#f3f4f6", borderRadius: 20, padding: 3, gap: 2 }}>
+          {["7d", "30d", "90d"].map(r => (
+            <button key={r} onClick={() => setRange(r)} style={{
+              background: range === r ? "white" : "transparent",
+              border: "none", borderRadius: 16, padding: "5px 14px",
+              fontSize: 12, cursor: "pointer", fontFamily: "inherit",
+              color: range === r ? "#1a1a2e" : "#9ca3af",
+              boxShadow: range === r ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+            }}>{r}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Metric Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 20 }}>
+        {METRICS.map(m => (
+          <div key={m.label} style={{ background: m.bg, borderRadius: 14, padding: "18px 20px" }}>
+            <div style={{ fontSize: 11, color: m.color, fontWeight: 600, marginBottom: 8 }}>{m.label}</div>
+            <div style={{ fontSize: 24, fontWeight: 800, color: "#1a1a2e", marginBottom: 4 }}>{m.value}</div>
+            <div style={{ fontSize: 11, color: m.positive ? "#16a34a" : "#dc2626" }}>
+              {m.positive ? "↑" : "↓"} {m.change}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Chart */}
+      <div style={{ background: "white", border: "1px solid #f0e6ff", borderRadius: 16, padding: 20, marginBottom: 20 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 14 }}>Traffic Overview</div>
+        <svg viewBox="0 0 100 50" preserveAspectRatio="none" style={{ width: "100%", height: 140 }}>
+          <defs>
+            <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.2} />
+              <stop offset="100%" stopColor="#7c3aed" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <polygon points={\`0,100 \${pts} 100,100\`} fill="url(#ag)" />
+          <polyline points={pts} fill="none" stroke="#7c3aed" strokeWidth={0.8} />
+        </svg>
+      </div>
+
+      {/* Bottom Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        {/* Funnel */}
+        <div style={{ background: "white", border: "1px solid #f3f4f6", borderRadius: 16, padding: 20 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 16 }}>Conversion Funnel</div>
+          {FUNNEL.map((f, i) => (
+            <div key={f.label} style={{ marginBottom: i < FUNNEL.length - 1 ? 12 : 0 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                <span style={{ fontSize: 12, color: "#374151" }}>{f.label}</span>
+                <span style={{ fontSize: 11, color: "#9ca3af" }}>{f.count.toLocaleString()}</span>
+              </div>
+              <div style={{ background: "#f3f4f6", borderRadius: 4, height: 6 }}>
+                <div style={{ width: \`\${f.pct}%\`, height: "100%", background: "#7c3aed", borderRadius: 4, transition: "width 0.4s ease" }} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Sources */}
+        <div style={{ background: "white", border: "1px solid #f3f4f6", borderRadius: 16, padding: 20 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 16 }}>Traffic Sources</div>
+          {SOURCES.map((s, i) => (
+            <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: i < SOURCES.length - 1 ? 12 : 0 }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: s.color, flexShrink: 0 }} />
+              <span style={{ flex: 1, fontSize: 12, color: "#374151" }}>{s.label}</span>
+              <span style={{ fontSize: 11, color: "#9ca3af", width: 28, textAlign: "right" as const }}>{s.pct}%</span>
+              <div style={{ width: 60, background: "#f3f4f6", borderRadius: 4, height: 5 }}>
+                <div style={{ width: \`\${s.pct}%\`, height: "100%", background: s.color, borderRadius: 4 }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}`,
       preview: () => React.createElement("div", { style: { background: "#fafafa", padding: 8, borderRadius: 10, width: "100%" } },
         React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 5, marginBottom: 7 } },
           ...[["Views", "48K", "#f3e8ff", "#7c3aed"], ["Visitors", "12K", "#fce7f3", "#ec4899"]].map(([l, v, bg, tc]) =>
