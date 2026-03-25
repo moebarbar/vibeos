@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 
 /* ── Static data ─────────────────────────────────────────────────────── */
@@ -264,7 +265,7 @@ function AppMockup() {
 
 /* ── SVG Hexagon Decoration ────────────────────────────────────────────── */
 function HexBadge({ size = 80, color = "#00FFB2", opacity = 0.12, rotate = 0, style = {} }: {
-  size?: number; color?: string; opacity?: number; rotate?: number; style?: React.CSSProperties;
+  size?: number; color?: string; opacity?: number; rotate?: number; style?: CSSProperties;
 }) {
   const h = size * 1.1547;
   const pts = [
@@ -281,18 +282,20 @@ function HexBadge({ size = 80, color = "#00FFB2", opacity = 0.12, rotate = 0, st
 }
 
 /* ── Circuit node SVG ──────────────────────────────────────────────────── */
+let _cdgCounter = 0;
 function CircuitDots({ color = "#00FFB2" }: { color?: string }) {
+  const gradId = `cdg-${++_cdgCounter}`;
   return (
     <svg width="200" height="200" viewBox="0 0 200 200" style={{ opacity: 0.07 }}>
       <defs>
-        <radialGradient id="cdg" cx="50%" cy="50%" r="50%">
+        <radialGradient id={gradId} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor={color} stopOpacity="1" />
           <stop offset="100%" stopColor={color} stopOpacity="0" />
         </radialGradient>
       </defs>
       {[[20,20],[80,20],[140,20],[200,20],[20,80],[80,80],[140,80],[200,80],
         [20,140],[80,140],[140,140],[200,140],[20,200],[80,200],[140,200],[200,200]].map(([x,y], i) => (
-        <circle key={i} cx={x} cy={y} r={1.5} fill="url(#cdg)" />
+        <circle key={i} cx={x} cy={y} r={1.5} fill={`url(#${gradId})`} />
       ))}
       <line x1="20" y1="20" x2="200" y2="20" stroke={color} strokeWidth="0.5" />
       <line x1="20" y1="80" x2="200" y2="80" stroke={color} strokeWidth="0.5" />
@@ -598,14 +601,17 @@ export default function LandingPage() {
               <div
                 key={f.name}
                 className={`vibe-feature-card vibe-reveal vibe-reveal-delay-${Math.min(i + 1, 5)}`}
-                style={{ "--card-glow": `${f.color}12` } as React.CSSProperties}
                 onMouseOver={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = `${f.color}26`;
-                  (e.currentTarget as HTMLElement).style.boxShadow = `0 24px 60px rgba(0,0,0,0.45), 0 0 50px ${f.color}0c`;
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.borderColor = `${f.color}26`;
+                  el.style.boxShadow = `0 24px 60px rgba(0,0,0,0.45), 0 0 50px ${f.color}0c`;
+                  el.style.background = `radial-gradient(ellipse at 40% 0%, ${f.color}10 0%, rgba(8,8,10,0.85) 65%)`;
                 }}
                 onMouseOut={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.04)";
-                  (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.borderColor = "rgba(255,255,255,0.04)";
+                  el.style.boxShadow = "none";
+                  el.style.background = "rgba(8,8,10,0.85)";
                 }}>
                 <div className="vibe-shine" />
 
