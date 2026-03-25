@@ -167,6 +167,7 @@ export default function ForgePage() {
   const detailOpen = selectedEl !== null || selectedTmpl !== null;
 
   return (
+    <>
     <div style={{ display: "flex", flex: 1, overflow: "hidden", height: "100%" }}>
 
       {/* ══ SIDEBAR ═══════════════════════════════════════════════════════ */}
@@ -912,6 +913,7 @@ export default function ForgePage() {
         </div>
       </div>
     )}
+    </>
   );
 }
 
