@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { UserButton } from "@clerk/nextjs";
+import { createClient } from "@/lib/supabase/client";
 
 interface Project {
   id: string;
@@ -30,6 +30,13 @@ export default function Sidebar({ user, projects, activeProject, usageCount }: P
   const pathname = usePathname();
   const router = useRouter();
   const [projectOpen, setProjectOpen] = useState(false);
+
+  async function signOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  }
 
   const usageLimit = user.plan === "FREE" ? 20 : user.plan === "PRO" ? 500 : null;
   const usagePct = usageLimit ? Math.min((usageCount / usageLimit) * 100, 100) : 0;
@@ -129,10 +136,13 @@ export default function Sidebar({ user, projects, activeProject, usageCount }: P
 
         {/* User */}
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <UserButton afterSignOutUrl="/" />
+          <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#1a1a1a", border: "1px solid #00FFB244", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#00FFB2", flexShrink: 0 }}>
+            {(user.name ?? user.email)[0].toUpperCase()}
+          </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 11, fontWeight: 600, color: "#888", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name ?? user.email.split("@")[0]}</div>
           </div>
+          <button onClick={signOut} title="Sign out" style={{ background: "none", border: "none", color: "#333", cursor: "pointer", fontSize: 14, padding: "2px 4px", flexShrink: 0 }}>↩</button>
         </div>
       </div>
     </aside>

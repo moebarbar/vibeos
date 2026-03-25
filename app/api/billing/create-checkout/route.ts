@@ -1,13 +1,13 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 import { stripe, STRIPE_PRICES } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) return new Response("Unauthorized", { status: 401 });
+  const supabaseUser = await getUser();
+  if (!supabaseUser) return new Response("Unauthorized", { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  const user = await prisma.user.findUnique({ where: { supabaseId: supabaseUser.id } });
   if (!user) return new Response("User not found", { status: 404 });
 
   const { plan } = await req.json();
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     const customer = await stripe.customers.create({
       email: user.email,
       name: user.name ?? undefined,
-      metadata: { userId: user.id, clerkId: userId },
+      metadata: { userId: user.id },
     });
     customerId = customer.id;
     await prisma.user.update({ where: { id: user.id }, data: { stripeCustomerId: customerId } });

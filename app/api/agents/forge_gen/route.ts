@@ -1,7 +1,7 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/supabase/server";
 
 const SYSTEM = `You are Element Forge — an expert UI/UX prompt engineer for vibe coders using Cursor, Claude Code, and v0.
 
@@ -18,13 +18,13 @@ Your prompts must:
 Output ONLY the prompt text. No preamble, no explanation, no markdown. Just the raw prompt.`;
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) return new Response("Unauthorized", { status: 401 });
+  const supabaseUser = await getUser();
+  if (!supabaseUser) return new Response("Unauthorized", { status: 401 });
 
   const { message } = await req.json();
   if (!message?.trim()) return new Response("Message required", { status: 400 });
 
-  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  const user = await prisma.user.findUnique({ where: { supabaseId: supabaseUser.id } });
   if (!user) return new Response("User not found", { status: 404 });
 
   const encoder = new TextEncoder();

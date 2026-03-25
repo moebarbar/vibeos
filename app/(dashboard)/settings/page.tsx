@@ -64,11 +64,10 @@ export default function SettingsPage() {
               <div style={{ width: 52, height: 52, borderRadius: "50%", background: "#1a1a1a", border: "2px solid #00FFB244", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, fontWeight: 700, color: "#00FFB2", flexShrink: 0 }}>M</div>
               <div>
                 <div style={{ fontSize: 15, fontWeight: 600, color: "#fff" }}>Your Account</div>
-                <div style={{ fontSize: 12, color: "#555" }}>Managed by Clerk authentication</div>
+                <div style={{ fontSize: 12, color: "#555" }}>Managed by Supabase authentication</div>
               </div>
             </div>
-            <p style={{ fontSize: 13, color: "#555", lineHeight: 1.7 }}>Profile details like name, email, and avatar are managed through your Clerk account. Click below to update them.</p>
-            <a href="https://accounts.clerk.com/user" target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", marginTop: 16, background: "#111", border: "1px solid #1e1e1e", borderRadius: 8, color: "#888", padding: "10px 18px", fontSize: 13, textDecoration: "none" }}>Manage Account →</a>
+            <p style={{ fontSize: 13, color: "#555", lineHeight: 1.7 }}>Your email and password are managed through Supabase. To change your password, sign out and use the reset password flow on the sign-in page.</p>
           </>
         )}
 

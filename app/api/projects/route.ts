@@ -1,13 +1,12 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/supabase/server";
 
-// GET /api/projects
 export async function GET() {
-  const { userId } = await auth();
-  if (!userId) return new Response("Unauthorized", { status: 401 });
+  const supabaseUser = await getUser();
+  if (!supabaseUser) return new Response("Unauthorized", { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  const user = await prisma.user.findUnique({ where: { supabaseId: supabaseUser.id } });
   if (!user) return Response.json([]);
 
   const projects = await prisma.project.findMany({
@@ -19,15 +18,13 @@ export async function GET() {
   return Response.json(projects);
 }
 
-// POST /api/projects
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) return new Response("Unauthorized", { status: 401 });
+  const supabaseUser = await getUser();
+  if (!supabaseUser) return new Response("Unauthorized", { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  const user = await prisma.user.findUnique({ where: { supabaseId: supabaseUser.id } });
   if (!user) return new Response("User not found", { status: 404 });
 
-  // Free plan: max 1 project
   if (user.plan === "FREE") {
     const count = await prisma.project.count({ where: { userId: user.id } });
     if (count >= 1) {
@@ -38,7 +35,6 @@ export async function POST(req: NextRequest) {
   const { name, description, stack } = await req.json();
   if (!name?.trim()) return Response.json({ error: "Name required" }, { status: 400 });
 
-  // Deactivate all others then create active
   await prisma.project.updateMany({ where: { userId: user.id }, data: { isActive: false } });
 
   const project = await prisma.project.create({

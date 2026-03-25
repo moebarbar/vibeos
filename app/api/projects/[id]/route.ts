@@ -1,16 +1,15 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/supabase/server";
 
-async function getAuthedUser(userId: string) {
-  return prisma.user.findUnique({ where: { clerkId: userId } });
+async function getAuthedUser(supabaseId: string) {
+  return prisma.user.findUnique({ where: { supabaseId } });
 }
 
-// GET /api/projects/[id]
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
-  const { userId } = await auth();
-  if (!userId) return new Response("Unauthorized", { status: 401 });
-  const user = await getAuthedUser(userId);
+  const supabaseUser = await getUser();
+  if (!supabaseUser) return new Response("Unauthorized", { status: 401 });
+  const user = await getAuthedUser(supabaseUser.id);
   if (!user) return new Response("Not found", { status: 404 });
 
   const project = await prisma.project.findFirst({
@@ -22,15 +21,14 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   return Response.json(project);
 }
 
-// PUT /api/projects/[id]
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const { userId } = await auth();
-  if (!userId) return new Response("Unauthorized", { status: 401 });
-  const user = await getAuthedUser(userId);
+  const supabaseUser = await getUser();
+  if (!supabaseUser) return new Response("Unauthorized", { status: 401 });
+  const user = await getAuthedUser(supabaseUser.id);
   if (!user) return new Response("Not found", { status: 404 });
 
   const data = await req.json();
-  const project = await prisma.project.updateMany({
+  await prisma.project.updateMany({
     where: { id: params.id, userId: user.id },
     data: {
       name: data.name,
@@ -45,11 +43,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   return Response.json({ success: true });
 }
 
-// DELETE /api/projects/[id]
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
-  const { userId } = await auth();
-  if (!userId) return new Response("Unauthorized", { status: 401 });
-  const user = await getAuthedUser(userId);
+  const supabaseUser = await getUser();
+  if (!supabaseUser) return new Response("Unauthorized", { status: 401 });
+  const user = await getAuthedUser(supabaseUser.id);
   if (!user) return new Response("Not found", { status: 404 });
 
   await prisma.project.deleteMany({ where: { id: params.id, userId: user.id } });

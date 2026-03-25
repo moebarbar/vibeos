@@ -1,12 +1,12 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/supabase/server";
 import { AGENT_SYSTEM_PROMPTS, getUsageLimit, type AgentId } from "@/lib/agents";
 
 export async function POST(req: NextRequest, { params }: { params: { agentId: string } }) {
-  const { userId } = await auth();
-  if (!userId) return new Response("Unauthorized", { status: 401 });
+  const supabaseUser = await getUser();
+  if (!supabaseUser) return new Response("Unauthorized", { status: 401 });
 
   const agentId = params.agentId as AgentId;
   if (!AGENT_SYSTEM_PROMPTS[agentId]) {
@@ -16,8 +16,7 @@ export async function POST(req: NextRequest, { params }: { params: { agentId: st
   const { message } = await req.json();
   if (!message?.trim()) return new Response("Message required", { status: 400 });
 
-  // Get user
-  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  const user = await prisma.user.findUnique({ where: { supabaseId: supabaseUser.id } });
   if (!user) return new Response("User not found", { status: 404 });
 
   // Check usage limits
@@ -37,7 +36,6 @@ export async function POST(req: NextRequest, { params }: { params: { agentId: st
     }
   }
 
-  // Get active project for context injection
   const activeProject = await prisma.project.findFirst({
     where: { userId: user.id, isActive: true },
   });
@@ -47,14 +45,9 @@ export async function POST(req: NextRequest, { params }: { params: { agentId: st
     fullMessage = `[PROJECT CONTEXT: ${activeProject.contextBrief}]\n\n${message}`;
   }
 
-  // Log usage
-  await prisma.usageLog.create({
-    data: { userId: user.id, agentId },
-  });
+  await prisma.usageLog.create({ data: { userId: user.id, agentId } });
 
-  // Stream from Claude
   const encoder = new TextEncoder();
-
   const stream = new ReadableStream({
     async start(controller) {
       try {
@@ -75,7 +68,6 @@ export async function POST(req: NextRequest, { params }: { params: { agentId: st
           }
         }
 
-        // After brain completes, save context brief to project
         if (agentId === "brain" && activeProject) {
           const briefMatch = fullText.match(/## ⚡ Session Context Brief\s*([\s\S]+?)(?=##|$)/);
           if (briefMatch) {
