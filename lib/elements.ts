@@ -14,12 +14,13 @@ export interface Element {
 export const VIBES = ["All", "Dark & Minimal", "Glassmorphism", "Brutalist", "Soft & Pastel", "Neon & Cyber"];
 
 export const CATEGORIES = [
-  { id: "buttons",    label: "Buttons & CTAs",   icon: "⬡" },
-  { id: "cards",      label: "Cards & Pricing",   icon: "▣" },
-  { id: "hero",       label: "Hero Sections",     icon: "◈" },
-  { id: "nav",        label: "Navigation",        icon: "≡" },
-  { id: "forms",      label: "Forms & Inputs",    icon: "▤" },
-  { id: "dashboards", label: "Dashboards",        icon: "◫" },
+  { id: "buttons",     label: "Buttons & CTAs",   icon: "⬡" },
+  { id: "cards",       label: "Cards & Pricing",   icon: "▣" },
+  { id: "hero",        label: "Hero Sections",     icon: "◈" },
+  { id: "nav",         label: "Navigation",        icon: "≡" },
+  { id: "forms",       label: "Forms & Inputs",    icon: "▤" },
+  { id: "dashboards",  label: "Dashboards",        icon: "◫" },
+  { id: "backgrounds", label: "Backgrounds",       icon: "◱" },
 ];
 
 export const ELEMENTS: Record<string, Element[]> = {
@@ -1495,6 +1496,294 @@ export default function AnalyticsDashboard() {
           React.createElement("svg", { viewBox: "0 0 120 36", style: { width: "100%", height: 30 } },
             React.createElement("polyline", { points: "0,30 15,22 30,25 45,14 60,17 75,7 90,11 105,4 120,7", fill: "none", stroke: "#7c3aed", strokeWidth: "1.8" })
           )
+        )
+      ),
+    },
+  ],
+
+  backgrounds: [
+    {
+      id: "bg-neural-grid",
+      name: "Neural Grid",
+      vibe: "Neon & Cyber",
+      difficulty: "Medium",
+      desc: "An animated cyan grid where random intersection nodes fire like neurons. Mouse movement casts a spotlight, revealing the grid beneath the vignette.",
+      prompt: `Create a full-section background component called NeuralGrid. Dark background #020204. Grid lines using backgroundImage with two linear-gradients at rgba(0,255,178,0.055), 56px spacing. Animated glowing nodes: use useEffect with setInterval(300ms) to add random glowing dots at grid intersections (snap to 56px grid). Each node fades out over 1.5s using opacity calculated from (Date.now() - born) / 1500. Mouse tracking via useRef + onMouseMove: draws a radial-gradient spotlight at cursor position. Radial vignette (transparent center, #020204 at 80%) masks edges. Centered content: badge "GRID · LIVE", 58px headline with "Grid" in #00FFB2 with textShadow glow, subtitle, and two CTAs (solid green + ghost). Inline styles only.`,
+      code: `import { useState, useEffect, useRef } from "react";
+
+export default function NeuralGrid() {
+  const [mouse, setMouse] = useState({ x: 50, y: 50 });
+  const [nodes, setNodes] = useState([]);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      const now = Date.now();
+      setNodes(prev => {
+        const alive = prev.filter(n => now - n.born < 1500);
+        if (alive.length < 7) {
+          alive.push({
+            id: Math.random(),
+            x: (Math.floor(Math.random() * 11) + 1) * (100 / 12),
+            y: (Math.floor(Math.random() * 8) + 1) * (100 / 9),
+            born: now,
+          });
+        }
+        return alive;
+      });
+    }, 300);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={e => {
+        const r = ref.current?.getBoundingClientRect();
+        if (r) setMouse({ x: (e.clientX - r.left) / r.width * 100, y: (e.clientY - r.top) / r.height * 100 });
+      }}
+      style={{ position: "relative", width: "100%", minHeight: 580, background: "#020204", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}
+    >
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(0,255,178,0.055) 1px, transparent 1px), linear-gradient(to right, rgba(0,255,178,0.055) 1px, transparent 1px)", backgroundSize: "56px 56px" }} />
+
+      {nodes.map(n => {
+        const age = Math.min((Date.now() - n.born) / 1500, 1);
+        return (
+          <div key={n.id} style={{ position: "absolute", left: n.x + "%", top: n.y + "%", transform: "translate(-50%,-50%)", width: 8, height: 8, borderRadius: "50%", background: "#00FFB2", opacity: Math.max(0, 1 - age), boxShadow: "0 0 " + (12 + age * 24) + "px " + (4 + age * 12) + "px rgba(0,255,178," + (0.8 - age * 0.8) + ")", pointerEvents: "none" }} />
+        );
+      })}
+
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle 500px at " + mouse.x + "% " + mouse.y + "%, rgba(0,255,178,0.07) 0%, transparent 70%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, transparent 20%, #020204 80%)", pointerEvents: "none" }} />
+
+      <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 32px" }}>
+        <span style={{ display: "inline-block", fontFamily: "monospace", fontSize: 9, letterSpacing: "0.35em", color: "#00FFB2", background: "rgba(0,255,178,0.07)", border: "1px solid rgba(0,255,178,0.2)", borderRadius: 4, padding: "4px 14px", marginBottom: 24 }}>GRID · LIVE</span>
+        <h1 style={{ margin: "0 0 16px", fontSize: 58, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Neural <span style={{ color: "#00FFB2", textShadow: "0 0 60px rgba(0,255,178,0.5)" }}>Grid</span></h1>
+        <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 16, maxWidth: 380, margin: "0 auto 32px", lineHeight: 1.7 }}>Watch the grid fire as you move. Every node a pulse. Every cursor a signal.</p>
+        <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+          <button style={{ background: "#00FFB2", color: "#000", border: "none", borderRadius: 8, padding: "12px 28px", fontSize: 13, fontWeight: 800, cursor: "pointer", letterSpacing: "0.04em" }}>Get Started</button>
+          <button style={{ background: "transparent", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "12px 24px", fontSize: 13, cursor: "pointer" }}>Explore</button>
+        </div>
+      </div>
+    </div>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#020204", position: "relative", overflow: "hidden", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
+        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(0,255,178,0.1) 1px, transparent 1px), linear-gradient(to right, rgba(0,255,178,0.1) 1px, transparent 1px)", backgroundSize: "20px 20px" } }),
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(0,255,178,0.08) 0%, #020204 65%)" } }),
+        React.createElement("div", { style: { position: "absolute", left: "50%", top: "45%", transform: "translate(-50%,-50%)", width: 8, height: 8, borderRadius: "50%", background: "#00FFB2", boxShadow: "0 0 18px 7px rgba(0,255,178,0.5)" } }),
+        React.createElement("div", { style: { position: "relative", zIndex: 1, textAlign: "center" } },
+          React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: "#fff", fontFamily: "system-ui" } }, "Neural Grid")
+        )
+      ),
+    },
+
+    {
+      id: "bg-cosmic-dust",
+      name: "Cosmic Dust",
+      vibe: "Dark & Minimal",
+      difficulty: "Simple",
+      desc: "Three CSS-animated star layers drift at different speeds and scales, creating a deep-space parallax illusion. Zero JavaScript — pure CSS keyframes.",
+      prompt: `Create a full-section background called CosmicDust. Black background #000008. Three absolutely positioned layers using CSS backgroundImage radial-gradient dots: Layer 1 (1.5px dots, 80px spacing, opacity 0.55, 12s drift animation), Layer 2 (1px dots, 48px spacing, blue-tinted, offset 24px, 8s reverse drift), Layer 3 (0.6px dots, 28px spacing, faint, 5s drift). Use @keyframes inside a <style> tag for three translate animations. Radial vignette masks edges. Center glow in blue #38BDF8. Centered content: monospace badge, 58px headline with "Stars" in #38BDF8 with glow, subtitle, and ghost CTA button. Inline styles only.`,
+      code: `export default function CosmicDust() {
+  return (
+    <div style={{ position: "relative", width: "100%", minHeight: 580, background: "#000008", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <style>{\`
+        @keyframes cdrift1 { 0% { transform: translate(0,0); } 100% { transform: translate(-40px,-30px); } }
+        @keyframes cdrift2 { 0% { transform: translate(0,0); } 100% { transform: translate(30px,-50px); } }
+        @keyframes cdrift3 { 0% { transform: translate(0,0); } 100% { transform: translate(-20px,40px); } }
+      \`}</style>
+
+      <div style={{ position: "absolute", inset: "-60px", backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.55) 1.5px, transparent 1.5px)", backgroundSize: "80px 80px", animation: "cdrift1 12s ease-in-out infinite alternate" }} />
+      <div style={{ position: "absolute", inset: "-40px", backgroundImage: "radial-gradient(circle, rgba(160,220,255,0.35) 1px, transparent 1px)", backgroundSize: "48px 48px", backgroundPosition: "24px 24px", animation: "cdrift2 8s ease-in-out infinite alternate" }} />
+      <div style={{ position: "absolute", inset: "-30px", backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.18) 0.6px, transparent 0.6px)", backgroundSize: "28px 28px", backgroundPosition: "14px 7px", animation: "cdrift3 5s ease-in-out infinite alternate" }} />
+
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 70% 60% at center, transparent 0%, #000008 72%)" }} />
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 40% 30% at center, rgba(56,189,248,0.05) 0%, transparent 70%)" }} />
+
+      <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 32px" }}>
+        <div style={{ fontSize: 9, letterSpacing: "0.4em", color: "#38BDF8", marginBottom: 24, fontFamily: "monospace", opacity: 0.8 }}>COSMIC · DUST</div>
+        <h1 style={{ margin: "0 0 16px", fontSize: 58, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Among the <span style={{ color: "#38BDF8", textShadow: "0 0 60px rgba(56,189,248,0.55)" }}>Stars</span></h1>
+        <p style={{ color: "rgba(255,255,255,0.28)", fontSize: 16, maxWidth: 380, margin: "0 auto 32px", lineHeight: 1.7 }}>Three layers of stars drifting at different depths. A parallax universe — no libraries needed.</p>
+        <button style={{ background: "rgba(56,189,248,0.1)", color: "#38BDF8", border: "1px solid rgba(56,189,248,0.3)", borderRadius: 8, padding: "12px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: "0.04em" }}>Explore cosmos</button>
+      </div>
+    </div>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#000008", position: "relative", overflow: "hidden", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
+        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)", backgroundSize: "22px 22px" } }),
+        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(160,220,255,0.3) 0.7px, transparent 0.7px)", backgroundSize: "12px 12px", backgroundPosition: "6px 6px" } }),
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, transparent 20%, #000008 72%)" } }),
+        React.createElement("div", { style: { position: "relative", zIndex: 1, textAlign: "center" } },
+          React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: "#fff", fontFamily: "system-ui" } }, "Cosmic Dust")
+        )
+      ),
+    },
+
+    {
+      id: "bg-aurora-drift",
+      name: "Aurora Drift",
+      vibe: "Glassmorphism",
+      difficulty: "Medium",
+      desc: "Two layers of diagonal multi-color stripes animate in opposite directions behind a glassmorphic card. Cyan, violet, blue, and pink aurora light — pure CSS, no JS.",
+      prompt: `Create a full-section background called AuroraDrift. Dark background #06030f. Two absolutely-positioned divs with diagonal repeating-linear-gradient stripe patterns (135deg and -45deg), each with different rainbow stripe colors (rgba(0,255,178,0.04), rgba(167,139,250,0.05), rgba(56,189,248,0.04), rgba(249,168,212,0.04)) and different gap spacings. Animate each layer with background-position shift (@keyframes, 8s and 12s, opposite directions). Linear gradient fade top and bottom. Center: glassmorphic card (backdrop-filter blur(20px), rgba white border, inner top highlight), headline with gradient text clip on key word, subtitle, CTA. Inline styles only.`,
+      code: `export default function AuroraDrift() {
+  return (
+    <div style={{ position: "relative", width: "100%", minHeight: 580, background: "#06030f", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <style>{\`
+        @keyframes adrift { 0% { background-position: 0 0; } 100% { background-position: 400px 0; } }
+        @keyframes adrift2 { 0% { background-position: 0 0; } 100% { background-position: -320px 0; } }
+      \`}</style>
+
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(135deg, transparent, transparent 60px, rgba(0,255,178,0.04) 60px, rgba(0,255,178,0.04) 62px, transparent 62px, transparent 100px, rgba(167,139,250,0.05) 100px, rgba(167,139,250,0.05) 102px, transparent 102px, transparent 140px, rgba(56,189,248,0.04) 140px, rgba(56,189,248,0.04) 142px, transparent 142px, transparent 180px, rgba(249,168,212,0.04) 180px, rgba(249,168,212,0.04) 182px, transparent 182px, transparent 220px)", backgroundSize: "400px 400px", animation: "adrift 8s linear infinite" }} />
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(-45deg, transparent, transparent 80px, rgba(167,139,250,0.03) 80px, rgba(167,139,250,0.03) 82px, transparent 82px, transparent 120px, rgba(0,255,178,0.03) 120px, rgba(0,255,178,0.03) 122px, transparent 122px, transparent 160px)", backgroundSize: "320px 320px", animation: "adrift2 12s linear infinite" }} />
+
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(167,139,250,0.05) 0%, transparent 60%)" }} />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #06030f 0%, transparent 15%, transparent 85%, #06030f 100%)" }} />
+
+      <div style={{ position: "relative", zIndex: 2, background: "rgba(255,255,255,0.03)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20, padding: "48px 56px", textAlign: "center", maxWidth: 520, boxShadow: "0 30px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)" }}>
+        <div style={{ fontSize: 9, letterSpacing: "0.35em", color: "#A78BFA", marginBottom: 22, fontFamily: "monospace", fontWeight: 600 }}>AURORA · DRIFT</div>
+        <h1 style={{ margin: "0 0 14px", fontSize: 52, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Beyond the <span style={{ background: "linear-gradient(135deg, #00FFB2, #A78BFA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Veil</span></h1>
+        <p style={{ color: "rgba(255,255,255,0.32)", fontSize: 15, margin: "0 0 28px", lineHeight: 1.7 }}>Diagonal aurora light stripes animate behind a glass card. Luxury, in motion.</p>
+        <button style={{ background: "linear-gradient(135deg, rgba(0,255,178,0.15), rgba(167,139,250,0.15))", color: "#fff", border: "1px solid rgba(255,255,255,0.14)", borderRadius: 9, padding: "12px 32px", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: "0.04em" }}>Experience it</button>
+      </div>
+    </div>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#06030f", position: "relative", overflow: "hidden", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
+        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(135deg, transparent, transparent 18px, rgba(0,255,178,0.09) 18px, rgba(0,255,178,0.09) 19px, transparent 19px, transparent 28px, rgba(167,139,250,0.1) 28px, rgba(167,139,250,0.1) 29px, transparent 29px, transparent 38px, rgba(56,189,248,0.08) 38px, rgba(56,189,248,0.08) 39px)", backgroundSize: "100px 100px" } }),
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, #06030f 0%, transparent 20%, transparent 80%, #06030f 100%)" } }),
+        React.createElement("div", { style: { position: "relative", zIndex: 1, background: "rgba(255,255,255,0.04)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "8px 16px", textAlign: "center" } },
+          React.createElement("div", { style: { fontSize: 12, fontWeight: 800, color: "#fff", fontFamily: "system-ui" } }, "Aurora Drift")
+        )
+      ),
+    },
+
+    {
+      id: "bg-horizon-scanner",
+      name: "Horizon Scanner",
+      vibe: "Dark & Minimal",
+      difficulty: "Simple",
+      desc: "Horizontal scan lines with a neon beam that sweeps top-to-bottom on a 3.5s loop. The lines fade to the right with a gradient mask. Left-aligned content with a raw, radar-room aesthetic.",
+      prompt: `Create a full-section background called HorizonScanner. Dark background #030305. Horizontal lines via backgroundImage linear-gradient(to bottom, rgba(255,255,255,0.045) 1px, transparent 1px), 36px spacing. Animated scan beam: absolutely-positioned 2px-high div with linear-gradient (bright left, fading right) and green glow box-shadow. Keyframe 'scan' animates top from -4px to calc(100% + 4px) over 3.5s ease-in-out infinite. Fade-right mask: linear-gradient(to right, transparent 30%, #030305 75%). Subtle left-edge green glow. Left-aligned content (padding-left 72px): badge, 56px headline, subtitle, green solid CTA. Inline styles only.`,
+      code: `export default function HorizonScanner() {
+  return (
+    <div style={{ position: "relative", width: "100%", minHeight: 580, background: "#030305", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "flex-start", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <style>{\`
+        @keyframes hscan { 0% { top: -4px; opacity: 0; } 5% { opacity: 1; } 92% { opacity: 1; } 100% { top: calc(100% + 4px); opacity: 0; } }
+      \`}</style>
+
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to bottom, rgba(255,255,255,0.045) 1px, transparent 1px)", backgroundSize: "100% 36px" }} />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, transparent 30%, #030305 75%)" }} />
+      <div style={{ position: "absolute", left: 0, right: 0, height: 2, background: "linear-gradient(to right, rgba(0,255,178,0.95) 0%, rgba(0,255,178,0.5) 25%, rgba(0,255,178,0.15) 55%, transparent 75%)", boxShadow: "0 0 18px 5px rgba(0,255,178,0.28)", animation: "hscan 3.5s ease-in-out infinite" }} />
+      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 280, background: "linear-gradient(to right, rgba(0,255,178,0.035), transparent)" }} />
+
+      <div style={{ position: "relative", zIndex: 2, padding: "0 0 0 72px", maxWidth: 500 }}>
+        <span style={{ display: "inline-block", fontFamily: "monospace", fontSize: 9, letterSpacing: "0.35em", color: "#00FFB2", background: "rgba(0,255,178,0.07)", border: "1px solid rgba(0,255,178,0.2)", borderRadius: 4, padding: "4px 12px", marginBottom: 22 }}>SCANNING · HORIZON</span>
+        <h1 style={{ margin: "0 0 16px", fontSize: 56, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1.0 }}>Horizon<br /><span style={{ color: "#00FFB2" }}>Scanner</span></h1>
+        <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 16, margin: "0 0 32px", lineHeight: 1.7, maxWidth: 380 }}>Horizontal scan lines with a neon beam that sweeps forever. The grid fades right into nothing.</p>
+        <button style={{ background: "#00FFB2", color: "#000", border: "none", borderRadius: 8, padding: "12px 28px", fontSize: 13, fontWeight: 800, cursor: "pointer", letterSpacing: "0.04em" }}>Start Scanning</button>
+      </div>
+    </div>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#030305", position: "relative", overflow: "hidden", borderRadius: 8 } },
+        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px)", backgroundSize: "100% 14px" } }),
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to right, transparent 35%, #030305 72%)" } }),
+        React.createElement("div", { style: { position: "absolute", left: 0, right: 0, top: "40%", height: 1, background: "linear-gradient(to right, rgba(0,255,178,0.9), rgba(0,255,178,0.3) 30%, transparent 65%)", boxShadow: "0 0 8px 3px rgba(0,255,178,0.3)" } }),
+        React.createElement("div", { style: { position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", zIndex: 1 } },
+          React.createElement("div", { style: { fontSize: 12, fontWeight: 800, color: "#fff", fontFamily: "system-ui", marginBottom: 4 } }, "Horizon Scanner"),
+          React.createElement("div", { style: { fontSize: 9, color: "#00FFB2", fontFamily: "monospace", letterSpacing: "0.1em" } }, "SCANNING ·")
+        )
+      ),
+    },
+
+    {
+      id: "bg-digital-rain",
+      name: "Digital Rain",
+      vibe: "Neon & Cyber",
+      difficulty: "Advanced",
+      desc: "Vertical grid lines with six independently animated neon streaks falling at staggered speeds and delays — a cinematic matrix-rain effect that fades into the void below.",
+      prompt: `Create a full-section background called DigitalRain. Very dark green-tinted background #020403. Vertical lines via backgroundImage linear-gradient(to right, rgba(0,255,100,0.05) 1px, transparent 1px), 44px spacing. Six animated 'rain drop' divs (1px wide, 55–100px tall) positioned at different left percentages. Each is a linear-gradient from transparent to bright rgba(0,255,100,0.9) to transparent, with green glow box-shadow. Three @keyframes (fall-1, fall-2, fall-3) animate top from -80px to 110%. Each drop uses a different keyframe + animation-delay for stagger. Fade-to-bottom mask: linear-gradient(to bottom, transparent 55%, #020403 100%). Top green glow. Content: centered, badge in monospace, 58px headline with "Rain" in bright green with glow, subtitle, ghost CTA. Inline styles only.`,
+      code: `export default function DigitalRain() {
+  return (
+    <div style={{ position: "relative", width: "100%", minHeight: 580, background: "#020403", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <style>{\`
+        @keyframes dfall1 { 0% { top: -80px; opacity: 0; } 8% { opacity: 1; } 90% { opacity: 0.7; } 100% { top: 110%; opacity: 0; } }
+        @keyframes dfall2 { 0% { top: -60px; opacity: 0; } 10% { opacity: 0.85; } 88% { opacity: 0.5; } 100% { top: 110%; opacity: 0; } }
+        @keyframes dfall3 { 0% { top: -40px; opacity: 0; } 6% { opacity: 1; } 92% { opacity: 0.8; } 100% { top: 110%; opacity: 0; } }
+      \`}</style>
+
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right, rgba(0,255,100,0.05) 1px, transparent 1px)", backgroundSize: "44px 100%" }} />
+
+      <div style={{ position: "absolute", left: "11%", width: 1, height: 90, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.95), rgba(0,255,100,0.4), transparent)", boxShadow: "0 0 7px 2px rgba(0,255,100,0.45)", animation: "dfall1 2.2s ease-in infinite" }} />
+      <div style={{ position: "absolute", left: "25%", width: 1, height: 65, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.7), transparent)", boxShadow: "0 0 4px 1px rgba(0,255,100,0.3)", animation: "dfall2 1.7s ease-in infinite 0.4s" }} />
+      <div style={{ position: "absolute", left: "43%", width: 1, height: 105, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,1), rgba(0,255,100,0.5), transparent)", boxShadow: "0 0 9px 2px rgba(0,255,100,0.55)", animation: "dfall3 1.9s ease-in infinite 0.2s" }} />
+      <div style={{ position: "absolute", left: "61%", width: 1, height: 75, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.85), transparent)", boxShadow: "0 0 5px 1px rgba(0,255,100,0.35)", animation: "dfall1 2.5s ease-in infinite 0.8s" }} />
+      <div style={{ position: "absolute", left: "79%", width: 1, height: 88, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.9), rgba(0,255,100,0.4), transparent)", boxShadow: "0 0 7px 2px rgba(0,255,100,0.45)", animation: "dfall2 2.1s ease-in infinite 1.1s" }} />
+      <div style={{ position: "absolute", left: "88%", width: 1, height: 55, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.6), transparent)", boxShadow: "0 0 4px 1px rgba(0,255,100,0.28)", animation: "dfall3 1.6s ease-in infinite 0.6s" }} />
+
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, #020403 100%)" }} />
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 180, background: "linear-gradient(to bottom, rgba(0,255,100,0.03), transparent)" }} />
+
+      <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 32px", marginTop: -50 }}>
+        <div style={{ fontFamily: "monospace", fontSize: 9, color: "#00ff64", letterSpacing: "0.35em", marginBottom: 22, opacity: 0.8 }}>RAIN · VERTICAL</div>
+        <h1 style={{ margin: "0 0 16px", fontSize: 58, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Digital <span style={{ color: "#00ff64", textShadow: "0 0 50px rgba(0,255,100,0.6)" }}>Rain</span></h1>
+        <p style={{ color: "rgba(255,255,255,0.27)", fontSize: 16, maxWidth: 380, margin: "0 auto 28px", lineHeight: 1.7 }}>Six neon drops fall along vertical grid lines at staggered speeds. The grid fades into the void below.</p>
+        <button style={{ background: "rgba(0,255,100,0.1)", color: "#00ff64", border: "1px solid rgba(0,255,100,0.3)", borderRadius: 8, padding: "12px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: "0.04em" }}>Enter the matrix</button>
+      </div>
+    </div>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#020403", position: "relative", overflow: "hidden", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
+        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right, rgba(0,255,100,0.08) 1px, transparent 1px)", backgroundSize: "18px 100%" } }),
+        React.createElement("div", { style: { position: "absolute", left: "20%", width: 1, height: 50, top: "15%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.9), transparent)", boxShadow: "0 0 6px 2px rgba(0,255,100,0.4)" } }),
+        React.createElement("div", { style: { position: "absolute", left: "50%", width: 1, height: 60, top: "10%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,1), transparent)", boxShadow: "0 0 8px 2px rgba(0,255,100,0.5)" } }),
+        React.createElement("div", { style: { position: "absolute", left: "75%", width: 1, height: 40, top: "30%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.7), transparent)" } }),
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 45%, #020403 100%)" } }),
+        React.createElement("div", { style: { position: "relative", zIndex: 1, textAlign: "center", marginTop: -20 } },
+          React.createElement("div", { style: { fontSize: 12, fontWeight: 800, color: "#fff", fontFamily: "system-ui" } }, "Digital Rain")
+        )
+      ),
+    },
+
+    {
+      id: "bg-void-floor",
+      name: "Void Floor",
+      vibe: "Brutalist",
+      difficulty: "Medium",
+      desc: "A 3D perspective checkerboard floor vanishes toward the horizon using CSS perspective + rotateX. A content card floats above it with a gentle CSS float animation — raw, dramatic, bold.",
+      prompt: `Create a full-section background called VoidFloor. Background #050507. A 3D checkerboard floor: absolutely-positioned div (bottom: -80, left/right: -200, height: 65%) with CSS checkerboard backgroundImage (linear-gradient 45deg pattern, rgba(255,255,255,0.04) squares), backgroundSize 48px, transform: perspective(600px) rotateX(55deg), transformOrigin: bottom center. A vanishing-point glow line rising from bottom center (2px wide div, violet gradient). Linear gradient fades top (dark over floor) and bottom. Content card floats with @keyframes float (translateY -8px cycle, 4s). Card has centered text: monospace badge, 58px headline with "Floor" in #A78BFA with glow, subtitle, violet ghost CTA. Inline styles only.`,
+      code: `export default function VoidFloor() {
+  return (
+    <div style={{ position: "relative", width: "100%", minHeight: 580, background: "#050507", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <style>{\`
+        @keyframes vfloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+      \`}</style>
+
+      <div style={{ position: "absolute", bottom: -80, left: -200, right: -200, height: "65%", backgroundImage: "linear-gradient(45deg, rgba(255,255,255,0.045) 25%, transparent 25%), linear-gradient(-45deg, rgba(255,255,255,0.045) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.045) 75%), linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.045) 75%)", backgroundSize: "48px 48px", backgroundPosition: "0 0, 0 24px, 24px -24px, -24px 0px", transform: "perspective(600px) rotateX(55deg)", transformOrigin: "bottom center" }} />
+
+      <div style={{ position: "absolute", bottom: "18%", left: "50%", transform: "translateX(-50%)", width: 2, height: "45%", background: "linear-gradient(to top, rgba(167,139,250,0.7), rgba(167,139,250,0.1), transparent)", boxShadow: "0 0 30px 12px rgba(167,139,250,0.1)" }} />
+
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "48%", background: "linear-gradient(to bottom, #050507, transparent)" }} />
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "28%", background: "linear-gradient(to top, #050507, transparent)" }} />
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 80% 50% at 50% 35%, rgba(167,139,250,0.04) 0%, transparent 70%)" }} />
+
+      <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 32px", animation: "vfloat 4s ease-in-out infinite" }}>
+        <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: "0.35em", color: "#A78BFA", marginBottom: 22, opacity: 0.8 }}>DEPTH · BOARD</div>
+        <h1 style={{ margin: "0 0 16px", fontSize: 58, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Void <span style={{ color: "#A78BFA", textShadow: "0 0 60px rgba(167,139,250,0.65)" }}>Floor</span></h1>
+        <p style={{ color: "rgba(255,255,255,0.28)", fontSize: 16, maxWidth: 380, margin: "0 auto 32px", lineHeight: 1.7 }}>A 3D perspective checkerboard vanishes into the horizon. The card floats endlessly above.</p>
+        <button style={{ background: "rgba(167,139,250,0.1)", color: "#A78BFA", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 8, padding: "12px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: "0.04em" }}>Step inside</button>
+      </div>
+    </div>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#050507", position: "relative", overflow: "hidden", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
+        React.createElement("div", { style: { position: "absolute", bottom: -30, left: -60, right: -60, height: "55%", backgroundImage: "linear-gradient(45deg, rgba(255,255,255,0.07) 25%, transparent 25%), linear-gradient(-45deg, rgba(255,255,255,0.07) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.07) 75%), linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.07) 75%)", backgroundSize: "18px 18px", backgroundPosition: "0 0, 0 9px, 9px -9px, -9px 0px", transform: "perspective(200px) rotateX(52deg)", transformOrigin: "bottom center" } }),
+        React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to bottom, #050507, transparent)" } }),
+        React.createElement("div", { style: { position: "absolute", bottom: "18%", left: "50%", transform: "translateX(-50%)", width: 1, height: "35%", background: "linear-gradient(to top, rgba(167,139,250,0.6), transparent)" } }),
+        React.createElement("div", { style: { position: "relative", zIndex: 1, textAlign: "center" } },
+          React.createElement("div", { style: { fontSize: 12, fontWeight: 800, color: "#fff", fontFamily: "system-ui" } }, "Void Floor")
         )
       ),
     },
