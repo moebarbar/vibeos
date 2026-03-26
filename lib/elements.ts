@@ -1568,13 +1568,12 @@ export default function NeuralGrid() {
     </div>
   );
 }`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#020204", position: "relative", overflow: "hidden", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
-        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(0,255,178,0.1) 1px, transparent 1px), linear-gradient(to right, rgba(0,255,178,0.1) 1px, transparent 1px)", backgroundSize: "20px 20px" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(0,255,178,0.08) 0%, #020204 65%)" } }),
-        React.createElement("div", { style: { position: "absolute", left: "50%", top: "45%", transform: "translate(-50%,-50%)", width: 8, height: 8, borderRadius: "50%", background: "#00FFB2", boxShadow: "0 0 18px 7px rgba(0,255,178,0.5)" } }),
-        React.createElement("div", { style: { position: "relative", zIndex: 1, textAlign: "center" } },
-          React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: "#fff", fontFamily: "system-ui" } }, "Neural Grid")
-        )
+      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#020204", position: "relative", overflow: "hidden" } },
+        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(0,255,178,0.1) 1px, transparent 1px), linear-gradient(to right, rgba(0,255,178,0.1) 1px, transparent 1px)", backgroundSize: "22px 22px" } }),
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(0,255,178,0.06) 0%, #020204 70%)" } }),
+        React.createElement("div", { style: { position: "absolute", left: "30%", top: "40%", width: 5, height: 5, borderRadius: "50%", background: "#00FFB2", boxShadow: "0 0 14px 6px rgba(0,255,178,0.5)" } }),
+        React.createElement("div", { style: { position: "absolute", left: "65%", top: "60%", width: 4, height: 4, borderRadius: "50%", background: "#00FFB2", boxShadow: "0 0 10px 4px rgba(0,255,178,0.35)" } }),
+        React.createElement("div", { style: { position: "absolute", left: "50%", top: "25%", width: 3, height: 3, borderRadius: "50%", background: "#00FFB2", boxShadow: "0 0 8px 3px rgba(0,255,178,0.4)" } })
       ),
     },
 
@@ -1610,13 +1609,11 @@ export default function NeuralGrid() {
     </div>
   );
 }`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#000008", position: "relative", overflow: "hidden", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
-        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)", backgroundSize: "22px 22px" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(160,220,255,0.3) 0.7px, transparent 0.7px)", backgroundSize: "12px 12px", backgroundPosition: "6px 6px" } }),
+      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#000008", position: "relative", overflow: "hidden" } },
+        React.createElement("div", { style: { position: "absolute", inset: "-10px", backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px)", backgroundSize: "24px 24px" } }),
+        React.createElement("div", { style: { position: "absolute", inset: "-10px", backgroundImage: "radial-gradient(circle, rgba(160,220,255,0.3) 0.7px, transparent 0.7px)", backgroundSize: "13px 13px", backgroundPosition: "6px 6px" } }),
         React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, transparent 20%, #000008 72%)" } }),
-        React.createElement("div", { style: { position: "relative", zIndex: 1, textAlign: "center" } },
-          React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: "#fff", fontFamily: "system-ui" } }, "Cosmic Dust")
-        )
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse 35% 25% at center, rgba(56,189,248,0.06) 0%, transparent 70%)" } })
       ),
     },
 
@@ -1650,12 +1647,10 @@ export default function NeuralGrid() {
     </div>
   );
 }`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#06030f", position: "relative", overflow: "hidden", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
+      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#06030f", position: "relative", overflow: "hidden" } },
         React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(135deg, transparent, transparent 18px, rgba(0,255,178,0.09) 18px, rgba(0,255,178,0.09) 19px, transparent 19px, transparent 28px, rgba(167,139,250,0.1) 28px, rgba(167,139,250,0.1) 29px, transparent 29px, transparent 38px, rgba(56,189,248,0.08) 38px, rgba(56,189,248,0.08) 39px)", backgroundSize: "100px 100px" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, #06030f 0%, transparent 20%, transparent 80%, #06030f 100%)" } }),
-        React.createElement("div", { style: { position: "relative", zIndex: 1, background: "rgba(255,255,255,0.04)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "8px 16px", textAlign: "center" } },
-          React.createElement("div", { style: { fontSize: 12, fontWeight: 800, color: "#fff", fontFamily: "system-ui" } }, "Aurora Drift")
-        )
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, #06030f 0%, transparent 25%, transparent 75%, #06030f 100%)" } }),
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(167,139,250,0.06) 0%, transparent 60%)" } })
       ),
     },
 
@@ -1687,14 +1682,11 @@ export default function NeuralGrid() {
     </div>
   );
 }`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#030305", position: "relative", overflow: "hidden", borderRadius: 8 } },
-        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px)", backgroundSize: "100% 14px" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to right, transparent 35%, #030305 72%)" } }),
-        React.createElement("div", { style: { position: "absolute", left: 0, right: 0, top: "40%", height: 1, background: "linear-gradient(to right, rgba(0,255,178,0.9), rgba(0,255,178,0.3) 30%, transparent 65%)", boxShadow: "0 0 8px 3px rgba(0,255,178,0.3)" } }),
-        React.createElement("div", { style: { position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", zIndex: 1 } },
-          React.createElement("div", { style: { fontSize: 12, fontWeight: 800, color: "#fff", fontFamily: "system-ui", marginBottom: 4 } }, "Horizon Scanner"),
-          React.createElement("div", { style: { fontSize: 9, color: "#00FFB2", fontFamily: "monospace", letterSpacing: "0.1em" } }, "SCANNING ·")
-        )
+      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#030305", position: "relative", overflow: "hidden" } },
+        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(to bottom, rgba(255,255,255,0.065) 1px, transparent 1px)", backgroundSize: "100% 14px" } }),
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to right, transparent 35%, #030305 75%)" } }),
+        React.createElement("div", { style: { position: "absolute", left: 0, right: 0, top: "38%", height: 1, background: "linear-gradient(to right, rgba(0,255,178,0.95), rgba(0,255,178,0.4) 30%, transparent 65%)", boxShadow: "0 0 8px 3px rgba(0,255,178,0.35)" } }),
+        React.createElement("div", { style: { position: "absolute", left: 0, top: 0, bottom: 0, width: 80, background: "linear-gradient(to right, rgba(0,255,178,0.03), transparent)" } })
       ),
     },
 
@@ -1735,15 +1727,14 @@ export default function NeuralGrid() {
     </div>
   );
 }`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#020403", position: "relative", overflow: "hidden", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
-        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right, rgba(0,255,100,0.08) 1px, transparent 1px)", backgroundSize: "18px 100%" } }),
-        React.createElement("div", { style: { position: "absolute", left: "20%", width: 1, height: 50, top: "15%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.9), transparent)", boxShadow: "0 0 6px 2px rgba(0,255,100,0.4)" } }),
-        React.createElement("div", { style: { position: "absolute", left: "50%", width: 1, height: 60, top: "10%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,1), transparent)", boxShadow: "0 0 8px 2px rgba(0,255,100,0.5)" } }),
-        React.createElement("div", { style: { position: "absolute", left: "75%", width: 1, height: 40, top: "30%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.7), transparent)" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 45%, #020403 100%)" } }),
-        React.createElement("div", { style: { position: "relative", zIndex: 1, textAlign: "center", marginTop: -20 } },
-          React.createElement("div", { style: { fontSize: 12, fontWeight: 800, color: "#fff", fontFamily: "system-ui" } }, "Digital Rain")
-        )
+      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#020403", position: "relative", overflow: "hidden" } },
+        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right, rgba(0,255,100,0.07) 1px, transparent 1px)", backgroundSize: "18px 100%" } }),
+        React.createElement("div", { style: { position: "absolute", left: "14%", width: 1, height: 55, top: "5%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.9), transparent)", boxShadow: "0 0 6px 2px rgba(0,255,100,0.4)" } }),
+        React.createElement("div", { style: { position: "absolute", left: "36%", width: 1, height: 70, top: "0%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,1), transparent)", boxShadow: "0 0 8px 2px rgba(0,255,100,0.5)" } }),
+        React.createElement("div", { style: { position: "absolute", left: "55%", width: 1, height: 45, top: "15%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.8), transparent)", boxShadow: "0 0 5px 1px rgba(0,255,100,0.35)" } }),
+        React.createElement("div", { style: { position: "absolute", left: "72%", width: 1, height: 60, top: "5%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.7), transparent)" } }),
+        React.createElement("div", { style: { position: "absolute", left: "88%", width: 1, height: 35, top: "20%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.6), transparent)" } }),
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, #020403 100%)" } })
       ),
     },
 
@@ -1778,13 +1769,49 @@ export default function NeuralGrid() {
     </div>
   );
 }`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: 150, background: "#050507", position: "relative", overflow: "hidden", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
-        React.createElement("div", { style: { position: "absolute", bottom: -30, left: -60, right: -60, height: "55%", backgroundImage: "linear-gradient(45deg, rgba(255,255,255,0.07) 25%, transparent 25%), linear-gradient(-45deg, rgba(255,255,255,0.07) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.07) 75%), linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.07) 75%)", backgroundSize: "18px 18px", backgroundPosition: "0 0, 0 9px, 9px -9px, -9px 0px", transform: "perspective(200px) rotateX(52deg)", transformOrigin: "bottom center" } }),
-        React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to bottom, #050507, transparent)" } }),
-        React.createElement("div", { style: { position: "absolute", bottom: "18%", left: "50%", transform: "translateX(-50%)", width: 1, height: "35%", background: "linear-gradient(to top, rgba(167,139,250,0.6), transparent)" } }),
-        React.createElement("div", { style: { position: "relative", zIndex: 1, textAlign: "center" } },
-          React.createElement("div", { style: { fontSize: 12, fontWeight: 800, color: "#fff", fontFamily: "system-ui" } }, "Void Floor")
-        )
+      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#050507", position: "relative", overflow: "hidden" } },
+        React.createElement("div", { style: { position: "absolute", bottom: -30, left: -60, right: -60, height: "60%", backgroundImage: "linear-gradient(45deg, rgba(255,255,255,0.07) 25%, transparent 25%), linear-gradient(-45deg, rgba(255,255,255,0.07) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.07) 75%), linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.07) 75%)", backgroundSize: "20px 20px", backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px", transform: "perspective(200px) rotateX(52deg)", transformOrigin: "bottom center" } }),
+        React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: "55%", background: "linear-gradient(to bottom, #050507, transparent)" } }),
+        React.createElement("div", { style: { position: "absolute", bottom: 0, left: 0, right: 0, height: "20%", background: "linear-gradient(to top, #050507, transparent)" } }),
+        React.createElement("div", { style: { position: "absolute", bottom: "20%", left: "50%", transform: "translateX(-50%)", width: 1, height: "40%", background: "linear-gradient(to top, rgba(167,139,250,0.7), rgba(167,139,250,0.1), transparent)", boxShadow: "0 0 20px 8px rgba(167,139,250,0.08)" } }),
+        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 40% at 50% 30%, rgba(167,139,250,0.05) 0%, transparent 70%)" } })
+      ),
+    },
+
+    {
+      id: "bg-clean-grid",
+      name: "Grid Background",
+      vibe: "Dark & Minimal",
+      difficulty: "Simple",
+      desc: "A crisp CSS grid on a near-black canvas, masked by a radial fade that dissolves the lines into darkness at the edges. Pure CSS — one div, zero JavaScript.",
+      prompt: `Create a section background component called GridBackground. Background #0c0c0e. Two CSS linear-gradients as backgroundImage: to-right and to-bottom, both rgba(255,255,255,0.07) 1px lines, transparent, 40px spacing. Apply maskImage (and WebkitMaskImage) with radial-gradient(ellipse 80% 80% at center, black 30%, transparent 100%) so lines fade into the edges. Centered content: small monospace label at top, large bold headline "Grid Background", monospace subtitle "With (fade-edges) Mask" in gray, and a minimal ghost CTA button. Use position relative, min-height 520. Inline styles only.`,
+      code: `export default function GridBackground() {
+  return (
+    <div style={{ position: "relative", width: "100%", minHeight: 520, background: "#0c0c0e", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <div style={{
+        position: "absolute", inset: 0,
+        backgroundImage: "linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px)",
+        backgroundSize: "40px 40px",
+        maskImage: "radial-gradient(ellipse 80% 80% at center, black 30%, transparent 100%)",
+        WebkitMaskImage: "radial-gradient(ellipse 80% 80% at center, black 30%, transparent 100%)",
+      }} />
+      <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 32px" }}>
+        <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: "0.35em", color: "rgba(255,255,255,0.3)", marginBottom: 22 }}>GRID · BACKGROUND</div>
+        <h1 style={{ margin: "0 0 14px", fontSize: 58, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Grid Background</h1>
+        <p style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.28)", fontSize: 15, margin: "0 auto 32px", lineHeight: 1.7, maxWidth: 380 }}>With (fade-edges) Mask</p>
+        <button style={{ background: "transparent", color: "rgba(255,255,255,0.4)", border: "1px solid rgba(255,255,255,0.14)", borderRadius: 8, padding: "12px 28px", fontSize: 13, cursor: "pointer", letterSpacing: "0.04em" }}>Discover more →</button>
+      </div>
+    </div>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#0c0c0e", position: "relative", overflow: "hidden" } },
+        React.createElement("div", { style: {
+          position: "absolute", inset: 0,
+          backgroundImage: "linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+          maskImage: "radial-gradient(ellipse 80% 80% at center, black 30%, transparent 100%)",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 80% at center, black 30%, transparent 100%)",
+        } })
       ),
     },
   ],

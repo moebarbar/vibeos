@@ -19,10 +19,10 @@ const ALL_ELEMENTS: ElWithCat[] = Object.entries(ELEMENTS).flatMap(([category, e
 );
 const ALL_TEMPLATES = Object.values(TEMPLATES).flat();
 
-const DIFF_BADGE: Record<string, { bg: string; color: string }> = {
-  Simple:   { bg: "rgba(255,255,255,0.04)", color: "#3a3a3a" },
-  Medium:   { bg: "rgba(251,191,36,0.06)",  color: "#6a5a1a" },
-  Advanced: { bg: "rgba(248,113,113,0.06)", color: "#6a2a2a" },
+const DIFF_BADGE: Record<string, { bg: string; color: string; border: string }> = {
+  Simple:   { bg: "rgba(255,255,255,0.06)",  color: "rgba(255,255,255,0.5)", border: "rgba(255,255,255,0.08)"  },
+  Medium:   { bg: "rgba(251,191,36,0.1)",    color: "#fbbf24",               border: "rgba(251,191,36,0.2)"   },
+  Advanced: { bg: "rgba(248,113,113,0.1)",   color: "#f87171",               border: "rgba(248,113,113,0.2)"  },
 };
 
 export default function ForgePage() {
@@ -515,26 +515,35 @@ function ForgeInner() {
                       >
                         {/* Preview */}
                         <div style={{
-                          height: 148, background: "rgba(0,0,0,0.35)", position: "relative",
-                          display: "flex", alignItems: "center", justifyContent: "center",
+                          height: 160,
+                          position: "relative",
                           overflow: "hidden",
+                          background: el.category === "backgrounds" ? "transparent" : "rgba(0,0,0,0.4)",
+                          display: el.category === "backgrounds" ? "block" : "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}>
-                          <div style={{ transform: "scale(0.86)", transformOrigin: "center" }}>
+                          {el.category === "backgrounds" ? (
+                            <div style={{ position: "absolute", inset: 0 }}>
+                              <Preview />
+                            </div>
+                          ) : (
                             <Preview />
-                          </div>
+                          )}
                           {/* Vibe badge */}
                           <span style={{
                             position: "absolute", top: 8, right: 8,
-                            background: "rgba(0,0,0,0.65)", border: "1px solid rgba(255,255,255,0.05)",
-                            borderRadius: 4, padding: "2px 5px", fontSize: 7.5,
-                            color: "rgba(255,255,255,0.25)",
+                            background: "rgba(0,0,0,0.7)", border: "1px solid rgba(255,255,255,0.1)",
+                            borderRadius: 4, padding: "2px 6px", fontSize: 8,
+                            color: "rgba(255,255,255,0.55)",
+                            backdropFilter: "blur(8px)",
                           }}>{el.vibe}</span>
                           {/* Kit badge */}
                           {saved && (
                             <span style={{
                               position: "absolute", top: 8, left: 8,
-                              background: "rgba(0,255,178,0.12)", border: "1px solid rgba(0,255,178,0.25)",
-                              borderRadius: 20, width: 18, height: 18,
+                              background: "rgba(0,255,178,0.14)", border: "1px solid rgba(0,255,178,0.3)",
+                              borderRadius: 20, width: 20, height: 20,
                               display: "flex", alignItems: "center", justifyContent: "center",
                               fontSize: 9, color: "#00FFB2",
                             }}>✓</span>
@@ -542,19 +551,21 @@ function ForgeInner() {
                         </div>
 
                         {/* Info */}
-                        <div style={{ padding: "9px 11px", display: "flex", alignItems: "center", gap: 8 }}>
+                        <div style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 8 }}>
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{
-                              fontSize: 11.5, fontWeight: 600, marginBottom: 4,
-                              color: active ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.5)",
+                              fontSize: 12, fontWeight: 600, marginBottom: 5,
+                              color: active ? "#fff" : "rgba(255,255,255,0.82)",
                               whiteSpace: "nowrap" as const, overflow: "hidden", textOverflow: "ellipsis",
                             }}>{el.name}</div>
                             <span style={{
-                              fontSize: 8.5, borderRadius: 4, padding: "2px 6px",
+                              fontSize: 9, borderRadius: 4, padding: "2px 7px",
                               background: diff.bg, color: diff.color,
+                              border: `1px solid ${diff.border}`,
+                              fontWeight: 600, letterSpacing: "0.03em",
                             }}>{el.difficulty}</span>
                           </div>
-                          <span style={{ fontSize: 10, color: active ? "#00FFB2" : "rgba(255,255,255,0.12)", fontFamily: "monospace" }}>
+                          <span style={{ fontSize: 10, color: active ? "#00FFB2" : "rgba(255,255,255,0.18)", fontFamily: "monospace" }}>
                             {active ? "←" : "→"}
                           </span>
                         </div>
@@ -590,19 +601,23 @@ function ForgeInner() {
                         onMouseOver={e => { if (!active) e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
                         onMouseOut={e => { if (!active) e.currentTarget.style.borderColor = "rgba(255,255,255,0.04)"; }}
                       >
-                        <div style={{ height: 155, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                          <div style={{ width: "100%", height: "100%", transform: "scale(0.9)", transformOrigin: "center" }}>
+                        <div style={{ height: 160, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", position: "relative" }}>
+                          <div style={{ width: "100%", height: "100%" }}>
                             <Thumb />
                           </div>
                         </div>
                         <div style={{ padding: "10px 12px" }}>
-                          <div style={{ fontSize: 12, fontWeight: 600, color: active ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.5)", marginBottom: 5 }}>{t.name}</div>
-                          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                            <span style={{ fontSize: 8.5, color: "rgba(255,255,255,0.2)" }}>{t.vibe}</span>
-                            <span style={{ fontSize: 8.5, color: "rgba(255,255,255,0.1)" }}>·</span>
-                            <span style={{ fontSize: 8.5, color: "rgba(255,255,255,0.2)" }}>{t.difficulty}</span>
-                            <span style={{ fontSize: 8.5, color: "rgba(255,255,255,0.1)" }}>·</span>
-                            <span style={{ fontSize: 8.5, color: "rgba(255,255,255,0.2)" }}>{t.vars.length} variables</span>
+                          <div style={{ fontSize: 12, fontWeight: 600, color: active ? "#fff" : "rgba(255,255,255,0.82)", marginBottom: 6 }}>{t.name}</div>
+                          <div style={{ display: "flex", gap: 5, alignItems: "center", flexWrap: "wrap" as const }}>
+                            <span style={{ fontSize: 8.5, color: "rgba(255,255,255,0.45)", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 4, padding: "1px 6px" }}>{t.vibe}</span>
+                            <span style={{
+                              fontSize: 8.5, borderRadius: 4, padding: "1px 6px",
+                              background: (DIFF_BADGE[t.difficulty] ?? DIFF_BADGE.Simple).bg,
+                              color: (DIFF_BADGE[t.difficulty] ?? DIFF_BADGE.Simple).color,
+                              border: `1px solid ${(DIFF_BADGE[t.difficulty] ?? DIFF_BADGE.Simple).border}`,
+                              fontWeight: 600,
+                            }}>{t.difficulty}</span>
+                            <span style={{ fontSize: 8.5, color: "rgba(255,255,255,0.35)" }}>{t.vars.length} vars</span>
                           </div>
                         </div>
                       </div>
