@@ -1,6 +1,7 @@
 import React from "react";
 import { NEW_ELEMENTS } from "./elements-new";
 import { PREMIUM_ELEMENTS } from "./elements-premium";
+import { HERO_PREMIUM } from "./elements-hero-premium";
 
 export interface Element {
   id: string;
@@ -770,6 +771,8 @@ export function ModalPricing() {
       )
     },
 
+    // Premium 3D Heroes
+    ...HERO_PREMIUM.hero,
     // New Creative Heroes
     ...NEW_ELEMENTS.hero,
     ...PREMIUM_ELEMENTS.hero,
