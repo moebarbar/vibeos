@@ -108,6 +108,9 @@ function ForgeInner() {
     localStorage.setItem("vos-kit", JSON.stringify(next));
   };
 
+  // ── New tab preview ───────────────────────────────────────────────────
+  const openInNewTab = (id: string) => { window.open(`/preview/${id}`, "_blank"); };
+
   // ── Copy ─────────────────────────────────────────────────────────────
   const copy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -639,11 +642,16 @@ function ForgeInner() {
                         }}>
                           {inKit(selectedEl.id) ? "✓ In Kit" : "+ Kit"}
                         </button>
-                        <button onClick={() => setFullPreview(true)} title="Full page preview" style={{
+                        <button onClick={() => setFullPreview(true)} title="Fullscreen overlay" style={{
                           background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)",
                           borderRadius: 6, color: "rgba(255,255,255,0.35)", padding: "4px 8px",
                           fontSize: 11, cursor: "pointer", lineHeight: 1, transition: "all 0.15s",
                         }}>⛶</button>
+                        <button onClick={() => openInNewTab(selectedEl.id)} title="Open in new tab" style={{
+                          background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)",
+                          borderRadius: 6, color: "rgba(255,255,255,0.35)", padding: "4px 8px",
+                          fontSize: 11, cursor: "pointer", lineHeight: 1, transition: "all 0.15s",
+                        }}>↗</button>
                         <button onClick={closeDetail} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.2)", cursor: "pointer", fontSize: 16, lineHeight: 1 }}>✕</button>
                       </div>
                     </div>
@@ -675,12 +683,27 @@ function ForgeInner() {
                   {/* Tab content */}
                   <div style={{ flex: 1, overflow: "auto", padding: 14 }}>
                     {tab === "preview" && (
-                      <div style={{
-                        background: "rgba(0,0,0,0.35)", border: "1px solid rgba(255,255,255,0.04)",
-                        borderRadius: 10, padding: 24, display: "flex",
-                        alignItems: "center", justifyContent: "center", minHeight: 150,
-                      }}>
-                        <selectedEl.preview />
+                      <div>
+                        <div style={{
+                          background: "#080808", border: "1px solid rgba(255,255,255,0.07)",
+                          borderRadius: 12, overflow: "hidden", minHeight: 280,
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
+                        }}>
+                          <selectedEl.preview />
+                        </div>
+                        <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+                          <button onClick={() => setFullPreview(true)} style={{
+                            flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+                            borderRadius: 7, color: "rgba(255,255,255,0.4)", padding: "7px", fontSize: 10,
+                            cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s",
+                          }}>⛶ Fullscreen</button>
+                          <button onClick={() => openInNewTab(selectedEl.id)} style={{
+                            flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+                            borderRadius: 7, color: "rgba(255,255,255,0.4)", padding: "7px", fontSize: 10,
+                            cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s",
+                          }}>↗ Open in New Tab</button>
+                        </div>
                       </div>
                     )}
 
@@ -768,11 +791,16 @@ function ForgeInner() {
                         <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.35)" }}>{selectedTmpl.vibe} · {selectedTmpl.difficulty} · {selectedTmpl.vars.length} variables</div>
                       </div>
                       <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                        <button onClick={() => setFullPreview(true)} title="Full page preview" style={{
+                        <button onClick={() => setFullPreview(true)} title="Fullscreen overlay" style={{
                           background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)",
                           borderRadius: 6, color: "rgba(255,255,255,0.35)", padding: "4px 8px",
                           fontSize: 11, cursor: "pointer", lineHeight: 1,
                         }}>⛶</button>
+                        <button onClick={() => openInNewTab(selectedTmpl.id)} title="Open in new tab" style={{
+                          background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)",
+                          borderRadius: 6, color: "rgba(255,255,255,0.35)", padding: "4px 8px",
+                          fontSize: 11, cursor: "pointer", lineHeight: 1,
+                        }}>↗</button>
                         <button onClick={closeDetail} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.3)", cursor: "pointer", fontSize: 16, lineHeight: 1 }}>✕</button>
                       </div>
                     </div>
@@ -805,11 +833,26 @@ function ForgeInner() {
                   <div style={{ flex: 1, overflow: "auto", padding: 14 }}>
                     {/* Preview — full live component */}
                     {tab === "preview" && (
-                      <div style={{
-                        border: "1px solid rgba(255,255,255,0.04)", borderRadius: 10,
-                        overflow: "auto", maxHeight: 500, background: "rgba(0,0,0,0.2)",
-                      }}>
-                        {(() => { const C = selectedTmpl.component(tmplVars); return <C />; })()}
+                      <div>
+                        <div style={{
+                          border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10,
+                          overflow: "auto", maxHeight: 480, background: "#080808",
+                          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
+                        }}>
+                          {(() => { const C = selectedTmpl.component(tmplVars); return <C />; })()}
+                        </div>
+                        <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+                          <button onClick={() => setFullPreview(true)} style={{
+                            flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+                            borderRadius: 7, color: "rgba(255,255,255,0.4)", padding: "7px", fontSize: 10,
+                            cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s",
+                          }}>⛶ Fullscreen</button>
+                          <button onClick={() => openInNewTab(selectedTmpl.id)} style={{
+                            flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+                            borderRadius: 7, color: "rgba(255,255,255,0.4)", padding: "7px", fontSize: 10,
+                            cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s",
+                          }}>↗ Open in New Tab</button>
+                        </div>
                       </div>
                     )}
 
@@ -915,11 +958,32 @@ function ForgeInner() {
           </div>
         </div>
         {/* Overlay content */}
-        <div style={{ flex: 1, overflow: "auto", display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
-          <div style={{ width: "100%", minHeight: "100%" }}>
-            {selectedEl && <selectedEl.preview />}
-            {selectedTmpl && (() => { const C = selectedTmpl.component(tmplVars); return <C />; })()}
-          </div>
+        <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          {selectedEl && (
+            <>
+              <div style={{
+                background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.07)",
+                borderRadius: 20, padding: "80px 120px",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 60px 120px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05)",
+              }}>
+                <selectedEl.preview />
+              </div>
+              <div style={{ marginTop: 36, textAlign: "center" }}>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em", marginBottom: 6 }}>
+                  {selectedEl.vibe} · {selectedEl.difficulty}
+                </div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.25)", maxWidth: 500, lineHeight: 1.8 }}>
+                  {selectedEl.desc}
+                </div>
+              </div>
+            </>
+          )}
+          {selectedTmpl && (
+            <div style={{ width: "100%", minHeight: "100%" }}>
+              {(() => { const C = selectedTmpl.component(tmplVars); return <C />; })()}
+            </div>
+          )}
         </div>
       </div>
     )}
