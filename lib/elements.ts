@@ -1,7 +1,5 @@
 import React from "react";
-import { NEW_ELEMENTS } from "./elements-new";
-import { PREMIUM_ELEMENTS } from "./elements-premium";
-import { HERO_PREMIUM } from "./elements-hero-premium";
+import { HERO_V2 } from "./elements-hero-v2";
 
 export interface Element {
   id: string;
@@ -63,9 +61,7 @@ export const ELEMENTS: Record<string, Element[]> = {
       )
     },
 
-    // New Creative Buttons
-    ...NEW_ELEMENTS.buttons,
-    ...PREMIUM_ELEMENTS.buttons,
+    // Additional buttons...
     {
       id: "btn-neon",
       name: "Neon Glow CTA",
@@ -366,9 +362,7 @@ export function HandWrittenTitle({ title = "Hello World" }: { title?: string }) 
       )
     },
 
-    // New Creative Cards
-    ...NEW_ELEMENTS.cards,
-    ...PREMIUM_ELEMENTS.cards,
+    // Additional cards...
     {
       id: "card-pricing-dark",
       name: "Dark Pricing Card",
@@ -771,11 +765,8 @@ export function ModalPricing() {
       )
     },
 
-    // Premium 3D Heroes
-    ...HERO_PREMIUM.hero,
-    // New Creative Heroes
-    ...NEW_ELEMENTS.hero,
-    ...PREMIUM_ELEMENTS.hero,
+    // Premium v2 Heroes (Actually Beautiful)
+    ...HERO_V2.hero,
     {
       id: "hero-dark",
       name: "Dark SaaS Hero",
@@ -1157,8 +1148,7 @@ export default function MinimalNav({ logoText = "forge.", initials = "MO" }: { l
       )
     },
 
-    // New Creative Forms
-    ...NEW_ELEMENTS.forms,
+    // Additional forms...
     {
       id: "form-auth-dark",
       name: "Dark Auth Form",
@@ -1923,8 +1913,7 @@ export default function AnalyticsDashboard() {
   ],
 
   backgrounds: [
-    // Premium Backgrounds
-    ...PREMIUM_ELEMENTS.backgrounds,
+    // Additional backgrounds...
     {
       id: "bg-neural-grid",
       name: "Neural Grid",
