@@ -1,4 +1,5 @@
 import React from "react";
+import { NEW_ELEMENTS } from "./elements-new";
 
 export interface Element {
   id: string;
@@ -24,6 +25,8 @@ export const CATEGORIES = [
 ];
 
 export const ELEMENTS: Record<string, Element[]> = {
+  // New Creative Components
+  ...NEW_ELEMENTS,
   buttons: [
     {
       id: "btn-neon",
