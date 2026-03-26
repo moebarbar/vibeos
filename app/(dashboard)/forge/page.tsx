@@ -973,7 +973,7 @@ function ForgeInner() {
           </div>
         </div>
         {/* Overlay content */}
-        <div style={{ flex: 1, overflow: "auto", position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ flex: 1, overflow: "auto", position: "relative" }}>
           {selectedEl && (() => {
             const isBackground = selectedEl.category === "backgrounds";
             if (isBackground) {
@@ -983,25 +983,18 @@ function ForgeInner() {
                 </div>
               );
             }
+            const ZOOM: Record<string, number> = { buttons: 1.5, cards: 2.5, forms: 3, nav: 3, hero: 2, dashboards: 2 };
+            const zoom = ZOOM[selectedEl.category] ?? 2;
+            const isCentered = selectedEl.category === "buttons" || selectedEl.category === "cards";
             return (
-              <>
-                <div style={{
-                  background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: 20, padding: "80px 120px",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  boxShadow: "0 60px 120px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05)",
-                }}>
+              <div style={{
+                minHeight: "100%",
+                ...(isCentered ? { display: "flex", alignItems: "center", justifyContent: "center" } : {}),
+              }}>
+                <div style={{ zoom, width: "100%" }}>
                   <selectedEl.preview />
                 </div>
-                <div style={{ marginTop: 36, textAlign: "center" }}>
-                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em", marginBottom: 6 }}>
-                    {selectedEl.vibe} · {selectedEl.difficulty}
-                  </div>
-                  <div style={{ fontSize: 13, color: "rgba(255,255,255,0.25)", maxWidth: 500, lineHeight: 1.8 }}>
-                    {selectedEl.desc}
-                  </div>
-                </div>
-              </>
+              </div>
             );
           })()}
           {selectedTmpl && (
