@@ -12,5 +12,6 @@ export async function GET() {
     where: { userId: user.id, isActive: true },
   });
 
-  return Response.json(project);
+  if (!project) return Response.json(null);
+  return Response.json({ ...project, userPlan: user.plan });
 }

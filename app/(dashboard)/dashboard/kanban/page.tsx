@@ -19,6 +19,21 @@ interface Project {
   name: string;
   contextBrief: string | null;
   description: string;
+  stack?: string | null;
+  userPlan?: string;
+}
+
+interface AnalysisResult {
+  importanceScore: number;
+  impactLevel: "critical" | "high" | "medium" | "low";
+  valueStatement: string;
+  effortLevel: "quick-win" | "medium" | "heavy-lift";
+  effortHours: string;
+  businessImpact: string;
+  suggestedPriority: "high" | "medium" | "low";
+  unlocksNext: string;
+  blockedBy: string;
+  recommendation: string;
 }
 
 const COLUMNS = [
@@ -43,9 +58,11 @@ function getPriority(tags: string | null): PriorityKey | null {
   return null;
 }
 
+const HIDDEN_TAG_PREFIXES = ["priority:", "importance:", "effort:"];
+
 function getDisplayTags(tags: string | null): string[] {
   if (!tags) return [];
-  return tags.split(",").map(t => t.trim()).filter(t => t && !t.startsWith("priority:"));
+  return tags.split(",").map(t => t.trim()).filter(t => t && !HIDDEN_TAG_PREFIXES.some(p => t.startsWith(p)));
 }
 
 function setTagPriority(tags: string | null, p: PriorityKey | null): string {
@@ -53,6 +70,37 @@ function setTagPriority(tags: string | null, p: PriorityKey | null): string {
   if (p) base.push(`priority:${p}`);
   return base.join(",");
 }
+
+function getImportance(tags: string | null): number | null {
+  if (!tags) return null;
+  const m = tags.match(/importance:(\d+)/);
+  return m ? parseInt(m[1]) : null;
+}
+
+function setTagImportance(tags: string | null, score: number | null): string {
+  const base = (tags ?? "").split(",").map(t => t.trim()).filter(t => t && !t.startsWith("importance:"));
+  if (score !== null) base.push(`importance:${score}`);
+  return base.join(",");
+}
+
+function getEffort(tags: string | null): string | null {
+  if (!tags) return null;
+  const m = tags.match(/effort:([\w-]+)/);
+  return m ? m[1] : null;
+}
+
+const IMPACT_COLORS = {
+  critical: { color: "#f87171", bg: "rgba(248,113,113,0.08)", border: "rgba(248,113,113,0.2)" },
+  high:     { color: "#fb923c", bg: "rgba(251,146,60,0.08)",  border: "rgba(251,146,60,0.2)"  },
+  medium:   { color: "#fbbf24", bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.2)"  },
+  low:      { color: "rgba(255,255,255,0.3)", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.08)" },
+};
+
+const EFFORT_LABELS: Record<string, { label: string; color: string }> = {
+  "quick-win":  { label: "Quick Win ⚡", color: "#00FFB2" },
+  "medium":     { label: "Medium",       color: "#fbbf24" },
+  "heavy-lift": { label: "Heavy Lift",   color: "#f87171" },
+};
 
 export default function KanbanPage() {
   const [project, setProject]           = useState<Project | null>(null);
@@ -80,6 +128,11 @@ export default function KanbanPage() {
   // AI prompt generation
   const [promptLoading, setPromptLoading] = useState(false);
   const [copied, setCopied]               = useState(false);
+
+  // AI value analysis
+  const [analyzing, setAnalyzing]   = useState(false);
+  const [analysis, setAnalysis]     = useState<AnalysisResult | null>(null);
+  const [analysisId, setAnalysisId] = useState<string | null>(null); // which card the analysis belongs to
 
   // Drag
   const dragCard    = useRef<KanbanCard | null>(null);
@@ -177,6 +230,8 @@ export default function KanbanPage() {
     setSelectedCard(card);
     setDetailDraft({ ...card });
     setSaveStatus("idle");
+    // Show cached analysis if same card
+    if (analysisId !== card.id) setAnalysis(null);
   };
   const closeDetail = () => {
     setSelectedCard(null);
@@ -216,6 +271,61 @@ export default function KanbanPage() {
     if (selectedCard && selectedCard.column === "done") closeDetail();
   };
 
+  // ── Move card up/down within column ──────────────────────────────────
+  const moveCardInColumn = async (card: KanbanCard, dir: "up" | "down") => {
+    const colCards = cardsIn(card.column);
+    const idx = colCards.findIndex(c => c.id === card.id);
+    const newIdx = dir === "up" ? idx - 1 : idx + 1;
+    if (newIdx < 0 || newIdx >= colCards.length) return;
+    const swap = colCards[newIdx];
+    // Optimistic swap
+    setCards(prev => prev.map(c => {
+      if (c.id === card.id) return { ...c, position: swap.position };
+      if (c.id === swap.id) return { ...c, position: card.position };
+      return c;
+    }));
+    await fetch("/api/kanban/reorder", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cards: [
+        { id: card.id, column: card.column, position: swap.position },
+        { id: swap.id, column: swap.column, position: card.position },
+      ]}),
+    });
+  };
+
+  // ── AI: Analyze card value ────────────────────────────────────────────
+  const analyzeCard = async () => {
+    if (!selectedCard) return;
+    setAnalyzing(true);
+    setAnalysis(null);
+    try {
+      const res = await fetch("/api/agents/kanban_analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: detailDraft.title ?? selectedCard.title,
+          description: detailDraft.description ?? selectedCard.description,
+          projectContext: project?.contextBrief ?? project?.description,
+          projectStack: project?.stack,
+          userPlan: project?.userPlan ?? "FREE",
+        }),
+      });
+      if (res.ok) {
+        const data: AnalysisResult = await res.json();
+        setAnalysis(data);
+        setAnalysisId(selectedCard.id);
+        // Auto-apply suggested priority and importance to tags
+        const currentTags = detailDraft.tags ?? selectedCard.tags;
+        const withPriority = setTagPriority(currentTags, data.suggestedPriority);
+        const withImportance = setTagImportance(withPriority, data.importanceScore);
+        handleDraftChange("tags", withImportance);
+      }
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
   // ── AI: Generate full board ───────────────────────────────────────────
   const generateBoard = async () => {
     if (!genDesc.trim() || !project) return;
@@ -230,6 +340,7 @@ export default function KanbanPage() {
           projectId: project.id,
           projectName: project.name,
           projectDescription: genDesc,
+          userPlan: project.userPlan ?? "FREE",
         }),
       });
       if (res.ok) {
@@ -516,14 +627,18 @@ export default function KanbanPage() {
                     </div>
                   )}
 
-                  {colCards.map(card => (
+                  {colCards.map((card, idx) => (
                     <KanbanCardItem
                       key={card.id}
                       card={card}
                       isSelected={selectedCard?.id === card.id}
                       colColor={col.color}
+                      isFirst={idx === 0}
+                      isLast={idx === colCards.length - 1}
                       onDragStart={() => onDragStart(card)}
                       onClick={() => openCard(card)}
+                      onMoveUp={() => moveCardInColumn(card, "up")}
+                      onMoveDown={() => moveCardInColumn(card, "down")}
                     />
                   ))}
 
@@ -693,6 +808,124 @@ export default function KanbanPage() {
                 />
               </div>
 
+              {/* AI Value Analysis */}
+              <div style={{ marginBottom: 20 }}>
+                <button
+                  onClick={analyzeCard}
+                  disabled={analyzing}
+                  style={{
+                    width: "100%",
+                    background: analyzing
+                      ? "rgba(56,189,248,0.04)"
+                      : "rgba(56,189,248,0.06)",
+                    border: `1px solid ${analyzing ? "rgba(56,189,248,0.3)" : "rgba(56,189,248,0.18)"}`,
+                    borderRadius: 8, color: analyzing ? "rgba(56,189,248,0.5)" : "#38BDF8",
+                    padding: "8px", fontSize: 10.5, fontWeight: 700,
+                    cursor: analyzing ? "wait" : "pointer", fontFamily: "inherit",
+                    transition: "all 0.2s", letterSpacing: "0.04em",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                  }}
+                  onMouseOver={e => { if (!analyzing) (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 20px rgba(56,189,248,0.15)"; }}
+                  onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; }}
+                >
+                  {analyzing ? (
+                    <>
+                      <span style={{ display: "inline-block", animation: "spin 0.8s linear infinite", fontSize: 12 }}>◌</span>
+                      Analyzing value…
+                    </>
+                  ) : (
+                    <>◎ Analyze Value &amp; Impact</>
+                  )}
+                </button>
+
+                {analysis && analysisId === selectedCard?.id && (
+                  <div style={{
+                    marginTop: 10,
+                    background: "rgba(0,0,0,0.3)",
+                    border: "1px solid rgba(56,189,248,0.14)",
+                    borderRadius: 10, overflow: "hidden",
+                    animation: "vibe-slide-up 0.2s ease both",
+                  }}>
+                    {/* Score header */}
+                    <div style={{
+                      padding: "12px 14px",
+                      background: "rgba(56,189,248,0.04)",
+                      borderBottom: "1px solid rgba(56,189,248,0.08)",
+                      display: "flex", alignItems: "center", gap: 12,
+                    }}>
+                      <div style={{
+                        width: 44, height: 44, borderRadius: "50%", flexShrink: 0,
+                        background: `conic-gradient(${IMPACT_COLORS[analysis.impactLevel]?.color ?? "#38BDF8"} ${analysis.importanceScore * 36}deg, rgba(255,255,255,0.05) 0deg)`,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        boxShadow: `0 0 16px ${IMPACT_COLORS[analysis.impactLevel]?.color ?? "#38BDF8"}44`,
+                      }}>
+                        <div style={{
+                          width: 34, height: 34, borderRadius: "50%",
+                          background: "#08080b",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                        }}>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: IMPACT_COLORS[analysis.impactLevel]?.color ?? "#38BDF8" }}>
+                            {analysis.importanceScore}
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                          <span style={{
+                            fontSize: 8.5, fontWeight: 700, letterSpacing: "0.06em",
+                            color: IMPACT_COLORS[analysis.impactLevel]?.color,
+                            background: IMPACT_COLORS[analysis.impactLevel]?.bg,
+                            border: `1px solid ${IMPACT_COLORS[analysis.impactLevel]?.border}`,
+                            borderRadius: 4, padding: "1px 6px",
+                          }}>{analysis.impactLevel.toUpperCase()}</span>
+                          <span style={{
+                            fontSize: 8.5, color: EFFORT_LABELS[analysis.effortLevel]?.color ?? "rgba(255,255,255,0.4)",
+                            background: "rgba(255,255,255,0.04)",
+                            border: "1px solid rgba(255,255,255,0.07)",
+                            borderRadius: 4, padding: "1px 6px",
+                          }}>{EFFORT_LABELS[analysis.effortLevel]?.label ?? analysis.effortLevel} · {analysis.effortHours}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.65)", lineHeight: 1.4 }}>
+                          {analysis.valueStatement}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ padding: "10px 14px", display: "flex", flexDirection: "column", gap: 10 }}>
+                      {/* Business impact */}
+                      <div>
+                        <div style={{ fontSize: 8.5, color: "rgba(255,255,255,0.2)", letterSpacing: "0.1em", fontWeight: 600, marginBottom: 3 }}>BUSINESS IMPACT</div>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", lineHeight: 1.5 }}>{analysis.businessImpact}</div>
+                      </div>
+
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                        {/* Blocked by */}
+                        <div style={{ background: "rgba(255,255,255,0.02)", borderRadius: 7, padding: "8px 10px", border: "1px solid rgba(255,255,255,0.04)" }}>
+                          <div style={{ fontSize: 8, color: "rgba(255,255,255,0.2)", letterSpacing: "0.1em", fontWeight: 600, marginBottom: 4 }}>BLOCKED BY</div>
+                          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", lineHeight: 1.4 }}>{analysis.blockedBy}</div>
+                        </div>
+                        {/* Unlocks next */}
+                        <div style={{ background: "rgba(0,255,178,0.02)", borderRadius: 7, padding: "8px 10px", border: "1px solid rgba(0,255,178,0.06)" }}>
+                          <div style={{ fontSize: 8, color: "rgba(0,255,178,0.4)", letterSpacing: "0.1em", fontWeight: 600, marginBottom: 4 }}>UNLOCKS NEXT</div>
+                          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", lineHeight: 1.4 }}>{analysis.unlocksNext}</div>
+                        </div>
+                      </div>
+
+                      {/* Recommendation */}
+                      <div style={{
+                        background: "rgba(56,189,248,0.04)",
+                        border: "1px solid rgba(56,189,248,0.1)",
+                        borderRadius: 7, padding: "8px 10px",
+                        display: "flex", alignItems: "flex-start", gap: 7,
+                      }}>
+                        <span style={{ fontSize: 12, color: "#38BDF8", flexShrink: 0, marginTop: 1 }}>→</span>
+                        <span style={{ fontSize: 10.5, color: "rgba(255,255,255,0.55)", lineHeight: 1.4 }}>{analysis.recommendation}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* AI Prompt */}
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
@@ -801,8 +1034,23 @@ export default function KanbanPage() {
                   Break Down Your Project
                 </h2>
                 <p style={{ margin: "7px 0 0", fontSize: 12, color: "rgba(255,255,255,0.28)", lineHeight: 1.65 }}>
-                  Describe what you&apos;re building. Claude will create 8–15 Kanban cards with detailed Cursor/Claude implementation prompts.
+                  Describe what you&apos;re building. Claude will generate a tailored board from basic to advanced — from MVP foundations to growth features.
                 </p>
+                {project.userPlan && (
+                  <div style={{
+                    display: "inline-flex", alignItems: "center", gap: 6, marginTop: 10,
+                    background: project.userPlan === "FOUNDER" ? "rgba(167,139,250,0.07)" : project.userPlan === "PRO" ? "rgba(0,255,178,0.06)" : "rgba(255,255,255,0.03)",
+                    border: `1px solid ${project.userPlan === "FOUNDER" ? "rgba(167,139,250,0.2)" : project.userPlan === "PRO" ? "rgba(0,255,178,0.18)" : "rgba(255,255,255,0.07)"}`,
+                    borderRadius: 7, padding: "4px 10px",
+                  }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.08em", color: project.userPlan === "FOUNDER" ? "#A78BFA" : project.userPlan === "PRO" ? "#00FFB2" : "rgba(255,255,255,0.35)" }}>
+                      {project.userPlan}
+                    </span>
+                    <span style={{ fontSize: 9, color: "rgba(255,255,255,0.25)" }}>
+                      {project.userPlan === "FOUNDER" ? "· 14–18 cards, enterprise scope" : project.userPlan === "PRO" ? "· 12–15 cards, full product scope" : "· 8–12 cards, focused MVP scope"}
+                    </span>
+                  </div>
+                )}
               </div>
               {!generating && (
                 <button onClick={() => setShowGenModal(false)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.2)", cursor: "pointer", fontSize: 20, lineHeight: 1, padding: 4 }}>✕</button>
@@ -887,30 +1135,46 @@ export default function KanbanPage() {
 
 // ── Card component ────────────────────────────────────────────────────────
 function KanbanCardItem({
-  card, isSelected, colColor, onDragStart, onClick,
+  card, isSelected, colColor, isFirst, isLast, onDragStart, onClick, onMoveUp, onMoveDown,
 }: {
   card: KanbanCard;
   isSelected: boolean;
   colColor: string;
+  isFirst: boolean;
+  isLast: boolean;
   onDragStart: () => void;
   onClick: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
 }) {
-  const priority = getPriority(card.tags);
+  const [hovered, setHovered] = useState(false);
+  const priority   = getPriority(card.tags);
+  const importance = getImportance(card.tags);
+  const effort     = getEffort(card.tags);
   const tags = getDisplayTags(card.tags);
   const pr = priority ? PRIORITY[priority] : null;
   const isDone = card.column === "done";
+
+  const importanceColor = importance
+    ? importance >= 9 ? "#f87171"
+    : importance >= 7 ? "#fb923c"
+    : importance >= 5 ? "#fbbf24"
+    : "rgba(255,255,255,0.25)"
+    : null;
 
   return (
     <div
       draggable
       onDragStart={onDragStart}
       onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         background: isSelected ? `${colColor}07` : "rgba(255,255,255,0.018)",
         border: `1px solid ${isSelected ? colColor + "30" : "rgba(255,255,255,0.05)"}`,
         borderRadius: 9, padding: "9px 10px 9px 20px", marginBottom: 5,
         cursor: "pointer", transition: "all 0.15s", position: "relative" as const,
-        opacity: isDone ? 0.7 : 1,
+        opacity: isDone ? 0.65 : 1,
       }}
       onMouseOver={e => { if (!isSelected) { (e.currentTarget as HTMLElement).style.borderColor = `${colColor}33`; (e.currentTarget as HTMLElement).style.background = `${colColor}05`; } }}
       onMouseOut={e => { if (!isSelected) { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.05)"; (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.018)"; } }}
@@ -927,36 +1191,87 @@ function KanbanCardItem({
       {/* Drag handle */}
       <div style={{
         position: "absolute", left: 5, top: "50%", transform: "translateY(-50%)",
-        color: "rgba(255,255,255,0.1)", fontSize: 9, cursor: "grab", userSelect: "none",
+        color: hovered ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.07)",
+        fontSize: 9, cursor: "grab", userSelect: "none", transition: "color 0.15s",
       }}>⣿</div>
 
-      {/* Title */}
-      <div style={{
-        fontSize: 12, fontWeight: 600,
-        color: isSelected ? "rgba(255,255,255,0.9)" : isDone ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.75)",
-        lineHeight: 1.4, marginBottom: card.description ? 4 : 0,
-        textDecoration: isDone ? "line-through" : "none",
-      }}>
-        {card.title}
+      {/* Move up/down buttons — shown on hover */}
+      {hovered && (
+        <div
+          onClick={e => e.stopPropagation()}
+          style={{
+            position: "absolute", right: 7, top: "50%", transform: "translateY(-50%)",
+            display: "flex", flexDirection: "column", gap: 2,
+          }}
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); onMoveUp(); }}
+            disabled={isFirst}
+            style={{
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: 4, color: isFirst ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.4)",
+              width: 18, height: 16, display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 9, cursor: isFirst ? "default" : "pointer", padding: 0,
+              transition: "all 0.1s",
+            }}
+            onMouseOver={e => { if (!isFirst) (e.currentTarget as HTMLButtonElement).style.color = "#fff"; }}
+            onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.color = isFirst ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.4)"; }}
+          >▲</button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onMoveDown(); }}
+            disabled={isLast}
+            style={{
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: 4, color: isLast ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.4)",
+              width: 18, height: 16, display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 9, cursor: isLast ? "default" : "pointer", padding: 0,
+              transition: "all 0.1s",
+            }}
+            onMouseOver={e => { if (!isLast) (e.currentTarget as HTMLButtonElement).style.color = "#fff"; }}
+            onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.color = isLast ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.4)"; }}
+          >▼</button>
+        </div>
+      )}
+
+      {/* Title row with importance indicator */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 6, marginBottom: card.description ? 4 : 0, paddingRight: hovered ? 26 : 0 }}>
+        {importance !== null && importanceColor && (
+          <div style={{
+            flexShrink: 0, width: 18, height: 18, borderRadius: 5, marginTop: 1,
+            background: `${importanceColor}14`, border: `1px solid ${importanceColor}40`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <span style={{ fontSize: 8.5, fontWeight: 800, color: importanceColor, lineHeight: 1 }}>{importance}</span>
+          </div>
+        )}
+        <div style={{
+          flex: 1, fontSize: 12, fontWeight: 600,
+          color: isSelected ? "rgba(255,255,255,0.9)" : isDone ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.75)",
+          lineHeight: 1.4,
+          textDecoration: isDone ? "line-through" : "none",
+        }}>
+          {card.title}
+        </div>
       </div>
 
       {/* Description */}
       {card.description && (
         <div style={{
           fontSize: 10.5, color: "rgba(255,255,255,0.28)", lineHeight: 1.45,
-          marginBottom: (tags.length > 0 || card.aiPrompt || priority) ? 6 : 0,
+          marginBottom: (tags.length > 0 || card.aiPrompt || priority || effort) ? 6 : 0,
           overflow: "hidden",
           display: "-webkit-box",
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as any,
+          paddingRight: hovered ? 26 : 0,
         }}>
           {card.description}
         </div>
       )}
 
       {/* Footer */}
-      {(tags.length > 0 || card.aiPrompt || priority) && (
-        <div style={{ display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap" as const }}>
+      {(tags.length > 0 || card.aiPrompt || priority || effort) && (
+        <div style={{ display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap" as const, paddingRight: hovered ? 26 : 0 }}>
           {priority && pr && (
             <span style={{
               fontSize: 8, color: pr.color, background: pr.bg,
@@ -964,7 +1279,14 @@ function KanbanCardItem({
               padding: "1px 5px", fontWeight: 700, letterSpacing: "0.04em",
             }}>{pr.label.toUpperCase()}</span>
           )}
-          {tags.slice(0, 3).map(tag => (
+          {effort && EFFORT_LABELS[effort] && (
+            <span style={{
+              fontSize: 8, color: EFFORT_LABELS[effort].color,
+              background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+              borderRadius: 4, padding: "1px 5px",
+            }}>{EFFORT_LABELS[effort].label}</span>
+          )}
+          {tags.slice(0, 2).map(tag => (
             <span key={tag} style={{
               fontSize: 8.5, color: "rgba(255,255,255,0.22)",
               background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)",
