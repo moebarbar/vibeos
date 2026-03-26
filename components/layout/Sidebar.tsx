@@ -22,6 +22,7 @@ const NAV = [
   { href: "/dashboard", icon: "⬡", label: "Agents", exact: true },
   { href: "/dashboard/forge", icon: "◈", label: "Element Forge", exact: false },
   { href: "/dashboard/forge?section=templates", icon: "⊞", label: "Templates", exact: false },
+  { href: "/dashboard/kanban", icon: "⊟", label: "Build Board", exact: false },
   { href: "/dashboard/ledger", icon: "◉", label: "Build Ledger", exact: false },
   { href: "/dashboard/projects", icon: "◫", label: "Projects", exact: false },
 ];

@@ -38,6 +38,7 @@ model Project {
 
   user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   ledgerEntries LedgerEntry[]
+  kanbanCards   KanbanCard[]
 
   @@index([userId])
 }
@@ -69,6 +70,23 @@ model UsageLog {
 
   @@index([userId])
   @@index([userId, createdAt])
+}
+
+model KanbanCard {
+  id          String   @id @default(cuid())
+  projectId   String
+  title       String
+  description String?  @db.Text
+  column      String   @default("plan")
+  position    Int      @default(0)
+  aiPrompt    String?  @db.Text
+  tags        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
 }
 
 enum Plan {
