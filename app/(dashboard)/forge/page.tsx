@@ -973,27 +973,37 @@ function ForgeInner() {
           </div>
         </div>
         {/* Overlay content */}
-        <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-          {selectedEl && (
-            <>
-              <div style={{
-                background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.07)",
-                borderRadius: 20, padding: "80px 120px",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                boxShadow: "0 60px 120px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05)",
-              }}>
-                <selectedEl.preview />
-              </div>
-              <div style={{ marginTop: 36, textAlign: "center" }}>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em", marginBottom: 6 }}>
-                  {selectedEl.vibe} · {selectedEl.difficulty}
+        <div style={{ flex: 1, overflow: "auto", position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          {selectedEl && (() => {
+            const isBackground = selectedEl.category === "backgrounds";
+            if (isBackground) {
+              return (
+                <div style={{ position: "absolute", inset: 0 }}>
+                  <selectedEl.preview />
                 </div>
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.25)", maxWidth: 500, lineHeight: 1.8 }}>
-                  {selectedEl.desc}
+              );
+            }
+            return (
+              <>
+                <div style={{
+                  background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.07)",
+                  borderRadius: 20, padding: "80px 120px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: "0 60px 120px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05)",
+                }}>
+                  <selectedEl.preview />
                 </div>
-              </div>
-            </>
-          )}
+                <div style={{ marginTop: 36, textAlign: "center" }}>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em", marginBottom: 6 }}>
+                    {selectedEl.vibe} · {selectedEl.difficulty}
+                  </div>
+                  <div style={{ fontSize: 13, color: "rgba(255,255,255,0.25)", maxWidth: 500, lineHeight: 1.8 }}>
+                    {selectedEl.desc}
+                  </div>
+                </div>
+              </>
+            );
+          })()}
           {selectedTmpl && (
             <div style={{ width: "100%", minHeight: "100%" }}>
               {(() => { const C = selectedTmpl.component(tmplVars); return <C />; })()}

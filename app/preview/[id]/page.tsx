@@ -11,12 +11,49 @@ export default function PreviewPage({ params }: { params: { id: string } }) {
 
   if (el) {
     const Preview = el.preview;
+    const category = Object.entries(ELEMENTS).find(([, els]) => els.some(e => e.id === id))?.[0];
+    const isBackground = category === "backgrounds";
+
+    if (isBackground) {
+      return (
+        <div style={{
+          width: "100vw", height: "100vh", overflow: "hidden", position: "relative",
+          fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        }}>
+          {/* Full-fill background */}
+          <div style={{ position: "absolute", inset: 0 }}>
+            <Preview />
+          </div>
+          {/* Floating top bar */}
+          <div style={{
+            position: "absolute", top: 0, left: 0, right: 0, zIndex: 10,
+            height: 52, display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "0 28px",
+            background: "linear-gradient(to bottom, rgba(0,0,0,0.55), transparent)",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{
+                width: 26, height: 26,
+                background: "linear-gradient(135deg, #00FFB2, #38BDF8)",
+                borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12,
+              }}>⚡</div>
+              <span style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: "0.06em" }}>{el.name}</span>
+              <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>{el.vibe} · {el.difficulty}</span>
+            </div>
+            <button onClick={() => window.close()} style={{
+              background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 7, color: "rgba(255,255,255,0.55)", padding: "5px 14px",
+              fontSize: 11, cursor: "pointer", fontFamily: "inherit", backdropFilter: "blur(12px)",
+            }}>✕ Close</button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div style={{
-        minHeight: "100vh",
-        background: "#060608",
-        display: "flex",
-        flexDirection: "column",
+        minHeight: "100vh", background: "#060608",
+        display: "flex", flexDirection: "column",
         fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       }}>
         {/* Top bar */}
@@ -28,10 +65,8 @@ export default function PreviewPage({ params }: { params: { id: string } }) {
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{
-              width: 26, height: 26,
-              background: "linear-gradient(135deg, #00FFB2, #38BDF8)",
-              borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 12,
+              width: 26, height: 26, background: "linear-gradient(135deg, #00FFB2, #38BDF8)",
+              borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12,
             }}>⚡</div>
             <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", letterSpacing: "0.1em" }}>VIBE OS · ELEMENT FORGE</span>
           </div>
@@ -45,17 +80,13 @@ export default function PreviewPage({ params }: { params: { id: string } }) {
         {/* Preview area */}
         <div style={{
           flex: 1, display: "flex", flexDirection: "column",
-          alignItems: "center", justifyContent: "center",
-          padding: "60px 40px",
+          alignItems: "center", justifyContent: "center", padding: "60px 40px",
         }}>
-          {/* Component name */}
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <div style={{ fontSize: 9, color: "#00FFB2", letterSpacing: "0.18em", fontWeight: 600, marginBottom: 10 }}>COMPONENT PREVIEW</div>
             <div style={{ fontSize: 28, fontWeight: 800, color: "rgba(255,255,255,0.92)", letterSpacing: "-0.03em", marginBottom: 8 }}>{el.name}</div>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>{el.vibe} · {el.difficulty}</div>
           </div>
-
-          {/* The component */}
           <div style={{
             background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.06)",
             borderRadius: 16, padding: "60px 80px",
@@ -65,12 +96,7 @@ export default function PreviewPage({ params }: { params: { id: string } }) {
           }}>
             <Preview />
           </div>
-
-          {/* Description */}
-          <div style={{
-            marginTop: 36, textAlign: "center", maxWidth: 480,
-            fontSize: 13, color: "rgba(255,255,255,0.3)", lineHeight: 1.75,
-          }}>
+          <div style={{ marginTop: 36, textAlign: "center", maxWidth: 480, fontSize: 13, color: "rgba(255,255,255,0.3)", lineHeight: 1.75 }}>
             {el.desc}
           </div>
         </div>
