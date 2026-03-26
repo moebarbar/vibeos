@@ -193,6 +193,111 @@ export default function GlassButton({ children = "Learn More" }: { children?: Re
         React.createElement("button", { style: { backdropFilter: "blur(10px)", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.28)", borderRadius: 10, color: "white", padding: "10px 22px", fontSize: 13, cursor: "pointer" } }, "Learn More")
       ),
     },
+    {
+      id: "btn-fey",
+      name: "Fey Button",
+      vibe: "Dark & Minimal",
+      difficulty: "Simple",
+      desc: "A refined, theme-aware button with radial gradient highlight and soft shadows — inspired by Fey's design language.",
+      prompt: `Create a theme-aware React button component called FeyButton. Uses next-themes useTheme hook to adapt. Dark mode: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.12), rgba(255,255,255,0.04), transparent) over #1a1a1a background, white/88% text, border rgba(255,255,255,0.1), shadow "0 1px 2px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)". Light mode: same structure but inverted. Includes a small SVG lock icon that adapts color. Hover: scale(1.02), active: scale(0.98). Border-radius 10px, padding "10px 20px", font-weight 600, font-size 14px. Smooth transitions. Export as FeyButton.`,
+      code: `"use client";
+import { useTheme } from "next-themes";
+
+export function FeyButton({ children = "Get Started", onClick }: { children?: React.ReactNode; onClick?: () => void }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: "inline-flex", alignItems: "center", gap: 8,
+        padding: "10px 20px", borderRadius: 10,
+        fontSize: 14, fontWeight: 600, cursor: "pointer",
+        fontFamily: "inherit", transition: "all 0.2s",
+        background: isDark
+          ? "radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 60%, transparent 100%), #1a1a1a"
+          : "radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.02) 60%, transparent 100%), #f5f5f5",
+        color: isDark ? "rgba(255,255,255,0.88)" : "rgba(0,0,0,0.82)",
+        border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
+        boxShadow: isDark
+          ? "0 1px 2px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)"
+          : "0 1px 2px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)",
+      }}
+    >
+      <svg viewBox="0 0 16 16" style={{ width: 14, height: 14 }} fill="none"
+        stroke={isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)"}
+        strokeWidth="1.5" strokeLinecap="round">
+        <rect x="2" y="5" width="12" height="8" rx="1.5" />
+        <path d="M5 5V3.5a3 3 0 016 0V5" />
+      </svg>
+      {children}
+    </button>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { padding: "28px 24px", display: "flex", alignItems: "center", justifyContent: "center" } },
+        React.createElement("button", {
+          style: {
+            display: "inline-flex", alignItems: "center", gap: 8,
+            padding: "10px 20px", borderRadius: 10,
+            fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+            background: "radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 60%, transparent 100%), #1a1a1a",
+            color: "rgba(255,255,255,0.88)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)",
+          }
+        },
+          React.createElement("svg", { viewBox: "0 0 16 16", style: { width: 13, height: 13 }, fill: "none", stroke: "rgba(255,255,255,0.6)", strokeWidth: "1.5", strokeLinecap: "round" },
+            React.createElement("rect", { x: "2", y: "5", width: "12", height: "8", rx: "1.5" }),
+            React.createElement("path", { d: "M5 5V3.5a3 3 0 016 0V5" })
+          ),
+          "Get Started"
+        )
+      ),
+    },
+    {
+      id: "btn-handwritten",
+      name: "Handwritten Title",
+      vibe: "Soft & Pastel",
+      difficulty: "Medium",
+      desc: "An animated SVG oval draws itself around your title text — pure motion poetry powered by framer-motion.",
+      prompt: `Create a React component called HandWrittenTitle using framer-motion. Center a title string inside a div. Behind it, render a motion.svg with an oval/ellipse path using motion.path. Animate pathLength from 0 to 1 with duration 1.2s, easeInOut, delay 0.5s. Animate path opacity 0→1 simultaneously. The SVG viewBox="0 0 300 80", path draws an irregular oval: "M 20 40 C 40 10, 260 10, 280 40 C 300 70, 260 70, 150 72 C 40 74, 0 70, 20 40". Stroke: #00FFB2 (or any accent), strokeWidth 2, strokeLinecap round, fill none. Title text animates in with opacity/y translate. Position SVG absolute inset-0. Export HandWrittenTitle.`,
+      code: `"use client";
+import { motion } from "framer-motion";
+
+export function HandWrittenTitle({ title = "Hello World" }: { title?: string }) {
+  return (
+    <div style={{ position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+      <motion.svg
+        viewBox="0 0 300 80" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+        fill="none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+      >
+        <motion.path
+          d="M 20 40 C 40 10, 260 10, 280 40 C 300 70, 260 70, 150 72 C 40 74, 0 70, 20 40"
+          stroke="#00FFB2" strokeWidth="2" strokeLinecap="round" fill="none"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.2, ease: "easeInOut", delay: 0.5 }}
+        />
+      </motion.svg>
+      <motion.h1
+        style={{ position: "relative", zIndex: 10, fontSize: 40, fontWeight: 800, padding: "16px 32px", margin: 0, letterSpacing: "-0.03em" }}
+        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+      >
+        {title}
+      </motion.h1>
+    </div>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0c" } },
+        React.createElement("div", { style: { position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center" } },
+          React.createElement("svg", { viewBox: "0 0 220 60", style: { position: "absolute", inset: 0, width: "100%", height: "100%" }, fill: "none" },
+            React.createElement("path", { d: "M 15 30 C 30 8, 190 8, 205 30 C 220 52, 190 52, 110 54 C 30 56, 0 52, 15 30", stroke: "#00FFB2", strokeWidth: "1.5", strokeLinecap: "round", fill: "none" })
+          ),
+          React.createElement("span", { style: { position: "relative", zIndex: 1, fontSize: 18, fontWeight: 800, color: "#fff", padding: "12px 24px", letterSpacing: "-0.02em" } }, "Hello World")
+        )
+      ),
+    },
   ],
 
   cards: [
@@ -441,6 +546,139 @@ export default function PastelCard({
         React.createElement("div", { style: { width: 40, height: 40, background: "#f3e8ff", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, marginBottom: 12 } }, "✨"),
         React.createElement("div", { style: { fontSize: 14, fontWeight: 600, color: "#1a1a2e", marginBottom: 6 } }, "AI Powered"),
         React.createElement("div", { style: { fontSize: 11, color: "#6b7280", lineHeight: 1.6 } }, "Every feature backed by Claude for insane results.")
+      ),
+    },
+    {
+      id: "card-x-tweet",
+      name: "X / Tweet Card",
+      vibe: "Dark & Minimal",
+      difficulty: "Simple",
+      desc: "A glassmorphic Twitter/X-style card with gradient border, verified badge, and stat row — perfect for social proof sections.",
+      prompt: `Create a React component called XCard. Dark glassmorphic card: outer wrapper with linear-gradient border (rgba(255,255,255,0.15) to rgba(255,255,255,0.03)) via padding:1px + inner div with background linear-gradient(135deg, #16181c, #0a0a0b), border-radius 16px, padding 20px. Header: circular avatar with gradient, author name + verified checkmark SVG (fill #1d9bf0), handle in muted white. Content: array of text lines, white/90%. Stats row: replies, retweets, likes with emoji icons and hover color transition. X logo SVG top-right. Props: author, handle, content (string[]), verified, likes, retweets, replies. Export XCard.`,
+      code: `interface XCardProps {
+  author?: string; handle?: string; content?: string[];
+  verified?: boolean; likes?: number; retweets?: number; replies?: number;
+}
+
+export function XCard({ author = "Mohammed Barbar", handle = "@mohammedbarbar", content = ["Just shipped something insane 🚀", "The future is being built right now."], verified = true, likes = 2400, retweets = 847, replies = 128 }: XCardProps) {
+  return (
+    <div style={{ position: "relative", maxWidth: 360, borderRadius: 18, padding: "1px", background: "linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03))" }}>
+      <div style={{ borderRadius: 17, padding: 20, background: "linear-gradient(135deg, #16181c, #0a0a0b)" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#00FFB2,#38BDF8)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#000" }}>{author[0]}</div>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <span style={{ color: "#fff", fontSize: 14, fontWeight: 600 }}>{author}</span>
+                {verified && <svg viewBox="0 0 24 24" style={{ width: 16, height: 16, fill: "#1d9bf0" }}><path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91-1.01-1-2.52-1.27-3.91-.81-.66-1.31-1.91-2.19-3.34-2.19-1.43 0-2.68.88-3.34 2.19-1.39-.46-2.9-.2-3.91.81-1 1.01-1.27 2.52-.81 3.91-1.31.67-2.19 1.91-2.19 3.34 0 1.43.88 2.67 2.19 3.34-.46 1.39-.2 2.9.81 3.91 1.01 1 2.52 1.27 3.91.81.66 1.31 1.91 2.19 3.34 2.19 1.43 0 2.67-.88 3.34-2.19 1.39.46 2.9.2 3.91-.81 1-1.01 1.27-2.52.81-3.91 1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z" /></svg>}
+              </div>
+              <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>{handle}</div>
+            </div>
+          </div>
+          <svg viewBox="0 0 24 24" style={{ width: 18, height: 18, fill: "rgba(255,255,255,0.5)" }}><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+        </div>
+        <div style={{ marginBottom: 14 }}>
+          {content.map((line, i) => <p key={i} style={{ color: "rgba(255,255,255,0.88)", fontSize: 14, lineHeight: 1.6, margin: "0 0 4px" }}>{line}</p>)}
+        </div>
+        <div style={{ display: "flex", gap: 20, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+          {[["💬", replies], ["🔁", retweets], ["♥", likes]].map(([icon, val]) => (
+            <button key={String(icon)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: "rgba(255,255,255,0.4)", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>
+              <span>{icon}</span><span>{Number(val).toLocaleString()}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { padding: "1px", borderRadius: 16, background: "linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03))", maxWidth: 220 } },
+        React.createElement("div", { style: { borderRadius: 15, padding: 14, background: "linear-gradient(135deg, #16181c, #0a0a0b)" } },
+          React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 10 } },
+            React.createElement("div", { style: { width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#00FFB2,#38BDF8)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#000" } }, "M"),
+            React.createElement("div", null,
+              React.createElement("div", { style: { color: "#fff", fontSize: 11, fontWeight: 600 } }, "Mohammed"),
+              React.createElement("div", { style: { color: "rgba(255,255,255,0.4)", fontSize: 10 } }, "@mohammedbarbar")
+            )
+          ),
+          React.createElement("p", { style: { color: "rgba(255,255,255,0.85)", fontSize: 11, lineHeight: 1.5, margin: "0 0 8px" } }, "Just shipped something insane 🚀"),
+          React.createElement("div", { style: { display: "flex", gap: 12, fontSize: 10, color: "rgba(255,255,255,0.35)" } },
+            React.createElement("span", null, "💬 128"),
+            React.createElement("span", null, "🔁 847"),
+            React.createElement("span", null, "♥ 2.4k")
+          )
+        )
+      ),
+    },
+    {
+      id: "card-modal-pricing",
+      name: "Modal Pricing",
+      vibe: "Dark & Minimal",
+      difficulty: "Medium",
+      desc: "A dialog-based plan selector with three tiers, feature lists, and a gradient CTA — no external deps, pure React state.",
+      prompt: `Create a React component called ModalPricing. A trigger button opens a full-screen overlay (fixed, rgba(0,0,0,0.8) backdrop, blur 12px). Modal content: #0c0c0e background, border rgba(255,255,255,0.08), border-radius 20px, max-width 560px. Header: monospace label "PRICING", large title "Choose your plan". Three plan cards in a 3-col grid (Free $0, Pro $19, Founder $49) — each selectable with highlight border on selection. Below: feature list for selected plan. Full-width gradient CTA button. Close on overlay click. No external libraries, pure useState. Export ModalPricing.`,
+      code: `"use client";
+import { useState } from "react";
+
+const PLANS = [
+  { id: "free", name: "Free", price: "$0", desc: "Side projects", features: ["5 projects", "Basic elements", "Community support"], color: "rgba(255,255,255,0.1)" },
+  { id: "pro", name: "Pro", price: "$19", desc: "Serious builders", features: ["Unlimited projects", "All elements", "AI features", "Priority support"], color: "#00FFB2", highlight: true },
+  { id: "founder", name: "Founder", price: "$49", desc: "Scale without limits", features: ["Everything in Pro", "Team access", "Custom elements", "White-label"], color: "#38BDF8" },
+];
+
+export function ModalPricing() {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState("pro");
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)} style={{ background: "linear-gradient(135deg,#00FFB2,#38BDF8)", color: "#000", border: "none", borderRadius: 10, padding: "12px 24px", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>View Pricing</button>
+      {open && (
+        <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(12px)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: "#0c0c0e", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, padding: 32, width: "100%", maxWidth: 560, boxShadow: "0 40px 80px rgba(0,0,0,0.8)" }}>
+            <div style={{ textAlign: "center", marginBottom: 28 }}>
+              <div style={{ fontSize: 10, color: "#00FFB2", letterSpacing: "0.2em", fontWeight: 600, marginBottom: 8, fontFamily: "monospace" }}>PRICING</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#fff", letterSpacing: "-0.03em" }}>Choose your plan</div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 24 }}>
+              {PLANS.map(plan => (
+                <button key={plan.id} onClick={() => setSelected(plan.id)} style={{ background: selected === plan.id ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.02)", border: selected === plan.id ? \`1px solid \${plan.color}\` : "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "16px 12px", cursor: "pointer", textAlign: "left", transition: "all 0.2s", fontFamily: "inherit" }}>
+                  <div style={{ fontSize: 11, color: (plan as any).highlight ? "#00FFB2" : "rgba(255,255,255,0.5)", fontWeight: 600, marginBottom: 6 }}>{plan.name}</div>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4 }}>{plan.price}<span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 400 }}>/mo</span></div>
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>{plan.desc}</div>
+                </button>
+              ))}
+            </div>
+            <div style={{ marginBottom: 24 }}>
+              {PLANS.find(p => p.id === selected)?.features.map(f => (
+                <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: "1px solid rgba(255,255,255,0.04)", fontSize: 13, color: "rgba(255,255,255,0.65)" }}><span style={{ color: "#00FFB2" }}>✓</span> {f}</div>
+              ))}
+            </div>
+            <button style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#00FFB2,#38BDF8)", border: "none", borderRadius: 12, fontSize: 14, fontWeight: 700, color: "#000", cursor: "pointer", fontFamily: "inherit" }}>
+              Get Started with {PLANS.find(p => p.id === selected)?.name}
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "center" } },
+        React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10, width: 200 } },
+          React.createElement("div", { style: { display: "flex", gap: 6 } },
+            ...["Free", "Pro", "Founder"].map((name, i) =>
+              React.createElement("div", {
+                key: name,
+                style: { flex: 1, background: i === 1 ? "rgba(0,255,178,0.08)" : "rgba(255,255,255,0.03)", border: i === 1 ? "1px solid #00FFB2" : "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "8px 6px", textAlign: "center" }
+              },
+                React.createElement("div", { style: { fontSize: 9, color: i === 1 ? "#00FFB2" : "rgba(255,255,255,0.45)", fontWeight: 600, marginBottom: 2 } }, name),
+                React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: "#fff" } }, ["$0", "$19", "$49"][i])
+              )
+            )
+          ),
+          React.createElement("button", {
+            style: { width: "100%", padding: "8px", background: "linear-gradient(135deg,#00FFB2,#38BDF8)", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, color: "#000", cursor: "pointer" }
+          }, "Get Started")
+        )
       ),
     },
   ],
@@ -1174,6 +1412,71 @@ export default function SplitSignup({
           React.createElement("div", { style: { background: "white", border: "1px solid #e5e7eb", borderRadius: 5, padding: "3px 7px", fontSize: 7.5, color: "#bbb", marginBottom: 5 } }, "you@example.com"),
           React.createElement("div", { style: { background: "white", border: "1px solid #e5e7eb", borderRadius: 5, padding: "3px 7px", fontSize: 7.5, color: "#bbb", marginBottom: 7 } }, "••••••••"),
           React.createElement("div", { style: { background: "#f97316", borderRadius: 5, padding: "3px 7px", textAlign: "center" as const, fontSize: 7.5, color: "#fff", fontWeight: 600 } }, "Create Account")
+        )
+      ),
+    },
+    {
+      id: "form-action-search",
+      name: "Action Search Bar",
+      vibe: "Dark & Minimal",
+      difficulty: "Medium",
+      desc: "An animated command palette search bar with real-time filtering, framer-motion dropdown, and keyboard shortcut badge.",
+      prompt: `Create a React component called ActionSearchBar using framer-motion. An input bar with search icon prefix and ⌘K badge suffix. On focus: box-shadow ring (rgba(0,255,178,0.12)), border brightens. Dropdown (AnimatePresence, motion.div) appears below with filtered results. Each result: icon box, label, category tag. Results animate in with stagger (0.03s delay per item). onMouseEnter/Leave for hover states. "✕" clear button appears when query is set. Props: placeholder, results (array of {id, label, category, icon}). Export ActionSearchBar.`,
+      code: `"use client";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const DEFAULT_RESULTS = [
+  { id: "1", label: "Create new project", category: "Actions", icon: "+" },
+  { id: "2", label: "Open dashboard", category: "Navigate", icon: "⬡" },
+  { id: "3", label: "View analytics", category: "Navigate", icon: "◉" },
+  { id: "4", label: "Invite teammate", category: "Actions", icon: "◎" },
+  { id: "5", label: "Element Forge", category: "Tools", icon: "◈" },
+];
+
+export function ActionSearchBar({ placeholder = "Search actions...", results = DEFAULT_RESULTS }) {
+  const [query, setQuery] = useState("");
+  const [focused, setFocused] = useState(false);
+
+  const filtered = query ? results.filter(r => r.label.toLowerCase().includes(query.toLowerCase())) : results;
+
+  return (
+    <div style={{ position: "relative", width: "100%", maxWidth: 360 }}>
+      <div style={{ position: "relative", display: "flex", alignItems: "center", background: "rgba(255,255,255,0.04)", border: focused ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(255,255,255,0.08)", borderRadius: 12, transition: "all 0.2s", boxShadow: focused ? "0 0 0 3px rgba(0,255,178,0.12)" : "none" }}>
+        <span style={{ paddingLeft: 14, color: "rgba(255,255,255,0.3)", fontSize: 14 }}>⌕</span>
+        <input value={query} onChange={e => setQuery(e.target.value)} onFocus={() => setFocused(true)} onBlur={() => setTimeout(() => setFocused(false), 150)} placeholder={placeholder} style={{ flex: 1, background: "transparent", border: "none", outline: "none", padding: "10px 14px", fontSize: 13, color: "rgba(255,255,255,0.85)", fontFamily: "inherit" }} />
+        {query && <button onClick={() => setQuery("")} style={{ paddingRight: 12, color: "rgba(255,255,255,0.3)", background: "none", border: "none", cursor: "pointer", fontSize: 14 }}>✕</button>}
+        <div style={{ paddingRight: 12, color: "rgba(255,255,255,0.2)", fontSize: 10, fontFamily: "monospace" }}>⌘K</div>
+      </div>
+      <AnimatePresence>
+        {focused && filtered.length > 0 && (
+          <motion.div initial={{ opacity: 0, y: -6, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.98 }} transition={{ duration: 0.15 }} style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, right: 0, background: "#111113", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden", zIndex: 50, boxShadow: "0 20px 40px rgba(0,0,0,0.6)" }}>
+            {filtered.map((r, i) => (
+              <motion.button key={r.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "9px 14px", background: "transparent", border: "none", borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}>
+                <span style={{ width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.06)", borderRadius: 6, fontSize: 11, color: "rgba(255,255,255,0.6)" }}>{r.icon}</span>
+                <span style={{ flex: 1, fontSize: 13, color: "rgba(255,255,255,0.8)" }}>{r.label}</span>
+                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.25)", fontFamily: "monospace" }}>{r.category}</span>
+              </motion.button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}`,
+      preview: () => React.createElement("div", { style: { padding: "20px 24px", display: "flex", flexDirection: "column" as const, gap: 6 } },
+        React.createElement("div", { style: { display: "flex", alignItems: "center", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10, padding: "8px 12px", boxShadow: "0 0 0 3px rgba(0,255,178,0.1)" } },
+          React.createElement("span", { style: { color: "rgba(255,255,255,0.3)", fontSize: 12, marginRight: 6 } }, "⌕"),
+          React.createElement("span", { style: { flex: 1, fontSize: 11, color: "rgba(255,255,255,0.35)" } }, "Search actions..."),
+          React.createElement("span", { style: { fontSize: 9, color: "rgba(255,255,255,0.2)", fontFamily: "monospace" } }, "⌘K")
+        ),
+        React.createElement("div", { style: { background: "#111113", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, overflow: "hidden" } },
+          ...["Create new project", "Open dashboard", "Element Forge"].map((label, i) =>
+            React.createElement("div", { key: label, style: { display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.04)" : "none", fontSize: 10, color: "rgba(255,255,255,0.7)" } },
+              React.createElement("span", { style: { width: 16, height: 16, background: "rgba(255,255,255,0.06)", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8 } }, ["+", "⬡", "◈"][i]),
+              label
+            )
+          )
         )
       ),
     },
