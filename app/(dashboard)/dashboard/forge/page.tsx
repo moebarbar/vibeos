@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { ELEMENTS, CATEGORIES, VIBES, type Element } from "@/lib/elements";
 import { TEMPLATES, TEMPLATE_CATEGORIES, type Template } from "@/lib/templates";
 
@@ -25,8 +26,16 @@ const DIFF_BADGE: Record<string, { bg: string; color: string }> = {
 };
 
 export default function ForgePage() {
-  // Section
-  const [section, setSection] = useState<"elements" | "templates">("elements");
+  return <Suspense fallback={null}><ForgeInner /></Suspense>;
+}
+
+function ForgeInner() {
+  const searchParams = useSearchParams();
+
+  // Section — can be set via ?section=templates URL param
+  const [section, setSection] = useState<"elements" | "templates">(
+    searchParams.get("section") === "templates" ? "templates" : "elements"
+  );
 
   // Filters
   const [elCat,   setElCat]   = useState("buttons");
@@ -158,6 +167,7 @@ export default function ForgePage() {
   const selectTmpl = (t: Template) => {
     setSelectedTmpl(prev => prev?.id === t.id ? null : t);
     setSelectedEl(null);
+    setTab("preview");
     const init: Record<string, string> = {};
     t.vars.forEach(v => { init[v.key] = v.default; });
     setTmplVars(init);
