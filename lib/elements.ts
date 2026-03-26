@@ -25,9 +25,9 @@ export const CATEGORIES = [
 ];
 
 export const ELEMENTS: Record<string, Element[]> = {
-  // New Creative Components
-  ...NEW_ELEMENTS,
   buttons: [
+    // New Creative Buttons
+    ...NEW_ELEMENTS.buttons,
     {
       id: "btn-neon",
       name: "Neon Glow CTA",
@@ -304,6 +304,8 @@ export function HandWrittenTitle({ title = "Hello World" }: { title?: string }) 
   ],
 
   cards: [
+    // New Creative Cards
+    ...NEW_ELEMENTS.cards,
     {
       id: "card-pricing-dark",
       name: "Dark Pricing Card",
@@ -687,6 +689,8 @@ export function ModalPricing() {
   ],
 
   hero: [
+    // New Creative Heroes
+    ...NEW_ELEMENTS.hero,
     {
       id: "hero-dark",
       name: "Dark SaaS Hero",
@@ -1044,6 +1048,8 @@ export default function MinimalNav({ logoText = "forge.", initials = "MO" }: { l
   ],
 
   forms: [
+    // New Creative Forms
+    ...NEW_ELEMENTS.forms,
     {
       id: "form-auth-dark",
       name: "Dark Auth Form",
