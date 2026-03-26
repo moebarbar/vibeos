@@ -1,5 +1,6 @@
 import React from "react";
 import { NEW_ELEMENTS } from "./elements-new";
+import { PREMIUM_ELEMENTS } from "./elements-premium";
 
 export interface Element {
   id: string;
@@ -26,8 +27,44 @@ export const CATEGORIES = [
 
 export const ELEMENTS: Record<string, Element[]> = {
   buttons: [
+
+    {
+      id: "btn-split-zone",
+      name: "Magnetic Split Button",
+      vibe: "Dark & Minimal",
+      difficulty: "Advanced",
+      desc: "Clean white action button with a separated icon frame that magnetically detaches and reveals a soft shadow on hover.",
+      prompt: `Create a React button component called SplitZoneButton. Structure: An outer button with flex, background white, border-radius 12px, padding 6px 6px 6px 20px. Text: "Get Started" #111 600 weight. Icon container: background #f0f0f0, rounded 8px, 36x36px with ChevronRight SVG. Hover: Icon container transforms translateX(4px) + shadow 0 4px 12px rgba(0,0,0,0.15). Smooth transition.`,
+      code: `"use client";\nimport { useState } from "react";\n\nexport function SplitZoneButton({ children = "Get Started", onClick }: { children?: React.ReactNode; onClick?: () => void }) {\n  const [hovered, setHovered] = useState(false);\n  const [pressed, setPressed] = useState(false);\n\n  return (\n    <button\n      onClick={onClick}\n      onMouseEnter={() => setHovered(true)}\n      onMouseLeave={() => { setHovered(false); setPressed(false); }}\n      onMouseDown={() => setPressed(true)}\n      onMouseUp={() => setPressed(false)}\n      style={{\n        display: "inline-flex", alignItems: "center", gap: 16,\n        background: "#ffffff", border: "none",\n        borderRadius: 12, padding: "6px 6px 6px 20px",\n        cursor: "pointer", fontFamily: "inherit",\n        transform: pressed ? "scale(0.98)" : "scale(1)",\n        transition: "transform 0.2s ease",\n        outline: "none",\n      }}\n    >\n      <span style={{ \n        color: "#111", fontSize: 15, fontWeight: 600,\n        transition: "text-shadow 0.3s ease",\n        textShadow: hovered ? "0 2px 4px rgba(0,0,0,0.1)" : "none"\n      }}>\n        {children}\n      </span>\n      <div style={{\n        background: "#e5e5e5", borderRadius: 8,\n        width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center",\n        transform: hovered ? "translateX(4px)" : "translateX(0)",\n        boxShadow: hovered ? "0 4px 12px rgba(0,0,0,0.15)" : "none",\n        transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",\n      }}>\n        <svg viewBox="0 0 24 24" width="16" height="16" stroke="#111" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">\n          <polyline points="9 18 15 12 9 6" />\n        </svg>\n      </div>\n    </button>\n  );\n}`,
+      preview: () => React.createElement("div", { style: { padding: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0c", borderRadius: 12 } },
+        React.createElement("button", { style: { display: "inline-flex", alignItems: "center", gap: 12, background: "#ffffff", border: "none", borderRadius: 10, padding: "5px 5px 5px 16px", cursor: "pointer" } },
+          React.createElement("span", { style: { color: "#111", fontSize: 13, fontWeight: 600 } }, "Get Started"),
+          React.createElement("div", { style: { background: "#e5e5e5", borderRadius: 7, width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" } },
+            React.createElement("svg", { viewBox: "0 0 24 24", width: "14", height: "14", stroke: "#111", strokeWidth: "2", fill: "none" }, React.createElement("polyline", { points: "9 18 15 12 9 6" }))
+          )
+        )
+      )
+    },
+    {
+      id: "btn-neural-glow",
+      name: "Neural Glow Connect",
+      vibe: "Neon & Cyber",
+      difficulty: "Advanced",
+      desc: "Premium dark pill button with an animated conic gradient border and a sweeping metallic shimmer across the text.",
+      prompt: `Create a React button NeuralConnectButton. Dark mode on #050510. Outer wrapper: radius 50px, padded 1px, animated background conic-gradient(from 0deg...). Inner button: bg #060608, radius 49px, padding 14px 42px. Text "Connect": linear-gradient(110deg,#999,#fff,#999) webkit-background-clip text. Hover: outer wrapper gets shadow + conic gradient starts rotating.`,
+      code: `"use client";\nimport { useState, useEffect } from "react";\n\nexport function NeuralConnectButton({ children = "Connect" }: { children?: React.ReactNode }) {\n  const [hovered, setHovered] = useState(false);\n  const [pressed, setPressed] = useState(false);\n  const [angle, setAngle] = useState(0);\n\n  useEffect(() => {\n    let animationFrameId: number;\n    const animate = () => {\n      setAngle((prev) => (prev + 2) % 360);\n      animationFrameId = requestAnimationFrame(animate);\n    };\n    if (hovered) animate();\n    return () => cancelAnimationFrame(animationFrameId);\n  }, [hovered]);\n\n  return (\n    <div style={{\n      display: "inline-block", borderRadius: 50, padding: 1,\n      background: hovered \n        ? \`conic-gradient(from \${angle}deg, rgba(255,255,255,0.05) 0%, rgba(150,150,255,0.6) 20%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.05) 100%)\`\n        : "rgba(255,255,255,0.1)",\n      boxShadow: hovered ? "0 0 30px rgba(100,100,255,0.15)" : "0 0 0 rgba(0,0,0,0)",\n      transition: "box-shadow 0.3s ease",\n    }}>\n      <button\n        onMouseEnter={() => setHovered(true)}\n        onMouseLeave={() => { setHovered(false); setPressed(false); }}\n        onMouseDown={() => setPressed(true)}\n        onMouseUp={() => setPressed(false)}\n        style={{\n          display: "block", background: "#060608", border: "none",\n          borderRadius: 49, padding: "14px 42px",\n          cursor: "pointer", fontFamily: "inherit",\n          transform: pressed ? "scale(0.97)" : hovered ? "scale(1.01)" : "scale(1)",\n          transition: "transform 0.2s ease",\n        }}\n      >\n        <span style={{\n          fontSize: 18, fontWeight: 600, letterSpacing: "0.02em",\n          background: "linear-gradient(110deg, #888 0%, #fff 40%, #fff 60%, #888 100%)",\n          backgroundSize: "200% auto",\n          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",\n          backgroundPosition: hovered ? "100% center" : "0% center",\n          transition: "background-position 1.5s ease",\n        }}>\n          {children}\n        </span>\n      </button>\n    </div>\n  );\n}`,
+      preview: () => React.createElement("div", { style: { padding: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "#050510", borderRadius: 12 } },
+        React.createElement("div", { style: { display: "inline-block", borderRadius: 50, padding: 1, background: "linear-gradient(45deg, rgba(255,255,255,0.05), rgba(150,150,255,0.4), rgba(255,255,255,0.05))", boxShadow: "0 0 15px rgba(100,100,255,0.1)" } },
+          React.createElement("button", { style: { background: "#060608", border: "none", borderRadius: 49, padding: "10px 32px", cursor: "pointer" } },
+            React.createElement("span", { style: { fontSize: 14, fontWeight: 600, background: "linear-gradient(110deg, #aaa, #fff, #aaa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" } }, "Connect")
+          )
+        )
+      )
+    },
+
     // New Creative Buttons
     ...NEW_ELEMENTS.buttons,
+    ...PREMIUM_ELEMENTS.buttons,
     {
       id: "btn-neon",
       name: "Neon Glow CTA",
@@ -304,8 +341,33 @@ export function HandWrittenTitle({ title = "Hello World" }: { title?: string }) 
   ],
 
   cards: [
+
+    {
+      id: "card-glass-state",
+      name: "Glassmorphic Sub Card",
+      vibe: "Glassmorphism",
+      difficulty: "Advanced",
+      desc: "A stunning white glassmorphic card with a 3D perspective tilt on hover, featuring profile info, description, and an interactive colored CTA.",
+      prompt: `Create a React GlassStateCard. Crisp white card (#fff), border-radius 24px, padding 32px, box-shadow "0 24px 48px rgba(0,0,0,0.08)". 3D perspective tilt effect on mousemove. Inside: Top "New" badge (light blue). Flex row: purple 44x44 avatar box (with smiley SVG) and bold text "Sigma Nuts". h2 "This is supposed to be a cool title". Muted description text. Full-width bright indigo/purple button (#5a5ce6) "Subscribe".`,
+      code: `"use client";\nimport { useState, useRef } from "react";\n\nexport function GlassStateCard() {\n  const cardRef = useRef<HTMLDivElement>(null);\n  const [rotate, setRotate] = useState({ x: 0, y: 0 });\n  const [isHovered, setIsHovered] = useState(false);\n\n  const handleMouseMove = (e: React.MouseEvent) => {\n    if (!cardRef.current) return;\n    const rect = cardRef.current.getBoundingClientRect();\n    const x = e.clientX - rect.left;\n    const y = e.clientY - rect.top;\n    const centerX = rect.width / 2;\n    const centerY = rect.height / 2;\n    \n    const rotateX = ((y - centerY) / centerY) * -5;\n    const rotateY = ((x - centerX) / centerX) * 5;\n    \n    setRotate({ x: rotateX, y: rotateY });\n  };\n\n  return (\n    <div style={{ perspective: "1000px", display: "inline-block", padding: 20, fontFamily: "inherit" }}>\n      <div\n        ref={cardRef}\n        onMouseEnter={() => setIsHovered(true)}\n        onMouseLeave={() => { setIsHovered(false); setRotate({ x: 0, y: 0 }); }}\n        onMouseMove={handleMouseMove}\n        style={{\n          background: "#ffffff",\n          borderRadius: 20, padding: 32, maxWidth: 380,\n          boxShadow: isHovered ? "0 30px 60px rgba(0,0,20,0.12)" : "0 20px 40px rgba(0,0,20,0.06)",\n          transform: isHovered ? \`rotateX(\${rotate.x}deg) rotateY(\${rotate.y}deg) translateY(-5px)\` : "rotateX(0deg) rotateY(0deg) translateY(0px)",\n          transition: isHovered ? "box-shadow 0.2s ease" : "all 0.4s ease",\n          transformStyle: "preserve-3d",\n        }}\n      >\n        <div style={{ display: "inline-block", background: "#e8efff", color: "#3b5bdb", fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 20, marginBottom: 20 }}>\n          New\n        </div>\n        \n        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>\n          <div style={{ width: 44, height: 44, background: "#5a5ce6", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>\n            <svg viewBox="0 0 24 24" width="24" height="24" stroke="#fff" strokeWidth="2" fill="none"><circle cx="12" cy="12" r="10"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="15" x2="16" y2="15"/></svg>\n          </div>\n          <span style={{ fontSize: 18, fontWeight: 800, color: "#111", letterSpacing: "-0.02em" }}>Sigma Nuts</span>\n        </div>\n        \n        <h2 style={{ fontSize: 26, fontWeight: 800, color: "#111", margin: "0 0 16px 0", letterSpacing: "-0.03em", lineHeight: 1.2 }}>\n          This is supposed to be a cool title\n        </h2>\n        \n        <p style={{ fontSize: 15, color: "#666", lineHeight: 1.6, margin: "0 0 28px 0" }}>\n          Your description goes here but idk what to write so im gonna continue with this to just take up some of the space on here\n        </p>\n        \n        <button style={{\n          width: "100%", background: "#5a5ce6", color: "#fff", border: "none",\n          borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 600,\n          cursor: "pointer", transition: "all 0.2s ease", fontFamily: "inherit",\n          boxShadow: isHovered ? "0 8px 20px rgba(90,92,230,0.4)" : "0 4px 12px rgba(90,92,230,0.3)",\n        }}>\n          Subscribe\n        </button>\n      </div>\n    </div>\n  );\n}`,
+      preview: () => React.createElement("div", { style: { padding: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "#f5f5f7", borderRadius: 12 } },
+        React.createElement("div", { style: { background: "#fff", borderRadius: 14, padding: 20, boxShadow: "0 12px 24px rgba(0,0,0,0.06)", maxWidth: 220 } },
+          React.createElement("div", { style: { display: "inline-block", background: "#e8efff", color: "#3b5bdb", fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 10, marginBottom: 12 } }, "New"),
+          React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 } },
+            React.createElement("div", { style: { width: 28, height: 28, background: "#5a5ce6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
+              React.createElement("svg", { viewBox: "0 0 24 24", width: "16", height: "16", stroke: "#fff", strokeWidth: "2", fill: "none" }, React.createElement("circle", { cx: "12", cy: "12", r: "10" }))
+            ),
+            React.createElement("span", { style: { fontSize: 13, fontWeight: 800, color: "#111" } }, "Sigma Nuts")
+          ),
+          React.createElement("div", { style: { fontSize: 15, fontWeight: 800, color: "#111", lineHeight: 1.2, marginBottom: 8 } }, "Cool title"),
+          React.createElement("button", { style: { width: "100%", background: "#5a5ce6", color: "#fff", border: "none", borderRadius: 6, padding: "8px", fontSize: 11, fontWeight: 600, marginTop: 10 } }, "Subscribe")
+        )
+      )
+    },
+
     // New Creative Cards
     ...NEW_ELEMENTS.cards,
+    ...PREMIUM_ELEMENTS.cards,
     {
       id: "card-pricing-dark",
       name: "Dark Pricing Card",
@@ -689,8 +751,28 @@ export function ModalPricing() {
   ],
 
   hero: [
+
+    {
+      id: "hero-flowing-vectors",
+      name: "Vector Streams Hero",
+      vibe: "Dark & Minimal",
+      difficulty: "Advanced",
+      desc: "A massive, typography-driven hero overlaying undulating, animated SVG vector paths that simulate fluid motion.",
+      prompt: `Create a React component VectorHero. Full width/height (minHeight '100vh') with background #0a0a0c. In the background layer (z-index 0, opacity 0.4), render a responsive SVG covering the container with 5 overlapping <path> elements (stroke rgba(255,255,255,0.15), fill none) representing wavy flowing lines. Animate their strokeDashoffset using requestAnimationFrame. Over this, centered: massive h1 text "Background Paths" in white, weight 800, tight tracking. Below it: a black pill button "Discover Excellence ->".`,
+      code: `"use client";\nimport { useEffect, useState } from "react";\n\nexport function VectorHero() {\n  const [offset, setOffset] = useState(0);\n\n  useEffect(() => {\n    let animationId: number;\n    const animate = () => {\n      setOffset(prev => (prev - 1) % 1000);\n      animationId = requestAnimationFrame(animate);\n    };\n    animate();\n    return () => cancelAnimationFrame(animationId);\n  }, []);\n\n  const paths = [\n    "M-100,500 C200,300 400,700 800,400 C1200,100 1600,600 2000,300",\n    "M-100,400 C200,200 500,600 900,300 C1300,00 1700,500 2100,200",\n    "M-100,600 C250,400 350,800 950,500 C1550,200 1650,700 2200,400",\n    "M-100,550 C300,450 450,750 850,450 C1250,150 1800,650 2000,350",\n    "M-100,450 C150,250 550,650 850,350 C1150,50 1750,550 2200,250"\n  ];\n\n  return (\n    <div style={{\n      position: "relative", minHeight: "80vh", width: "100%",\n      background: "#0a0a0c", display: "flex", flexDirection: "column",\n      alignItems: "center", justifyContent: "center", overflow: "hidden",\n      fontFamily: "inherit"\n    }}>\n      {/* Background Vectors */}\n      <svg \n        viewBox="0 0 1440 800"\n        preserveAspectRatio="xMidYMid slice"\n        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.6 }}\n      >\n        {paths.map((d, i) => (\n          <path\n            key={i} d={d}\n            stroke="rgba(255,255,255,0.15)" strokeWidth={1 + (i % 2)} fill="none"\n            strokeDasharray="400 200"\n            strokeDashoffset={offset * (1 + (i * 0.2))}\n          />\n        ))}\n      </svg>\n      \n      {/* Content */}\n      <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "0 20px" }}>\n        <h1 style={{\n          fontSize: "clamp(48px, 10vw, 120px)", fontWeight: 800, margin: "0 0 40px",\n          color: "#fff", letterSpacing: "-0.04em", lineHeight: 0.9,\n          textShadow: "0 20px 40px rgba(0,0,0,0.5)"\n        }}>\n          Background<br />Paths\n        </h1>\n        \n        <button style={{\n          background: "#000", border: "1px solid rgba(255,255,255,0.1)",\n          borderRadius: 30, padding: "14px 32px", color: "#fff",\n          fontSize: 16, fontWeight: 500, cursor: "pointer",\n          boxShadow: "0 0 20px rgba(255,255,255,0.05)",\n          transition: "all 0.3s ease", fontFamily: "inherit"\n        }}\n        onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 30px rgba(255,255,255,0.15)"}\n        onMouseLeave={e => e.currentTarget.style.boxShadow = "0 0 20px rgba(255,255,255,0.05)"}\n        >\n          Discover Excellence &rarr;\n        </button>\n      </div>\n    </div>\n  );\n}`,
+      preview: () => React.createElement("div", { style: { position: "relative", padding: 24, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#0a0a0c", overflow: "hidden", minHeight: 140, borderRadius: 12 } },
+        React.createElement("svg", { viewBox: "0 0 200 100", style: { position: "absolute", inset: 0, opacity: 0.4 } },
+          React.createElement("path", { d: "M-20,60 C40,20 80,100 120,50 C160,0 180,90 220,40", stroke: "rgba(255,255,255,0.2)", fill: "none", strokeWidth: 1 }),
+          React.createElement("path", { d: "M-20,50 C50,10 90,90 140,40 C190,-10 170,80 220,30", stroke: "rgba(255,255,255,0.1)", fill: "none", strokeWidth: 1 })
+        ),
+        React.createElement("div", { style: { position: "relative", fontSize: 24, fontWeight: 800, color: "#fff", letterSpacing: "-0.05em", textAlign: "center", marginBottom: 12 } }, "Background", React.createElement("br"), "Paths"),
+        React.createElement("div", { style: { position: "relative", background: "#000", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 10, padding: "4px 10px", color: "#fff", fontSize: 8 } }, "Discover ->")
+      )
+    },
+
     // New Creative Heroes
     ...NEW_ELEMENTS.hero,
+    ...PREMIUM_ELEMENTS.hero,
     {
       id: "hero-dark",
       name: "Dark SaaS Hero",
@@ -1048,6 +1130,30 @@ export default function MinimalNav({ logoText = "forge.", initials = "MO" }: { l
   ],
 
   forms: [
+
+    {
+      id: "form-omni-command",
+      name: "Omni-Command Palette",
+      vibe: "Dark & Minimal",
+      difficulty: "Advanced",
+      desc: "A highly engineered AI command palette with glowing border states, integrated attachments, and responsive staggered quick-action pills.",
+      prompt: `Create a React component OmniCommandInput. A dark-themed AI prompt input. Main wrapper: bg #111, radius 16px, padding 12px, border 1px solid #222. On focus: border transitions to rgba(255,255,255,0.2) + soft white inner glow. Inside: transparent textarea. Bottom row: paperclip icon (left), "+ Project" dashed pill and an up-arrow button (right). Below input: row of 3 quick action pills (Clone a Screenshot, Import from Figma, Landing Page) with border 1px solid #333, color #888, border-radius 20px, hover border #fff.`,
+      code: `"use client";\nimport { useState } from "react";\n\nconst ACTIONS = [\n  { icon: "⎘", label: "Clone a Screenshot" },\n  { icon: "✧", label: "Import from Figma" },\n  { icon: "↑", label: "Upload a Project" },\n  { icon: "□", label: "Landing Page" }\n];\n\nexport function OmniCommandInput() {\n  const [focused, setFocused] = useState(false);\n  const [val, setVal] = useState("");\n\n  return (\n    <div style={{ maxWidth: 700, width: "100%", fontFamily: "inherit" }}>\n      <div style={{\n        background: "#121212",\n        borderRadius: 16,\n        padding: "16px",\n        border: focused ? "1px solid rgba(255,255,255,0.15)" : "1px solid #222",\n        boxShadow: focused ? "0 0 0 2px rgba(255,255,255,0.05), inset 0 0 20px rgba(255,255,255,0.02)" : "0 4px 12px rgba(0,0,0,0.5)",\n        transition: "all 0.3s ease",\n        marginBottom: 16\n      }}>\n        <textarea \n          value={val}\n          onChange={e => setVal(e.target.value)}\n          onFocus={() => setFocused(true)}\n          onBlur={() => setFocused(false)}\n          placeholder="Ask v0 a question..."\n          style={{\n            width: "100%", minHeight: 60, background: "transparent", border: "none",\n            color: "#fff", fontSize: 15, outline: "none", resize: "none", fontFamily: "inherit"\n          }}\n        />\n        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12 }}>\n          <button style={{ background: "none", border: "none", color: "#666", cursor: "pointer", display: "flex", alignItems: "center", padding: 4 }}>\n            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>\n          </button>\n          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>\n            <button style={{ background: "transparent", border: "1px dashed #444", borderRadius: 20, color: "#888", fontSize: 13, padding: "6px 12px", cursor: "pointer", transition: "all 0.2s" }}\n              onMouseEnter={e => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "#fff"; }}\n              onMouseLeave={e => { e.currentTarget.style.color = "#888"; e.currentTarget.style.borderColor = "#444"; }}\n            >\n              + Project\n            </button>\n            <button style={{ background: val.length > 0 ? "#fff" : "#222", color: val.length > 0 ? "#000" : "#555", border: "none", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s" }}>\n              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>\n            </button>\n          </div>\n        </div>\n      </div>\n      \n      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>\n        {ACTIONS.map((action, i) => (\n          <button key={i} style={{\n            background: "#161616", border: "1px solid #2a2a2a", borderRadius: 20,\n            padding: "8px 16px", color: "#888", fontSize: 13, display: "flex", alignItems: "center", gap: 6,\n            cursor: "pointer", transition: "all 0.2s ease"\n          }}\n          onMouseEnter={e => { e.currentTarget.style.borderColor = "#fff"; e.currentTarget.style.color = "#fff"; }}\n          onMouseLeave={e => { e.currentTarget.style.borderColor = "#2a2a2a"; e.currentTarget.style.color = "#888"; }}\n          >\n            <span style={{ fontSize: 14 }}>{action.icon}</span> {action.label}\n          </button>\n        ))}\n      </div>\n    </div>\n  );\n}`,
+      preview: () => React.createElement("div", { style: { padding: 20, display: "flex", flexDirection: "column", gap: 10, background: "#0a0a0c", borderRadius: 12 } },
+        React.createElement("div", { style: { background: "#121212", borderRadius: 12, padding: 12, border: "1px solid #222" } },
+          React.createElement("div", { style: { color: "#555", fontSize: 12, marginBottom: 20 } }, "Ask v0 a question..."),
+          React.createElement("div", { style: { display: "flex", justifyContent: "space-between" } },
+            React.createElement("div", { style: { width: 14, height: 14, border: "1px solid #444", borderRadius: "50%" } }),
+            React.createElement("div", { style: { width: 20, height: 20, background: "#222", borderRadius: 4 } })
+          )
+        ),
+        React.createElement("div", { style: { display: "flex", gap: 6, opacity: 0.6 } },
+          React.createElement("div", { style: { padding: "4px 8px", background: "#161616", border: "1px solid #2a2a2a", borderRadius: 10, fontSize: 9, color: "#888" } }, "Clone Image"),
+          React.createElement("div", { style: { padding: "4px 8px", background: "#161616", border: "1px solid #2a2a2a", borderRadius: 10, fontSize: 9, color: "#888" } }, "Figma")
+        )
+      )
+    },
+
     // New Creative Forms
     ...NEW_ELEMENTS.forms,
     {
@@ -1814,6 +1920,8 @@ export default function AnalyticsDashboard() {
   ],
 
   backgrounds: [
+    // Premium Backgrounds
+    ...PREMIUM_ELEMENTS.backgrounds,
     {
       id: "bg-neural-grid",
       name: "Neural Grid",
