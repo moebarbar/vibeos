@@ -5,12 +5,12 @@ import { TEMPLATES } from "@/lib/templates";
 // How much to zoom each category so the component looks realistic at full scale.
 // Preview functions are built for 160px thumbnails — zoom brings them to actual size.
 const CATEGORY_ZOOM: Record<string, number> = {
-  buttons:     1.5,
+  buttons:     1.8,
   cards:       2.5,
   forms:       3,
   nav:         3,
   hero:        2,
-  dashboards:  2,
+  dashboards:  1.8,
 };
 
 const TopBar = ({ name, meta }: { name: string; meta: string }) => (

@@ -62,8 +62,9 @@ function ForgeInner() {
   // Copy
   const [copied, setCopied] = useState(false);
 
-  // Full-page preview overlay
+  // Popup modal (replaces full-page overlay)
   const [fullPreview, setFullPreview] = useState(false);
+  const [popupCopied, setPopupCopied] = useState<"code" | "prompt" | null>(null);
 
   // AI Generator
   const [showGen,   setShowGen]   = useState(false);
@@ -942,69 +943,224 @@ function ForgeInner() {
       </div>
     </div>
 
-    {/* ── FULL PAGE PREVIEW OVERLAY ─────────────────────────────────────── */}
-    {fullPreview && (selectedEl || selectedTmpl) && (
-      <div style={{
-        position: "fixed", inset: 0, zIndex: 9999,
-        background: "rgba(0,0,0,0.92)",
-        display: "flex", flexDirection: "column",
-        animation: "vibe-slide-up 0.18s ease both",
-      }}>
-        {/* Overlay header */}
-        <div style={{
-          height: 52, display: "flex", alignItems: "center",
-          padding: "0 20px", borderBottom: "1px solid rgba(255,255,255,0.06)",
-          background: "rgba(0,0,0,0.6)", backdropFilter: "blur(12px)",
-          flexShrink: 0,
-        }}>
-          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginRight: 10, letterSpacing: "0.08em" }}>FULL PREVIEW</span>
-          <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.8)", flex: 1 }}>
-            {selectedEl?.name ?? selectedTmpl?.name}
-          </span>
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <span style={{ fontSize: 10, color: "rgba(255,255,255,0.25)", fontFamily: "monospace" }}>
-              {selectedEl?.vibe ?? ""}{selectedEl ? " · " : ""}{selectedEl?.difficulty ?? ""}
-            </span>
-            <button onClick={() => setFullPreview(false)} style={{
-              background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: 7, color: "rgba(255,255,255,0.5)", padding: "5px 14px",
-              fontSize: 11, cursor: "pointer", fontFamily: "inherit",
-            }}>✕ Close</button>
-          </div>
-        </div>
-        {/* Overlay content */}
-        <div style={{ flex: 1, overflow: "auto", position: "relative" }}>
-          {selectedEl && (() => {
-            const isBackground = selectedEl.category === "backgrounds";
-            if (isBackground) {
-              return (
-                <div style={{ position: "absolute", inset: 0 }}>
-                  <selectedEl.preview />
-                </div>
-              );
-            }
-            const ZOOM: Record<string, number> = { buttons: 1.5, cards: 2.5, forms: 3, nav: 3, hero: 2, dashboards: 2 };
-            const zoom = ZOOM[selectedEl.category] ?? 2;
-            const isCentered = selectedEl.category === "buttons" || selectedEl.category === "cards";
+    {/* ── POPUP MODAL ────────────────────────────────────────────────────── */}
+    {fullPreview && (selectedEl || selectedTmpl) && (() => {
+      // Navigation helpers
+      const currentIndex = selectedEl
+        ? elements.findIndex(e => e.id === selectedEl.id)
+        : templates.findIndex(t => t.id === selectedTmpl!.id);
+      const total = selectedEl ? elements.length : templates.length;
+      const hasPrev = currentIndex > 0;
+      const hasNext = currentIndex < total - 1;
+      const goNext = () => {
+        if (!hasNext) return;
+        if (selectedEl) setSelectedEl(elements[currentIndex + 1]);
+        else { const next = templates[currentIndex + 1]; selectTmpl(next); }
+      };
+      const goPrev = () => {
+        if (!hasPrev) return;
+        if (selectedEl) setSelectedEl(elements[currentIndex - 1]);
+        else { const prev = templates[currentIndex - 1]; selectTmpl(prev); }
+      };
+
+      const itemName = selectedEl?.name ?? selectedTmpl?.name ?? "";
+      const itemVibe = selectedEl?.vibe ?? selectedTmpl?.vibe ?? "";
+      const itemDifficulty = selectedEl?.difficulty ?? selectedTmpl?.difficulty ?? "";
+      const diff = DIFF_BADGE[itemDifficulty] ?? DIFF_BADGE.Simple;
+      const itemId = selectedEl?.id ?? selectedTmpl?.id ?? "";
+      const itemDesc = selectedEl?.desc ?? selectedTmpl?.desc ?? "";
+
+      // Preview rendering
+      const renderPreview = () => {
+        if (selectedEl) {
+          const POPUP_ZOOM: Record<string, number> = { buttons: 1.8, cards: 2.5, forms: 3, nav: 3, hero: 2, dashboards: 1.8 };
+          const isBackground = selectedEl.category === "backgrounds";
+          if (isBackground) {
             return (
-              <div style={{
-                minHeight: "100%",
-                ...(isCentered ? { display: "flex", alignItems: "center", justifyContent: "center" } : {}),
-              }}>
-                <div style={{ zoom, width: "100%" }}>
-                  <selectedEl.preview />
-                </div>
+              <div style={{ position: "absolute", inset: 0 }}>
+                <selectedEl.preview />
               </div>
             );
-          })()}
-          {selectedTmpl && (
-            <div style={{ width: "100%", minHeight: "100%" }}>
-              {(() => { const C = selectedTmpl.component(tmplVars); return <C />; })()}
+          }
+          const zoom = POPUP_ZOOM[selectedEl.category] ?? 2;
+          const isCentered = selectedEl.category === "buttons" || selectedEl.category === "cards";
+          return (
+            <div style={{
+              width: "100%", height: "100%", overflow: "auto", background: "#060608",
+              ...(isCentered ? { display: "flex", alignItems: "center", justifyContent: "center", minHeight: 380 } : {}),
+            }}>
+              <div style={{ zoom, width: "100%" }}>
+                <selectedEl.preview />
+              </div>
             </div>
-          )}
-        </div>
-      </div>
-    )}
+          );
+        }
+        if (selectedTmpl) {
+          const C = selectedTmpl.component(tmplVars);
+          return (
+            <div style={{ width: "100%", height: "100%", overflow: "auto", background: "#060608" }}>
+              <C />
+            </div>
+          );
+        }
+        return null;
+      };
+
+      return (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={() => setFullPreview(false)}
+            style={{
+              position: "fixed", inset: 0, zIndex: 9999,
+              background: "rgba(0,0,0,0.82)", backdropFilter: "blur(20px)",
+            }}
+          />
+          {/* Modal box */}
+          <div style={{
+            position: "fixed", top: "50%", left: "50%",
+            transform: "translate(-50%,-50%)",
+            width: "min(900px, 92vw)", maxHeight: "88vh",
+            background: "#0a0a0c", border: "1px solid rgba(255,255,255,0.09)",
+            borderRadius: 20, overflow: "hidden",
+            display: "flex", flexDirection: "column",
+            boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 40px 80px rgba(0,0,0,0.8)",
+            animation: "vibe-slide-up 0.2s ease both",
+            zIndex: 10000,
+          }}>
+            {/* Header */}
+            <div style={{
+              height: 52, display: "flex", alignItems: "center",
+              padding: "0 20px", gap: 10,
+              borderBottom: "1px solid rgba(255,255,255,0.06)",
+              background: "rgba(0,0,0,0.3)", flexShrink: 0,
+            }}>
+              {/* Left: icon + name + badges */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1, minWidth: 0 }}>
+                <div style={{
+                  width: 22, height: 22, flexShrink: 0,
+                  background: "linear-gradient(135deg, #00FFB2, #38BDF8)",
+                  borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10,
+                }}>⚡</div>
+                <span style={{
+                  fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.88)",
+                  whiteSpace: "nowrap" as const, overflow: "hidden", textOverflow: "ellipsis",
+                }}>{itemName}</span>
+                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>{itemVibe}</span>
+                <span style={{
+                  fontSize: 9, borderRadius: 4, padding: "2px 6px", flexShrink: 0,
+                  background: diff.bg, color: diff.color, border: `1px solid ${diff.border}`,
+                  fontWeight: 600,
+                }}>{itemDifficulty}</span>
+              </div>
+              {/* Center: nav */}
+              <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                <button
+                  onClick={goPrev} disabled={!hasPrev}
+                  style={{
+                    background: "none", border: "none", cursor: hasPrev ? "pointer" : "default",
+                    color: hasPrev ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.15)",
+                    fontSize: 14, padding: "2px 6px", lineHeight: 1,
+                  }}
+                >←</button>
+                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontFamily: "monospace", whiteSpace: "nowrap" as const }}>
+                  {currentIndex + 1} / {total}
+                </span>
+                <button
+                  onClick={goNext} disabled={!hasNext}
+                  style={{
+                    background: "none", border: "none", cursor: hasNext ? "pointer" : "default",
+                    color: hasNext ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.15)",
+                    fontSize: 14, padding: "2px 6px", lineHeight: 1,
+                  }}
+                >→</button>
+              </div>
+              {/* Right: actions */}
+              <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                {selectedEl && (
+                  <button onClick={() => toggleKit(selectedEl.id)} style={{
+                    background: inKit(selectedEl.id) ? "rgba(0,255,178,0.08)" : "rgba(255,255,255,0.04)",
+                    border: `1px solid ${inKit(selectedEl.id) ? "rgba(0,255,178,0.2)" : "rgba(255,255,255,0.07)"}`,
+                    borderRadius: 8, color: inKit(selectedEl.id) ? "#00FFB2" : "rgba(255,255,255,0.5)",
+                    padding: "5px 10px", fontSize: 11, cursor: "pointer", fontFamily: "inherit",
+                  }}>
+                    {inKit(selectedEl.id) ? "✓ In Kit" : "+ Kit"}
+                  </button>
+                )}
+                <button onClick={() => openInNewTab(itemId)} style={{
+                  background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+                  borderRadius: 8, color: "rgba(255,255,255,0.5)",
+                  padding: "5px 10px", fontSize: 11, cursor: "pointer", fontFamily: "inherit",
+                }}>↗ Open</button>
+                <button onClick={() => setFullPreview(false)} style={{
+                  background: "none", border: "none",
+                  color: "rgba(255,255,255,0.4)", fontSize: 18, cursor: "pointer",
+                  lineHeight: 1, padding: "2px 4px",
+                }}>✕</button>
+              </div>
+            </div>
+
+            {/* Preview area */}
+            <div style={{
+              flex: 1, overflow: "hidden", position: "relative", minHeight: 380,
+            }}>
+              {renderPreview()}
+            </div>
+
+            {/* Footer */}
+            <div style={{
+              height: 64, display: "flex", alignItems: "center",
+              padding: "0 20px", gap: 12,
+              borderTop: "1px solid rgba(255,255,255,0.05)",
+              background: "rgba(0,0,0,0.2)", flexShrink: 0,
+            }}>
+              <div style={{
+                flex: 1, fontSize: 11, color: "rgba(255,255,255,0.3)",
+                maxWidth: 440, lineHeight: 1.55,
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const,
+              }}>{itemDesc}</div>
+              {selectedEl && (
+                <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(selectedEl.code);
+                      setPopupCopied("code");
+                      setTimeout(() => setPopupCopied(null), 2000);
+                    }}
+                    style={{
+                      background: popupCopied === "code" ? "rgba(0,255,178,0.08)" : "rgba(255,255,255,0.04)",
+                      border: `1px solid ${popupCopied === "code" ? "rgba(0,255,178,0.2)" : "rgba(255,255,255,0.07)"}`,
+                      borderRadius: 8, fontSize: 11, padding: "7px 14px",
+                      color: popupCopied === "code" ? "#00FFB2" : "rgba(255,255,255,0.5)",
+                      cursor: "pointer", fontFamily: "inherit",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    {popupCopied === "code" ? "✓ Copied!" : "⎘ Copy Code"}
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(selectedEl.prompt);
+                      setPopupCopied("prompt");
+                      setTimeout(() => setPopupCopied(null), 2000);
+                    }}
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      borderRadius: 8, fontSize: 11, padding: "7px 14px",
+                      color: "rgba(255,255,255,0.5)",
+                      cursor: "pointer", fontFamily: "inherit",
+                    }}
+                  >
+                    {popupCopied === "prompt" ? "✓ Copied!" : "✦ Copy Prompt"}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      );
+    })()}
     </>
   );
 }
