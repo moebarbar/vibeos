@@ -14,6 +14,7 @@ export interface BrandProfile {
   ctaText: string;
   logoUrl?: string;
   productScreenshots: string[];
+  websiteUrl?: string;
 }
 
 export interface ContentPiece {
@@ -29,6 +30,21 @@ export interface ContentPiece {
   dimensions: { width: number; height: number };
   status: 'pending' | 'generating' | 'compositing' | 'complete' | 'failed';
   outputUrl?: string;
+  // Patch B — ad platform fields
+  hashtags?: string[];
+  subjectLine?: string;
+  previewText?: string;
+  adHeadline1?: string;
+  adHeadline2?: string;
+  adHeadline3?: string;
+  adPrimaryText?: string;
+  adDescription?: string;
+  // Patch C — UTM tracking
+  utmUrl?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
 }
 
 export interface GenerationJob {

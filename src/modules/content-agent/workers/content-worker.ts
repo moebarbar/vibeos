@@ -1,141 +1,137 @@
-import { Worker, Queue, type Job } from 'bullmq';
-import IORedis from 'ioredis';
-import { ENV, QUEUE_NAME } from '../config/constants';
-import { scrapeUrl } from '../lib/scraper';
-import { analyzeBrand } from '../lib/brand-analyzer';
-import { generateCopy } from '../lib/copy-generator';
-import { generateImagePrompts } from '../lib/image-prompter';
-import { generateImages, type GeneratedImage } from '../lib/image-generator';
-import { renderTemplate, closeBrowser, type RenderedTemplate } from '../lib/template-renderer';
-import { compositeBatch } from '../lib/compositor';
-import type { GenerationJob, ContentPiece } from '../types';
+import { Worker, Job } from 'bullmq';
+import { scrapeUrl }              from '../lib/scraper';
+import { analyzeBrand }           from '../lib/brand-analyzer';
+import { generateCopy }           from '../lib/copy-generator';
+import { generateImagePrompts }   from '../lib/image-prompter';
+import { generateImages }         from '../lib/image-generator';
+import { renderBatch }            from '../lib/template-renderer';
+import { compositeBatch }         from '../lib/compositor';
+import { generateLandingPage }    from '../lib/landing-page-generator';
+import { generateEmailSequences } from '../lib/email-sequence-generator';
+import { generateCalendar, exportToCSV } from '../lib/content-calendar';
+import { ENV, QUEUE_NAME }        from '../config/constants';
+import type { GenerationJob }     from '../types';
 
-// In-memory job store — keyed by jobId
+// In-memory job store (swap for Redis/DB in production)
 export const jobStore = new Map<string, GenerationJob>();
 
-const connection = new IORedis(ENV.REDIS_URL, { maxRetriesPerRequest: null });
-
-export const contentQueue = new Queue(QUEUE_NAME, { connection });
-
-function updateJob(id: string, patch: Partial<GenerationJob>) {
-  const existing = jobStore.get(id);
-  if (existing) jobStore.set(id, { ...existing, ...patch });
+function update(jobId: string, patch: Partial<GenerationJob>) {
+  const existing = jobStore.get(jobId);
+  if (existing) jobStore.set(jobId, { ...existing, ...patch });
 }
 
-// ─── Worker ───────────────────────────────────────────────────────────────────
-
-const worker = new Worker(
+export const worker = new Worker(
   QUEUE_NAME,
-  async (job: Job) => {
-    const { jobId, url } = job.data as { jobId: string; url: string };
+  async (job: Job<{ jobId: string; url: string }>) => {
+    const { jobId, url } = job.data;
+    console.log(`[worker] Starting job ${jobId} for ${url}`);
 
     try {
-      // ── Step 1: Scrape ────────────────────────────────────────────────────
-      updateJob(jobId, { status: 'scraping', progress: 5 });
-      await job.updateProgress(5);
-      const scraped = await scrapeUrl(url);
+      // ── Step 1: Scrape (0-10%) ───────────────────────────────────────────
+      update(jobId, { status: 'scraping', progress: 5 });
+      const scrapedData = await scrapeUrl(url);
+      update(jobId, { progress: 10 });
 
-      // ── Step 2: Analyze brand ─────────────────────────────────────────────
-      updateJob(jobId, { status: 'analyzing', progress: 15 });
-      await job.updateProgress(15);
-      const brandProfile = await analyzeBrand(scraped);
-      updateJob(jobId, { brandProfile });
+      // ── Step 2: Brand analysis (10-25%) ──────────────────────────────────
+      update(jobId, { status: 'analyzing', progress: 15 });
+      const brandProfile = await analyzeBrand(scrapedData);
+      brandProfile.websiteUrl = url;
+      update(jobId, { brandProfile, progress: 25 });
 
-      // ── Step 3: Generate copy ─────────────────────────────────────────────
-      updateJob(jobId, { status: 'generating-copy', progress: 25 });
-      await job.updateProgress(25);
+      // ── Step 3: Copy generation (25-40%) ─────────────────────────────────
+      update(jobId, { status: 'generating-copy', progress: 30 });
       const contentPieces = await generateCopy(brandProfile);
-      updateJob(jobId, { contentPieces, totalPieces: contentPieces.length });
+      update(jobId, { contentPieces, totalPieces: contentPieces.length, progress: 40 });
 
-      // ── Step 4: Generate image prompts ────────────────────────────────────
-      updateJob(jobId, { progress: 35 });
-      await job.updateProgress(35);
+      // ── Step 4: Image prompts (40-50%) ───────────────────────────────────
+      update(jobId, { progress: 42 });
       const imagePrompts = await generateImagePrompts(brandProfile, contentPieces);
+      update(jobId, { progress: 50 });
 
-      // ── Step 5: Generate images via fal.ai ───────────────────────────────
-      updateJob(jobId, { status: 'generating-images', progress: 40 });
-      await job.updateProgress(40);
+      // ── Step 5: Image generation (50-65%) ────────────────────────────────
+      update(jobId, { status: 'generating-images', progress: 52 });
       const generatedImages = await generateImages(imagePrompts, (done, total) => {
-        const pct = 40 + Math.round((done / total) * 20);
-        updateJob(jobId, { progress: pct });
-        job.updateProgress(pct).catch(() => {});
+        update(jobId, { progress: 52 + Math.round((done / total) * 13) });
       });
-      const imageMap = new Map<string, GeneratedImage>(
-        generatedImages.map(img => [img.contentPieceId, img]),
-      );
+      update(jobId, { progress: 65 });
 
-      // ── Step 6: Render each template via Puppeteer ────────────────────────
-      updateJob(jobId, { status: 'rendering', progress: 62 });
-      await job.updateProgress(62);
+      // ── Step 6: Template rendering (65-75%) ──────────────────────────────
+      update(jobId, { status: 'rendering', progress: 67 });
+      const rendered = await renderBatch(contentPieces, brandProfile);
+      update(jobId, { progress: 75 });
 
-      const renderedMap = new Map<string, RenderedTemplate>();
-      const RENDER_CONCURRENCY = 3;
-
-      for (let i = 0; i < contentPieces.length; i += RENDER_CONCURRENCY) {
-        const batch = contentPieces.slice(i, i + RENDER_CONCURRENCY);
-        const results = await Promise.all(
-          batch.map(async (piece) => {
-            try {
-              const r = await renderTemplate(piece, { brandProfile, content: piece });
-              return r;
-            } catch (err) {
-              console.warn(`[worker] Render failed for ${piece.id}: ${(err as Error).message}`);
-              return null;
-            }
-          }),
-        );
-        for (const r of results) {
-          if (r) renderedMap.set(r.contentPieceId, r);
-        }
-        const pct = 62 + Math.round(((i + batch.length) / contentPieces.length) * 18);
-        updateJob(jobId, { progress: pct });
-        await job.updateProgress(pct);
-      }
-
-      // ── Step 7: Composite ─────────────────────────────────────────────────
-      updateJob(jobId, { status: 'compositing', progress: 82 });
-      await job.updateProgress(82);
-
-      const composited = await compositeBatch(renderedMap, imageMap, (done, total) => {
-        const pct = 82 + Math.round((done / total) * 15);
-        updateJob(jobId, { progress: pct });
-        job.updateProgress(pct).catch(() => {});
-      });
-
-      // ── Step 8: Finalize ──────────────────────────────────────────────────
-      const compositedMap = new Map(composited.map(c => [c.contentPieceId, c]));
-      const finalPieces: ContentPiece[] = contentPieces.map(piece => ({
-        ...piece,
-        status:    compositedMap.has(piece.id) ? ('complete' as const) : ('failed' as const),
-        outputUrl: compositedMap.get(piece.id)?.finalPath,
+      // ── Step 7: Compositing (75-85%) ─────────────────────────────────────
+      update(jobId, { status: 'compositing', progress: 77 });
+      const composited = await compositeBatch(rendered, generatedImages);
+      // Attach output URLs to content pieces
+      const finalPieces = contentPieces.map(p => ({
+        ...p,
+        outputUrl: composited.find(c => c.id === p.id)?.outputPath ?? undefined,
+        status: 'complete' as const,
       }));
+      update(jobId, { contentPieces: finalPieces, progress: 85 });
 
-      updateJob(jobId, {
-        status:        'complete',
-        progress:      100,
+      // ── Step 8: Landing page (85-88%) ────────────────────────────────────
+      update(jobId, { progress: 86 });
+      let landingPageHtml = '';
+      try {
+        landingPageHtml = await generateLandingPage(brandProfile, finalPieces);
+      } catch (err) {
+        console.warn('[worker] Landing page generation failed:', (err as Error).message);
+      }
+      update(jobId, { progress: 88 });
+
+      // ── Step 9: Email sequences (88-92%) ─────────────────────────────────
+      update(jobId, { progress: 89 });
+      let emailSequences: Awaited<ReturnType<typeof generateEmailSequences>> = [];
+      try {
+        emailSequences = await generateEmailSequences(brandProfile);
+      } catch (err) {
+        console.warn('[worker] Email sequence generation failed:', (err as Error).message);
+      }
+      update(jobId, { progress: 92 });
+
+      // ── Step 10: Content calendar (92-95%) ───────────────────────────────
+      update(jobId, { progress: 93 });
+      const calendar    = generateCalendar(finalPieces);
+      const calendarCsv = exportToCSV(calendar);
+      update(jobId, { progress: 95 });
+
+      // ── Step 11: Finalize (95-100%) ───────────────────────────────────────
+      update(jobId, {
+        status:       'complete',
+        progress:     100,
+        completedAt:  new Date(),
         contentPieces: finalPieces,
-        completedAt:   new Date(),
+        // Store extras in a type-safe way via cast
+        ...(({
+          landingPageHtml,
+          emailSequences,
+          calendar,
+          calendarCsv,
+        }) => ({ landingPageHtml, emailSequences, calendar, calendarCsv } as unknown as Partial<GenerationJob>))({
+          landingPageHtml,
+          emailSequences,
+          calendar,
+          calendarCsv,
+        }),
       });
-      await job.updateProgress(100);
 
-      await closeBrowser();
-      return { jobId, totalPieces: finalPieces.length };
+      console.log(`[worker] ✅ Job ${jobId} complete — ${finalPieces.length} pieces`);
+
     } catch (err) {
-      const message = (err as Error).message ?? 'Unknown error';
-      updateJob(jobId, { status: 'failed', error: message });
-      await closeBrowser();
+      const message = (err as Error).message;
+      console.error(`[worker] ❌ Job ${jobId} failed:`, message);
+      update(jobId, { status: 'failed', error: message });
       throw err;
     }
   },
-  { connection, concurrency: 2 },
+  {
+    connection: { host: ENV.REDIS_HOST, port: ENV.REDIS_PORT },
+    concurrency: 2,
+  },
 );
 
 worker.on('failed', (job, err) => {
-  console.error(`[content-worker] Job ${job?.id} failed:`, err.message);
+  console.error(`[worker] Job ${job?.id} failed:`, err.message);
 });
-
-worker.on('completed', (job) => {
-  console.log(`[content-worker] Job ${job.id} completed`);
-});
-
-export { worker };
