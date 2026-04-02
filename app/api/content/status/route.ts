@@ -1,1 +1,5 @@
-export { GET } from '@/modules/content-agent/api/status/route';
+import { NextResponse } from "next/server";
+
+export async function GET() {
+  return NextResponse.json({ error: "Content agent not yet connected" }, { status: 501 });
+}

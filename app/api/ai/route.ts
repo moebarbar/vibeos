@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
       fal.config({ credentials: process.env.FAL_KEY ?? '' });
       const result = await fal.subscribe('fal-ai/flux/dev', {
         input: { prompt, image_size: 'square_hd', num_images: 1 },
-      }) as { images: { url: string }[] };
+      }) as unknown as { images: { url: string }[] };
       return NextResponse.json({ url: result.images[0].url });
     }
 

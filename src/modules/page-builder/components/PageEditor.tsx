@@ -26,13 +26,13 @@ export default function PageEditor({ initialHTML, brandProfile, onSave, onPublis
 
     (async () => {
       const grapesjs = (await import('grapesjs')).default;
-      // @ts-expect-error — no types for these plugins
+      // @ts-ignore
       const presetWebpage  = (await import('grapesjs-preset-webpage')).default;
-      // @ts-expect-error
+      // @ts-ignore
       const blocksBasic    = (await import('grapesjs-blocks-basic')).default;
-      // @ts-expect-error
+      // @ts-ignore
       const pluginForms    = (await import('grapesjs-plugin-forms')).default;
-      // @ts-expect-error
+      // @ts-ignore
       const styleBg        = (await import('grapesjs-style-bg')).default;
       const { chiefmktBlocksPlugin } = await import('../plugins/chiefmkt-blocks');
 
@@ -80,7 +80,7 @@ export default function PageEditor({ initialHTML, brandProfile, onSave, onPublis
   function handleSave() {
     const editor = editorRef.current;
     if (!editor) return;
-    onSave(editor.getHtml(), editor.getCss());
+    onSave(editor.getHtml() ?? "", editor.getCss() ?? "");
   }
 
   async function handlePublish() {
@@ -88,7 +88,7 @@ export default function PageEditor({ initialHTML, brandProfile, onSave, onPublis
     if (!editor) return;
     setPublishing(true);
     try {
-      const url = await onPublish(editor.getHtml(), editor.getCss());
+      const url = await onPublish(editor.getHtml() ?? "", editor.getCss() ?? "");
       alert(`Published! URL: ${url}`);
     } catch (err) {
       alert(`Publish failed: ${(err as Error).message}`);

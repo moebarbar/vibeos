@@ -76,7 +76,7 @@ export default function CalendarView({ calendar }: CalendarViewProps) {
           <div key={`offset-${i}`} />
         ))}
         {calendar.days.map((day) => {
-          const platforms = [...new Set(day.posts.map(p => p.platform))];
+          const platforms = Array.from(new Set(day.posts.map(p => p.platform)));
           const isSelected = selectedDay?.date.toDateString() === day.date.toDateString();
           return (
             <button
