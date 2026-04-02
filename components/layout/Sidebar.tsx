@@ -19,12 +19,14 @@ interface Props {
 }
 
 const NAV = [
+  { href: "/dashboard/agent", icon: "⚡", label: "AI Cofounder", exact: false },
   { href: "/dashboard", icon: "⬡", label: "Agents", exact: true },
   { href: "/dashboard/forge", icon: "◈", label: "Element Forge", exact: false },
   { href: "/dashboard/forge?section=templates", icon: "⊞", label: "Templates", exact: false },
   { href: "/dashboard/kanban", icon: "⊟", label: "Build Board", exact: false },
   { href: "/dashboard/ledger", icon: "◉", label: "Build Ledger", exact: false },
   { href: "/dashboard/projects", icon: "◫", label: "Projects", exact: false },
+  { href: "/dashboard/showcase", icon: "◬", label: "Showcase", exact: false },
 ];
 
 const PLAN_STYLES: Record<string, { bg: string; color: string; border: string }> = {

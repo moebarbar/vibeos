@@ -18,8 +18,9 @@ model User {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
-  projects  Project[]
-  usageLogs UsageLog[]
+  projects       Project[]
+  usageLogs      UsageLog[]
+  notifications  Notification[]
 }
 
 model Project {
@@ -33,14 +34,191 @@ model Project {
   contextBrief  String? @db.Text
   isActive      Boolean @default(false)
 
+  // Onboarding fields for the AI agent
+  vision        String? @db.Text
+  industry      String?
+  targetUsers   String? @db.Text
+  businessModel String?
+  launchTimeline String?
+  status        String  @default("active") // active | paused | launched
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ledgerEntries LedgerEntry[]
-  kanbanCards   KanbanCard[]
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ledgerEntries    LedgerEntry[]
+  kanbanCards      KanbanCard[]
+  aiAgent          AiAgent?
+  contextSnapshots ProjectContext[]
+  milestones       Milestone[]
+  progressLogs     ProgressLog[]
+  conversations    ConversationMessage[]
+  projectFiles     ProjectFile[]
+  notifications    Notification[]
+  showcase         CommunityShowcase?
 
   @@index([userId])
+}
+
+model AiAgent {
+  id                   String   @id @default(cuid())
+  projectId            String   @unique
+  lastActiveAt         DateTime @default(now())
+  totalInteractions    Int      @default(0)
+  systemPromptVersion  String   @default("1.0")
+  agentPersonality     Json     @default("{}")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  project Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  memories AgentMemory[]
+}
+
+model AgentMemory {
+  id         String  @id @default(cuid())
+  agentId    String
+  memoryType String  // user_preference | risk | decision | pattern | learned_behavior | constraint | blocker
+  content    Json
+  confidence Float   @default(0.8)
+  createdAt  DateTime @default(now())
+
+  agent AiAgent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([agentId])
+  @@index([agentId, memoryType])
+}
+
+// Append-only context snapshots
+model ProjectContext {
+  id             String   @id @default(cuid())
+  projectId      String
+  contextVersion Int      @default(1)
+  fullContext    Json
+  createdAt      DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([projectId, contextVersion])
+}
+
+model Milestone {
+  id             String   @id @default(cuid())
+  projectId      String
+  name           String
+  description    String?  @db.Text
+  milestoneOrder Int      @default(0)
+  estimatedHours Int?
+  actualHours    Int?
+  status         String   @default("pending") // pending | in_progress | done | blocked
+  targetDate     DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  project  Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  specs    MilestoneSpec[]
+  progressLogs ProgressLog[]
+
+  @@index([projectId])
+  @@index([projectId, milestoneOrder])
+}
+
+model MilestoneSpec {
+  id                 String   @id @default(cuid())
+  milestoneId        String
+  specName           String
+  specContent        String   @db.Text
+  acceptanceCriteria Json     @default("[]")
+  generatedPrompt    String?  @db.Text
+  promptModel        String?
+  status             String   @default("pending") // pending | in_progress | done
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+
+  @@index([milestoneId])
+}
+
+// Append-only progress log
+model ProgressLog {
+  id          String   @id @default(cuid())
+  projectId   String
+  milestoneId String?
+  logType     String   // check_in | milestone_complete | spec_complete | blocker | decision | file_uploaded
+  content     Json
+  createdAt   DateTime @default(now())
+
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
+  @@index([projectId, createdAt])
+}
+
+model ConversationMessage {
+  id              String   @id @default(cuid())
+  projectId       String
+  role            String   // user | assistant | system
+  content         String   @db.Text
+  messageMetadata Json     @default("{}")
+  createdAt       DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([projectId, createdAt])
+}
+
+model ProjectFile {
+  id             String   @id @default(cuid())
+  projectId      String
+  fileName       String
+  fileType       String
+  fileUrl        String
+  analysisResult Json     @default("{}")
+  createdAt      DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+model Notification {
+  id               String   @id @default(cuid())
+  userId           String
+  projectId        String?
+  notificationType String   // check_in | milestone_complete | blocker | weekly_summary | system
+  title            String
+  content          String   @db.Text
+  isRead           Boolean  @default(false)
+  actionUrl        String?
+  createdAt        DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, isRead])
+}
+
+model CommunityShowcase {
+  id          String   @id @default(cuid())
+  projectId   String   @unique
+  userId      String
+  isPublic    Boolean  @default(false)
+  headline    String
+  demoUrl     String?
+  views       Int      @default(0)
+  likes       Int      @default(0)
+  industryTag String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([isPublic])
+  @@index([industryTag])
 }
 
 model LedgerEntry {
