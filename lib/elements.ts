@@ -1,5 +1,4 @@
 import React from "react";
-import { HERO_V2 } from "./elements-hero-v2";
 
 export interface Element {
   id: string;
@@ -10,58 +9,22 @@ export interface Element {
   prompt: string;
   code: string;
   preview: React.FC;
+  category?: string;
 }
 
 export const VIBES = ["All", "Dark & Minimal", "Glassmorphism", "Brutalist", "Soft & Pastel", "Neon & Cyber"];
 
 export const CATEGORIES = [
-  { id: "buttons", label: "Buttons & CTAs", icon: "⬡" },
-  { id: "cards", label: "Cards & Pricing", icon: "▣" },
-  { id: "hero", label: "Hero Sections", icon: "◈" },
-  { id: "nav", label: "Navigation", icon: "≡" },
-  { id: "forms", label: "Forms & Inputs", icon: "▤" },
-  { id: "dashboards", label: "Dashboards", icon: "◫" },
-  { id: "backgrounds", label: "Backgrounds", icon: "◱" },
+  { id: "buttons",    label: "Buttons & CTAs",   icon: "⬡" },
+  { id: "cards",      label: "Cards & Pricing",   icon: "▣" },
+  { id: "hero",       label: "Hero Sections",     icon: "◈" },
+  { id: "nav",        label: "Navigation",        icon: "≡" },
+  { id: "forms",      label: "Forms & Inputs",    icon: "▤" },
+  { id: "dashboards", label: "Dashboards",        icon: "◫" },
 ];
 
 export const ELEMENTS: Record<string, Element[]> = {
   buttons: [
-
-    {
-      id: "btn-split-zone",
-      name: "Magnetic Split Button",
-      vibe: "Dark & Minimal",
-      difficulty: "Advanced",
-      desc: "Clean white action button with a separated icon frame that magnetically detaches and reveals a soft shadow on hover.",
-      prompt: `Create a React button component called SplitZoneButton. Structure: An outer button with flex, background white, border-radius 12px, padding 6px 6px 6px 20px. Text: "Get Started" #111 600 weight. Icon container: background #f0f0f0, rounded 8px, 36x36px with ChevronRight SVG. Hover: Icon container transforms translateX(4px) + shadow 0 4px 12px rgba(0,0,0,0.15). Smooth transition.`,
-      code: `"use client";\nimport { useState } from "react";\n\nexport function SplitZoneButton({ children = "Get Started", onClick }: { children?: React.ReactNode; onClick?: () => void }) {\n  const [hovered, setHovered] = useState(false);\n  const [pressed, setPressed] = useState(false);\n\n  return (\n    <button\n      onClick={onClick}\n      onMouseEnter={() => setHovered(true)}\n      onMouseLeave={() => { setHovered(false); setPressed(false); }}\n      onMouseDown={() => setPressed(true)}\n      onMouseUp={() => setPressed(false)}\n      style={{\n        display: "inline-flex", alignItems: "center", gap: 16,\n        background: "#ffffff", border: "none",\n        borderRadius: 12, padding: "6px 6px 6px 20px",\n        cursor: "pointer", fontFamily: "inherit",\n        transform: pressed ? "scale(0.98)" : "scale(1)",\n        transition: "transform 0.2s ease",\n        outline: "none",\n      }}\n    >\n      <span style={{ \n        color: "#111", fontSize: 15, fontWeight: 600,\n        transition: "text-shadow 0.3s ease",\n        textShadow: hovered ? "0 2px 4px rgba(0,0,0,0.1)" : "none"\n      }}>\n        {children}\n      </span>\n      <div style={{\n        background: "#e5e5e5", borderRadius: 8,\n        width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center",\n        transform: hovered ? "translateX(4px)" : "translateX(0)",\n        boxShadow: hovered ? "0 4px 12px rgba(0,0,0,0.15)" : "none",\n        transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",\n      }}>\n        <svg viewBox="0 0 24 24" width="16" height="16" stroke="#111" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">\n          <polyline points="9 18 15 12 9 6" />\n        </svg>\n      </div>\n    </button>\n  );\n}`,
-      preview: () => React.createElement("div", { style: { padding: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0c", borderRadius: 12 } },
-        React.createElement("button", { style: { display: "inline-flex", alignItems: "center", gap: 12, background: "#ffffff", border: "none", borderRadius: 10, padding: "5px 5px 5px 16px", cursor: "pointer" } },
-          React.createElement("span", { style: { color: "#111", fontSize: 13, fontWeight: 600 } }, "Get Started"),
-          React.createElement("div", { style: { background: "#e5e5e5", borderRadius: 7, width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" } },
-            React.createElement("svg", { viewBox: "0 0 24 24", width: "14", height: "14", stroke: "#111", strokeWidth: "2", fill: "none" }, React.createElement("polyline", { points: "9 18 15 12 9 6" }))
-          )
-        )
-      )
-    },
-    {
-      id: "btn-neural-glow",
-      name: "Neural Glow Connect",
-      vibe: "Neon & Cyber",
-      difficulty: "Advanced",
-      desc: "Premium dark pill button with an animated conic gradient border and a sweeping metallic shimmer across the text.",
-      prompt: `Create a React button NeuralConnectButton. Dark mode on #050510. Outer wrapper: radius 50px, padded 1px, animated background conic-gradient(from 0deg...). Inner button: bg #060608, radius 49px, padding 14px 42px. Text "Connect": linear-gradient(110deg,#999,#fff,#999) webkit-background-clip text. Hover: outer wrapper gets shadow + conic gradient starts rotating.`,
-      code: `"use client";\nimport { useState, useEffect } from "react";\n\nexport function NeuralConnectButton({ children = "Connect" }: { children?: React.ReactNode }) {\n  const [hovered, setHovered] = useState(false);\n  const [pressed, setPressed] = useState(false);\n  const [angle, setAngle] = useState(0);\n\n  useEffect(() => {\n    let animationFrameId: number;\n    const animate = () => {\n      setAngle((prev) => (prev + 2) % 360);\n      animationFrameId = requestAnimationFrame(animate);\n    };\n    if (hovered) animate();\n    return () => cancelAnimationFrame(animationFrameId);\n  }, [hovered]);\n\n  return (\n    <div style={{\n      display: "inline-block", borderRadius: 50, padding: 1,\n      background: hovered \n        ? \`conic-gradient(from \${angle}deg, rgba(255,255,255,0.05) 0%, rgba(150,150,255,0.6) 20%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.05) 100%)\`\n        : "rgba(255,255,255,0.1)",\n      boxShadow: hovered ? "0 0 30px rgba(100,100,255,0.15)" : "0 0 0 rgba(0,0,0,0)",\n      transition: "box-shadow 0.3s ease",\n    }}>\n      <button\n        onMouseEnter={() => setHovered(true)}\n        onMouseLeave={() => { setHovered(false); setPressed(false); }}\n        onMouseDown={() => setPressed(true)}\n        onMouseUp={() => setPressed(false)}\n        style={{\n          display: "block", background: "#060608", border: "none",\n          borderRadius: 49, padding: "14px 42px",\n          cursor: "pointer", fontFamily: "inherit",\n          transform: pressed ? "scale(0.97)" : hovered ? "scale(1.01)" : "scale(1)",\n          transition: "transform 0.2s ease",\n        }}\n      >\n        <span style={{\n          fontSize: 18, fontWeight: 600, letterSpacing: "0.02em",\n          background: "linear-gradient(110deg, #888 0%, #fff 40%, #fff 60%, #888 100%)",\n          backgroundSize: "200% auto",\n          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",\n          backgroundPosition: hovered ? "100% center" : "0% center",\n          transition: "background-position 1.5s ease",\n        }}>\n          {children}\n        </span>\n      </button>\n    </div>\n  );\n}`,
-      preview: () => React.createElement("div", { style: { padding: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "#050510", borderRadius: 12 } },
-        React.createElement("div", { style: { display: "inline-block", borderRadius: 50, padding: 1, background: "linear-gradient(45deg, rgba(255,255,255,0.05), rgba(150,150,255,0.4), rgba(255,255,255,0.05))", boxShadow: "0 0 15px rgba(100,100,255,0.1)" } },
-          React.createElement("button", { style: { background: "#060608", border: "none", borderRadius: 49, padding: "10px 32px", cursor: "pointer" } },
-            React.createElement("span", { style: { fontSize: 14, fontWeight: 600, background: "linear-gradient(110deg, #aaa, #fff, #aaa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" } }, "Connect")
-          )
-        )
-      )
-    },
-
-    // Additional buttons...
     {
       id: "btn-neon",
       name: "Neon Glow CTA",
@@ -230,923 +193,9 @@ export default function GlassButton({ children = "Learn More" }: { children?: Re
         React.createElement("button", { style: { backdropFilter: "blur(10px)", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.28)", borderRadius: 10, color: "white", padding: "10px 22px", fontSize: 13, cursor: "pointer" } }, "Learn More")
       ),
     },
-    {
-      id: "btn-fey",
-      name: "Fey Button",
-      vibe: "Dark & Minimal",
-      difficulty: "Simple",
-      desc: "A refined, theme-aware button with radial gradient highlight and soft shadows — inspired by Fey's design language.",
-      prompt: `Create a theme-aware React button component called FeyButton. Uses next-themes useTheme hook to adapt. Dark mode: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.12), rgba(255,255,255,0.04), transparent) over #1a1a1a background, white/88% text, border rgba(255,255,255,0.1), shadow "0 1px 2px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)". Light mode: same structure but inverted. Includes a small SVG lock icon that adapts color. Hover: scale(1.02), active: scale(0.98). Border-radius 10px, padding "10px 20px", font-weight 600, font-size 14px. Smooth transitions. Export as FeyButton.`,
-      code: `"use client";
-import { useTheme } from "next-themes";
-
-export function FeyButton({ children = "Get Started", onClick }: { children?: React.ReactNode; onClick?: () => void }) {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
-
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        display: "inline-flex", alignItems: "center", gap: 8,
-        padding: "10px 20px", borderRadius: 10,
-        fontSize: 14, fontWeight: 600, cursor: "pointer",
-        fontFamily: "inherit", transition: "all 0.2s",
-        background: isDark
-          ? "radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 60%, transparent 100%), #1a1a1a"
-          : "radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.02) 60%, transparent 100%), #f5f5f5",
-        color: isDark ? "rgba(255,255,255,0.88)" : "rgba(0,0,0,0.82)",
-        border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
-        boxShadow: isDark
-          ? "0 1px 2px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)"
-          : "0 1px 2px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)",
-      }}
-    >
-      <svg viewBox="0 0 16 16" style={{ width: 14, height: 14 }} fill="none"
-        stroke={isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)"}
-        strokeWidth="1.5" strokeLinecap="round">
-        <rect x="2" y="5" width="12" height="8" rx="1.5" />
-        <path d="M5 5V3.5a3 3 0 016 0V5" />
-      </svg>
-      {children}
-    </button>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: "28px 24px", display: "flex", alignItems: "center", justifyContent: "center" } },
-        React.createElement("button", {
-          style: {
-            display: "inline-flex", alignItems: "center", gap: 8,
-            padding: "10px 20px", borderRadius: 10,
-            fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-            background: "radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 60%, transparent 100%), #1a1a1a",
-            color: "rgba(255,255,255,0.88)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            boxShadow: "0 1px 2px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)",
-          }
-        },
-          React.createElement("svg", { viewBox: "0 0 16 16", style: { width: 13, height: 13 }, fill: "none", stroke: "rgba(255,255,255,0.6)", strokeWidth: "1.5", strokeLinecap: "round" },
-            React.createElement("rect", { x: "2", y: "5", width: "12", height: "8", rx: "1.5" }),
-            React.createElement("path", { d: "M5 5V3.5a3 3 0 016 0V5" })
-          ),
-          "Get Started"
-        )
-      ),
-    },
-    {
-      id: "btn-3d-quantum",
-      name: "Quantum 3D Button",
-      vibe: "Neon & Cyber",
-      difficulty: "Advanced",
-      desc: "A hyper-realistic 3D button with multi-layered shadows, perspective transforms, and a holographic shimmer effect that responds to mouse position. The button appears to float above the surface with depth that shifts on hover.",
-      prompt: `Create a React 3D button component called Quantum3DButton. Dark background #0a0a0f. The button has a 3D appearance using multiple layered box-shadows: primary shadow (0 4px 0 #1a1a2e), secondary shadow (0 8px 0 #0f0f1a), and ambient glow (0 0 40px rgba(0,255,178,0.15)). Button background: linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%) with backgroundSize 200% 200%. Text: white, bold, with text-shadow. Border: 2px solid rgba(255,255,255,0.1). On hover: translateY(-4px) to lift, shadows intensify, backgroundPosition shifts to create holographic sweep. On active: translateY(2px) to press down. Add a pseudo-element shine effect using ::before with linear-gradient from transparent to white. Perspective wrapper with rotateX(5deg) for 3D tilt. Smooth cubic-bezier transitions. Export as default function Quantum3DButton.`,
-      code: `import { useState, useRef } from "react";
-
-export default function Quantum3DButton({ children = "Launch Quantum" }: { children?: React.ReactNode }) {
-  const [hovered, setHovered] = useState(false);
-  const [pressed, setPressed] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-  const btnRef = useRef<HTMLButtonElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!btnRef.current) return;
-    const rect = btnRef.current.getBoundingClientRect();
-    setMousePos({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    });
-  };
-
-  return (
-    <div style={{ perspective: "1000px", display: "inline-block" }}>
-      <button
-        ref={btnRef}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => { setHovered(false); setPressed(false); }}
-        onMouseDown={() => setPressed(true)}
-        onMouseUp={() => setPressed(false)}
-        onMouseMove={handleMouseMove}
-        style={{
-          position: "relative",
-          background: \`linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)\`,
-          backgroundSize: "200% 200%",
-          backgroundPosition: hovered ? "100% 100%" : "0% 0%",
-          color: "#fff",
-          border: "2px solid rgba(255,255,255,0.15)",
-          borderRadius: 16,
-          padding: "18px 48px",
-          fontSize: 16,
-          fontWeight: 800,
-          fontFamily: "inherit",
-          cursor: "pointer",
-          letterSpacing: "0.04em",
-          textShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          transform: pressed
-            ? "translateY(2px) rotateX(0deg)"
-            : hovered
-            ? "translateY(-4px) rotateX(2deg)"
-            : "translateY(0) rotateX(5deg)",
-          boxShadow: pressed
-            ? "0 2px 0 #1a1a2e, 0 4px 0 #0f0f1a, 0 0 20px rgba(0,255,178,0.1)"
-            : hovered
-            ? "0 8px 0 #1a1a2e, 0 16px 0 #0f0f1a, 0 0 60px rgba(0,255,178,0.25), 0 0 100px rgba(0,204,255,0.15)"
-            : "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)",
-          transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: \`radial-gradient(circle at \${mousePos.x}% \${mousePos.y}%, rgba(255,255,255,0.25) 0%, transparent 50%)\`,
-            opacity: hovered ? 1 : 0,
-            transition: "opacity 0.3s ease",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "50%",
-            background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)",
-            borderRadius: "14px 14px 0 0",
-            pointerEvents: "none",
-          }}
-        />
-        <span style={{ position: "relative", zIndex: 1 }}>{children}</span>
-      </button>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: 32, display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0f", borderRadius: 12 } },
-        React.createElement("div", { style: { perspective: "800px" } },
-          React.createElement("button", { style: { position: "relative", background: "linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)", backgroundSize: "200% 200%", color: "#fff", border: "2px solid rgba(255,255,255,0.15)", borderRadius: 14, padding: "14px 36px", fontSize: 14, fontWeight: 800, cursor: "pointer", letterSpacing: "0.04em", textShadow: "0 2px 6px rgba(0,0,0,0.3)", transform: "rotateX(5deg)", boxShadow: "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)" } },
-            React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)", borderRadius: "12px 12px 0 0", pointerEvents: "none" } }),
-            React.createElement("span", { style: { position: "relative", zIndex: 1 } }, "Launch Quantum")
-          )
-        )
-      )
-    },
-    {
-      id: "btn-3d-quantum",
-      name: "Quantum 3D Button",
-      vibe: "Neon & Cyber",
-      difficulty: "Advanced",
-      desc: "A hyper-realistic 3D button with multi-layered shadows, perspective transforms, and a holographic shimmer effect that responds to mouse position. The button appears to float above the surface with depth that shifts on hover.",
-      prompt: `Create a React 3D button component called Quantum3DButton. Dark background #0a0a0f. The button has a 3D appearance using multiple layered box-shadows: primary shadow (0 4px 0 #1a1a2e), secondary shadow (0 8px 0 #0f0f1a), and ambient glow (0 0 40px rgba(0,255,178,0.15)). Button background: linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%) with backgroundSize 200% 200%. Text: white, bold, with text-shadow. Border: 2px solid rgba(255,255,255,0.1). On hover: translateY(-4px) to lift, shadows intensify, backgroundPosition shifts to create holographic sweep. On active: translateY(2px) to press down. Add a pseudo-element shine effect using ::before with linear-gradient from transparent to white. Perspective wrapper with rotateX(5deg) for 3D tilt. Smooth cubic-bezier transitions. Export as default function Quantum3DButton.`,
-      code: `import { useState, useRef } from "react";
-
-export default function Quantum3DButton({ children = "Launch Quantum" }: { children?: React.ReactNode }) {
-  const [hovered, setHovered] = useState(false);
-  const [pressed, setPressed] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-  const btnRef = useRef<HTMLButtonElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!btnRef.current) return;
-    const rect = btnRef.current.getBoundingClientRect();
-    setMousePos({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    });
-  };
-
-  return (
-    <div style={{ perspective: "1000px", display: "inline-block" }}>
-      <button
-        ref={btnRef}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => { setHovered(false); setPressed(false); }}
-        onMouseDown={() => setPressed(true)}
-        onMouseUp={() => setPressed(false)}
-        onMouseMove={handleMouseMove}
-        style={{
-          position: "relative",
-          background: \`linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)\`,
-          backgroundSize: "200% 200%",
-          backgroundPosition: hovered ? "100% 100%" : "0% 0%",
-          color: "#fff",
-          border: "2px solid rgba(255,255,255,0.15)",
-          borderRadius: 16,
-          padding: "18px 48px",
-          fontSize: 16,
-          fontWeight: 800,
-          fontFamily: "inherit",
-          cursor: "pointer",
-          letterSpacing: "0.04em",
-          textShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          transform: pressed
-            ? "translateY(2px) rotateX(0deg)"
-            : hovered
-            ? "translateY(-4px) rotateX(2deg)"
-            : "translateY(0) rotateX(5deg)",
-          boxShadow: pressed
-            ? "0 2px 0 #1a1a2e, 0 4px 0 #0f0f1a, 0 0 20px rgba(0,255,178,0.1)"
-            : hovered
-            ? "0 8px 0 #1a1a2e, 0 16px 0 #0f0f1a, 0 0 60px rgba(0,255,178,0.25), 0 0 100px rgba(0,204,255,0.15)"
-            : "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)",
-          transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: \`radial-gradient(circle at \${mousePos.x}% \${mousePos.y}%, rgba(255,255,255,0.25) 0%, transparent 50%)\`,
-            opacity: hovered ? 1 : 0,
-            transition: "opacity 0.3s ease",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "50%",
-            background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)",
-            borderRadius: "14px 14px 0 0",
-            pointerEvents: "none",
-          }}
-        />
-        <span style={{ position: "relative", zIndex: 1 }}>{children}</span>
-      </button>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: 32, display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0f", borderRadius: 12 } },
-        React.createElement("div", { style: { perspective: "800px" } },
-          React.createElement("button", { style: { position: "relative", background: "linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)", backgroundSize: "200% 200%", color: "#fff", border: "2px solid rgba(255,255,255,0.15)", borderRadius: 14, padding: "14px 36px", fontSize: 14, fontWeight: 800, cursor: "pointer", letterSpacing: "0.04em", textShadow: "0 2px 6px rgba(0,0,0,0.3)", transform: "rotateX(5deg)", boxShadow: "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)" } },
-            React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)", borderRadius: "12px 12px 0 0", pointerEvents: "none" } }),
-            React.createElement("span", { style: { position: "relative", zIndex: 1 } }, "Launch Quantum")
-          )
-        )
-      )
-    },
-    {
-      id: "btn-3d-quantum",
-      name: "Quantum 3D Button",
-      vibe: "Neon & Cyber",
-      difficulty: "Advanced",
-      desc: "A hyper-realistic 3D button with multi-layered shadows, perspective transforms, and a holographic shimmer effect that responds to mouse position. The button appears to float above the surface with depth that shifts on hover.",
-      prompt: `Create a React 3D button component called Quantum3DButton. Dark background #0a0a0f. The button has a 3D appearance using multiple layered box-shadows: primary shadow (0 4px 0 #1a1a2e), secondary shadow (0 8px 0 #0f0f1a), and ambient glow (0 0 40px rgba(0,255,178,0.15)). Button background: linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%) with backgroundSize 200% 200%. Text: white, bold, with text-shadow. Border: 2px solid rgba(255,255,255,0.1). On hover: translateY(-4px) to lift, shadows intensify, backgroundPosition shifts to create holographic sweep. On active: translateY(2px) to press down. Add a pseudo-element shine effect using ::before with linear-gradient from transparent to white. Perspective wrapper with rotateX(5deg) for 3D tilt. Smooth cubic-bezier transitions. Export as default function Quantum3DButton.`,
-      code: `import { useState, useRef } from "react";
-
-export default function Quantum3DButton({ children = "Launch Quantum" }: { children?: React.ReactNode }) {
-  const [hovered, setHovered] = useState(false);
-  const [pressed, setPressed] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-  const btnRef = useRef<HTMLButtonElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!btnRef.current) return;
-    const rect = btnRef.current.getBoundingClientRect();
-    setMousePos({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    });
-  };
-
-  return (
-    <div style={{ perspective: "1000px", display: "inline-block" }}>
-      <button
-        ref={btnRef}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => { setHovered(false); setPressed(false); }}
-        onMouseDown={() => setPressed(true)}
-        onMouseUp={() => setPressed(false)}
-        onMouseMove={handleMouseMove}
-        style={{
-          position: "relative",
-          background: \`linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)\`,
-          backgroundSize: "200% 200%",
-          backgroundPosition: hovered ? "100% 100%" : "0% 0%",
-          color: "#fff",
-          border: "2px solid rgba(255,255,255,0.15)",
-          borderRadius: 16,
-          padding: "18px 48px",
-          fontSize: 16,
-          fontWeight: 800,
-          fontFamily: "inherit",
-          cursor: "pointer",
-          letterSpacing: "0.04em",
-          textShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          transform: pressed
-            ? "translateY(2px) rotateX(0deg)"
-            : hovered
-            ? "translateY(-4px) rotateX(2deg)"
-            : "translateY(0) rotateX(5deg)",
-          boxShadow: pressed
-            ? "0 2px 0 #1a1a2e, 0 4px 0 #0f0f1a, 0 0 20px rgba(0,255,178,0.1)"
-            : hovered
-            ? "0 8px 0 #1a1a2e, 0 16px 0 #0f0f1a, 0 0 60px rgba(0,255,178,0.25), 0 0 100px rgba(0,204,255,0.15)"
-            : "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)",
-          transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: \`radial-gradient(circle at \${mousePos.x}% \${mousePos.y}%, rgba(255,255,255,0.25) 0%, transparent 50%)\`,
-            opacity: hovered ? 1 : 0,
-            transition: "opacity 0.3s ease",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "50%",
-            background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)",
-            borderRadius: "14px 14px 0 0",
-            pointerEvents: "none",
-          }}
-        />
-        <span style={{ position: "relative", zIndex: 1 }}>{children}</span>
-      </button>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: 32, display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0f", borderRadius: 12 } },
-        React.createElement("div", { style: { perspective: "800px" } },
-          React.createElement("button", { style: { position: "relative", background: "linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)", backgroundSize: "200% 200%", color: "#fff", border: "2px solid rgba(255,255,255,0.15)", borderRadius: 14, padding: "14px 36px", fontSize: 14, fontWeight: 800, cursor: "pointer", letterSpacing: "0.04em", textShadow: "0 2px 6px rgba(0,0,0,0.3)", transform: "rotateX(5deg)", boxShadow: "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)" } },
-            React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)", borderRadius: "12px 12px 0 0", pointerEvents: "none" } }),
-            React.createElement("span", { style: { position: "relative", zIndex: 1 } }, "Launch Quantum")
-          )
-        )
-      )
-    },
-    {
-      id: "btn-3d-quantum",
-      name: "Quantum 3D Button",
-      vibe: "Neon & Cyber",
-      difficulty: "Advanced",
-      desc: "A hyper-realistic 3D button with multi-layered shadows, perspective transforms, and a holographic shimmer effect that responds to mouse position. The button appears to float above the surface with depth that shifts on hover.",
-      prompt: `Create a React 3D button component called Quantum3DButton. Dark background #0a0a0f. The button has a 3D appearance using multiple layered box-shadows: primary shadow (0 4px 0 #1a1a2e), secondary shadow (0 8px 0 #0f0f1a), and ambient glow (0 0 40px rgba(0,255,178,0.15)). Button background: linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%) with backgroundSize 200% 200%. Text: white, bold, with text-shadow. Border: 2px solid rgba(255,255,255,0.1). On hover: translateY(-4px) to lift, shadows intensify, backgroundPosition shifts to create holographic sweep. On active: translateY(2px) to press down. Add a pseudo-element shine effect using ::before with linear-gradient from transparent to white. Perspective wrapper with rotateX(5deg) for 3D tilt. Smooth cubic-bezier transitions. Export as default function Quantum3DButton.`,
-      code: `import { useState, useRef } from "react";
-
-export default function Quantum3DButton({ children = "Launch Quantum" }: { children?: React.ReactNode }) {
-  const [hovered, setHovered] = useState(false);
-  const [pressed, setPressed] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-  const btnRef = useRef<HTMLButtonElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!btnRef.current) return;
-    const rect = btnRef.current.getBoundingClientRect();
-    setMousePos({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    });
-  };
-
-  return (
-    <div style={{ perspective: "1000px", display: "inline-block" }}>
-      <button
-        ref={btnRef}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => { setHovered(false); setPressed(false); }}
-        onMouseDown={() => setPressed(true)}
-        onMouseUp={() => setPressed(false)}
-        onMouseMove={handleMouseMove}
-        style={{
-          position: "relative",
-          background: \`linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)\`,
-          backgroundSize: "200% 200%",
-          backgroundPosition: hovered ? "100% 100%" : "0% 0%",
-          color: "#fff",
-          border: "2px solid rgba(255,255,255,0.15)",
-          borderRadius: 16,
-          padding: "18px 48px",
-          fontSize: 16,
-          fontWeight: 800,
-          fontFamily: "inherit",
-          cursor: "pointer",
-          letterSpacing: "0.04em",
-          textShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          transform: pressed
-            ? "translateY(2px) rotateX(0deg)"
-            : hovered
-            ? "translateY(-4px) rotateX(2deg)"
-            : "translateY(0) rotateX(5deg)",
-          boxShadow: pressed
-            ? "0 2px 0 #1a1a2e, 0 4px 0 #0f0f1a, 0 0 20px rgba(0,255,178,0.1)"
-            : hovered
-            ? "0 8px 0 #1a1a2e, 0 16px 0 #0f0f1a, 0 0 60px rgba(0,255,178,0.25), 0 0 100px rgba(0,204,255,0.15)"
-            : "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)",
-          transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: \`radial-gradient(circle at \${mousePos.x}% \${mousePos.y}%, rgba(255,255,255,0.25) 0%, transparent 50%)\`,
-            opacity: hovered ? 1 : 0,
-            transition: "opacity 0.3s ease",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "50%",
-            background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)",
-            borderRadius: "14px 14px 0 0",
-            pointerEvents: "none",
-          }}
-        />
-        <span style={{ position: "relative", zIndex: 1 }}>{children}</span>
-      </button>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: 32, display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0f", borderRadius: 12 } },
-        React.createElement("div", { style: { perspective: "800px" } },
-          React.createElement("button", { style: { position: "relative", background: "linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)", backgroundSize: "200% 200%", color: "#fff", border: "2px solid rgba(255,255,255,0.15)", borderRadius: 14, padding: "14px 36px", fontSize: 14, fontWeight: 800, cursor: "pointer", letterSpacing: "0.04em", textShadow: "0 2px 6px rgba(0,0,0,0.3)", transform: "rotateX(5deg)", boxShadow: "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)" } },
-            React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)", borderRadius: "12px 12px 0 0", pointerEvents: "none" } }),
-            React.createElement("span", { style: { position: "relative", zIndex: 1 } }, "Launch Quantum")
-          )
-        )
-      )
-    },
-    {
-      id: "btn-3d-quantum",
-      name: "Quantum 3D Button",
-      vibe: "Neon & Cyber",
-      difficulty: "Advanced",
-      desc: "A hyper-realistic 3D button with multi-layered shadows, perspective transforms, and a holographic shimmer effect that responds to mouse position. The button appears to float above the surface with depth that shifts on hover.",
-      prompt: `Create a React 3D button component called Quantum3DButton. Dark background #0a0a0f. The button has a 3D appearance using multiple layered box-shadows: primary shadow (0 4px 0 #1a1a2e), secondary shadow (0 8px 0 #0f0f1a), and ambient glow (0 0 40px rgba(0,255,178,0.15)). Button background: linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%) with backgroundSize 200% 200%. Text: white, bold, with text-shadow. Border: 2px solid rgba(255,255,255,0.1). On hover: translateY(-4px) to lift, shadows intensify, backgroundPosition shifts to create holographic sweep. On active: translateY(2px) to press down. Add a pseudo-element shine effect using ::before with linear-gradient from transparent to white. Perspective wrapper with rotateX(5deg) for 3D tilt. Smooth cubic-bezier transitions. Export as default function Quantum3DButton.`,
-      code: `import { useState, useRef } from "react";
-
-export default function Quantum3DButton({ children = "Launch Quantum" }: { children?: React.ReactNode }) {
-  const [hovered, setHovered] = useState(false);
-  const [pressed, setPressed] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-  const btnRef = useRef<HTMLButtonElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!btnRef.current) return;
-    const rect = btnRef.current.getBoundingClientRect();
-    setMousePos({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    });
-  };
-
-  return (
-    <div style={{ perspective: "1000px", display: "inline-block" }}>
-      <button
-        ref={btnRef}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => { setHovered(false); setPressed(false); }}
-        onMouseDown={() => setPressed(true)}
-        onMouseUp={() => setPressed(false)}
-        onMouseMove={handleMouseMove}
-        style={{
-          position: "relative",
-          background: \`linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)\`,
-          backgroundSize: "200% 200%",
-          backgroundPosition: hovered ? "100% 100%" : "0% 0%",
-          color: "#fff",
-          border: "2px solid rgba(255,255,255,0.15)",
-          borderRadius: 16,
-          padding: "18px 48px",
-          fontSize: 16,
-          fontWeight: 800,
-          fontFamily: "inherit",
-          cursor: "pointer",
-          letterSpacing: "0.04em",
-          textShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          transform: pressed
-            ? "translateY(2px) rotateX(0deg)"
-            : hovered
-            ? "translateY(-4px) rotateX(2deg)"
-            : "translateY(0) rotateX(5deg)",
-          boxShadow: pressed
-            ? "0 2px 0 #1a1a2e, 0 4px 0 #0f0f1a, 0 0 20px rgba(0,255,178,0.1)"
-            : hovered
-            ? "0 8px 0 #1a1a2e, 0 16px 0 #0f0f1a, 0 0 60px rgba(0,255,178,0.25), 0 0 100px rgba(0,204,255,0.15)"
-            : "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)",
-          transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: \`radial-gradient(circle at \${mousePos.x}% \${mousePos.y}%, rgba(255,255,255,0.25) 0%, transparent 50%)\`,
-            opacity: hovered ? 1 : 0,
-            transition: "opacity 0.3s ease",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "50%",
-            background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)",
-            borderRadius: "14px 14px 0 0",
-            pointerEvents: "none",
-          }}
-        />
-        <span style={{ position: "relative", zIndex: 1 }}>{children}</span>
-      </button>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: 32, display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0f", borderRadius: 12 } },
-        React.createElement("div", { style: { perspective: "800px" } },
-          React.createElement("button", { style: { position: "relative", background: "linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)", backgroundSize: "200% 200%", color: "#fff", border: "2px solid rgba(255,255,255,0.15)", borderRadius: 14, padding: "14px 36px", fontSize: 14, fontWeight: 800, cursor: "pointer", letterSpacing: "0.04em", textShadow: "0 2px 6px rgba(0,0,0,0.3)", transform: "rotateX(5deg)", boxShadow: "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)" } },
-            React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)", borderRadius: "12px 12px 0 0", pointerEvents: "none" } }),
-            React.createElement("span", { style: { position: "relative", zIndex: 1 } }, "Launch Quantum")
-          )
-        )
-      )
-    },
-    {
-      id: "btn-3d-quantum",
-      name: "Quantum 3D Button",
-      vibe: "Neon & Cyber",
-      difficulty: "Advanced",
-      desc: "A hyper-realistic 3D button with multi-layered shadows, perspective transforms, and a holographic shimmer effect that responds to mouse position. The button appears to float above the surface with depth that shifts on hover.",
-      prompt: `Create a React 3D button component called Quantum3DButton. Dark background #0a0a0f. The button has a 3D appearance using multiple layered box-shadows: primary shadow (0 4px 0 #1a1a2e), secondary shadow (0 8px 0 #0f0f1a), and ambient glow (0 0 40px rgba(0,255,178,0.15)). Button background: linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%) with backgroundSize 200% 200%. Text: white, bold, with text-shadow. Border: 2px solid rgba(255,255,255,0.1). On hover: translateY(-4px) to lift, shadows intensify, backgroundPosition shifts to create holographic sweep. On active: translateY(2px) to press down. Add a pseudo-element shine effect using ::before with linear-gradient from transparent to white. Perspective wrapper with rotateX(5deg) for 3D tilt. Smooth cubic-bezier transitions. Export as default function Quantum3DButton.`,
-      code: `import { useState, useRef } from "react";
-
-export default function Quantum3DButton({ children = "Launch Quantum" }: { children?: React.ReactNode }) {
-  const [hovered, setHovered] = useState(false);
-  const [pressed, setPressed] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-  const btnRef = useRef<HTMLButtonElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!btnRef.current) return;
-    const rect = btnRef.current.getBoundingClientRect();
-    setMousePos({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    });
-  };
-
-  return (
-    <div style={{ perspective: "1000px", display: "inline-block" }}>
-      <button
-        ref={btnRef}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => { setHovered(false); setPressed(false); }}
-        onMouseDown={() => setPressed(true)}
-        onMouseUp={() => setPressed(false)}
-        onMouseMove={handleMouseMove}
-        style={{
-          position: "relative",
-          background: \`linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)\`,
-          backgroundSize: "200% 200%",
-          backgroundPosition: hovered ? "100% 100%" : "0% 0%",
-          color: "#fff",
-          border: "2px solid rgba(255,255,255,0.15)",
-          borderRadius: 16,
-          padding: "18px 48px",
-          fontSize: 16,
-          fontWeight: 800,
-          fontFamily: "inherit",
-          cursor: "pointer",
-          letterSpacing: "0.04em",
-          textShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          transform: pressed
-            ? "translateY(2px) rotateX(0deg)"
-            : hovered
-            ? "translateY(-4px) rotateX(2deg)"
-            : "translateY(0) rotateX(5deg)",
-          boxShadow: pressed
-            ? "0 2px 0 #1a1a2e, 0 4px 0 #0f0f1a, 0 0 20px rgba(0,255,178,0.1)"
-            : hovered
-            ? "0 8px 0 #1a1a2e, 0 16px 0 #0f0f1a, 0 0 60px rgba(0,255,178,0.25), 0 0 100px rgba(0,204,255,0.15)"
-            : "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)",
-          transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: \`radial-gradient(circle at \${mousePos.x}% \${mousePos.y}%, rgba(255,255,255,0.25) 0%, transparent 50%)\`,
-            opacity: hovered ? 1 : 0,
-            transition: "opacity 0.3s ease",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "50%",
-            background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)",
-            borderRadius: "14px 14px 0 0",
-            pointerEvents: "none",
-          }}
-        />
-        <span style={{ position: "relative", zIndex: 1 }}>{children}</span>
-      </button>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: 32, display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0f", borderRadius: 12 } },
-        React.createElement("div", { style: { perspective: "800px" } },
-          React.createElement("button", { style: { position: "relative", background: "linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #00ff88 100%)", backgroundSize: "200% 200%", color: "#fff", border: "2px solid rgba(255,255,255,0.15)", borderRadius: 14, padding: "14px 36px", fontSize: 14, fontWeight: 800, cursor: "pointer", letterSpacing: "0.04em", textShadow: "0 2px 6px rgba(0,0,0,0.3)", transform: "rotateX(5deg)", boxShadow: "0 4px 0 #1a1a2e, 0 8px 0 #0f0f1a, 0 0 40px rgba(0,255,178,0.15)" } },
-            React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)", borderRadius: "12px 12px 0 0", pointerEvents: "none" } }),
-            React.createElement("span", { style: { position: "relative", zIndex: 1 } }, "Launch Quantum")
-          )
-        )
-      )
-    },
-    {
-      id: "btn-handwritten",
-      name: "Handwritten Title",
-      vibe: "Soft & Pastel",
-      difficulty: "Medium",
-      desc: "An animated SVG oval draws itself around your title text — pure motion poetry powered by framer-motion.",
-      prompt: `Create a React component called HandWrittenTitle using framer-motion. Center a title string inside a div. Behind it, render a motion.svg with an oval/ellipse path using motion.path. Animate pathLength from 0 to 1 with duration 1.2s, easeInOut, delay 0.5s. Animate path opacity 0→1 simultaneously. The SVG viewBox="0 0 300 80", path draws an irregular oval: "M 20 40 C 40 10, 260 10, 280 40 C 300 70, 260 70, 150 72 C 40 74, 0 70, 20 40". Stroke: #00FFB2 (or any accent), strokeWidth 2, strokeLinecap round, fill none. Title text animates in with opacity/y translate. Position SVG absolute inset-0. Export HandWrittenTitle.`,
-      code: `"use client";
-import { motion } from "framer-motion";
-
-export function HandWrittenTitle({ title = "Hello World" }: { title?: string }) {
-  return (
-    <div style={{ position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-      <motion.svg
-        viewBox="0 0 300 80" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
-        fill="none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-      >
-        <motion.path
-          d="M 20 40 C 40 10, 260 10, 280 40 C 300 70, 260 70, 150 72 C 40 74, 0 70, 20 40"
-          stroke="#00FFB2" strokeWidth="2" strokeLinecap="round" fill="none"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 1.2, ease: "easeInOut", delay: 0.5 }}
-        />
-      </motion.svg>
-      <motion.h1
-        style={{ position: "relative", zIndex: 10, fontSize: 40, fontWeight: 800, padding: "16px 32px", margin: 0, letterSpacing: "-0.03em" }}
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-      >
-        {title}
-      </motion.h1>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0c" } },
-        React.createElement("div", { style: { position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center" } },
-          React.createElement("svg", { viewBox: "0 0 220 60", style: { position: "absolute", inset: 0, width: "100%", height: "100%" }, fill: "none" },
-            React.createElement("path", { d: "M 15 30 C 30 8, 190 8, 205 30 C 220 52, 190 52, 110 54 C 30 56, 0 52, 15 30", stroke: "#00FFB2", strokeWidth: "1.5", strokeLinecap: "round", fill: "none" })
-          ),
-          React.createElement("span", { style: { position: "relative", zIndex: 1, fontSize: 18, fontWeight: 800, color: "#fff", padding: "12px 24px", letterSpacing: "-0.02em" } }, "Hello World")
-        )
-      ),
-    },
   ],
 
   cards: [
-
-    {
-      id: "card-glass-state",
-      name: "Glassmorphic Sub Card",
-      vibe: "Glassmorphism",
-      difficulty: "Advanced",
-      desc: "A stunning white glassmorphic card with a 3D perspective tilt on hover, featuring profile info, description, and an interactive colored CTA.",
-      prompt: `Create a React GlassStateCard. Crisp white card (#fff), border-radius 24px, padding 32px, box-shadow "0 24px 48px rgba(0,0,0,0.08)". 3D perspective tilt effect on mousemove. Inside: Top "New" badge (light blue). Flex row: purple 44x44 avatar box (with smiley SVG) and bold text "Sigma Nuts". h2 "This is supposed to be a cool title". Muted description text. Full-width bright indigo/purple button (#5a5ce6) "Subscribe".`,
-      code: `"use client";\nimport { useState, useRef } from "react";\n\nexport function GlassStateCard() {\n  const cardRef = useRef<HTMLDivElement>(null);\n  const [rotate, setRotate] = useState({ x: 0, y: 0 });\n  const [isHovered, setIsHovered] = useState(false);\n\n  const handleMouseMove = (e: React.MouseEvent) => {\n    if (!cardRef.current) return;\n    const rect = cardRef.current.getBoundingClientRect();\n    const x = e.clientX - rect.left;\n    const y = e.clientY - rect.top;\n    const centerX = rect.width / 2;\n    const centerY = rect.height / 2;\n    \n    const rotateX = ((y - centerY) / centerY) * -5;\n    const rotateY = ((x - centerX) / centerX) * 5;\n    \n    setRotate({ x: rotateX, y: rotateY });\n  };\n\n  return (\n    <div style={{ perspective: "1000px", display: "inline-block", padding: 20, fontFamily: "inherit" }}>\n      <div\n        ref={cardRef}\n        onMouseEnter={() => setIsHovered(true)}\n        onMouseLeave={() => { setIsHovered(false); setRotate({ x: 0, y: 0 }); }}\n        onMouseMove={handleMouseMove}\n        style={{\n          background: "#ffffff",\n          borderRadius: 20, padding: 32, maxWidth: 380,\n          boxShadow: isHovered ? "0 30px 60px rgba(0,0,20,0.12)" : "0 20px 40px rgba(0,0,20,0.06)",\n          transform: isHovered ? \`rotateX(\${rotate.x}deg) rotateY(\${rotate.y}deg) translateY(-5px)\` : "rotateX(0deg) rotateY(0deg) translateY(0px)",\n          transition: isHovered ? "box-shadow 0.2s ease" : "all 0.4s ease",\n          transformStyle: "preserve-3d",\n        }}\n      >\n        <div style={{ display: "inline-block", background: "#e8efff", color: "#3b5bdb", fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 20, marginBottom: 20 }}>\n          New\n        </div>\n        \n        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>\n          <div style={{ width: 44, height: 44, background: "#5a5ce6", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>\n            <svg viewBox="0 0 24 24" width="24" height="24" stroke="#fff" strokeWidth="2" fill="none"><circle cx="12" cy="12" r="10"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="15" x2="16" y2="15"/></svg>\n          </div>\n          <span style={{ fontSize: 18, fontWeight: 800, color: "#111", letterSpacing: "-0.02em" }}>Sigma Nuts</span>\n        </div>\n        \n        <h2 style={{ fontSize: 26, fontWeight: 800, color: "#111", margin: "0 0 16px 0", letterSpacing: "-0.03em", lineHeight: 1.2 }}>\n          This is supposed to be a cool title\n        </h2>\n        \n        <p style={{ fontSize: 15, color: "#666", lineHeight: 1.6, margin: "0 0 28px 0" }}>\n          Your description goes here but idk what to write so im gonna continue with this to just take up some of the space on here\n        </p>\n        \n        <button style={{\n          width: "100%", background: "#5a5ce6", color: "#fff", border: "none",\n          borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 600,\n          cursor: "pointer", transition: "all 0.2s ease", fontFamily: "inherit",\n          boxShadow: isHovered ? "0 8px 20px rgba(90,92,230,0.4)" : "0 4px 12px rgba(90,92,230,0.3)",\n        }}>\n          Subscribe\n        </button>\n      </div>\n    </div>\n  );\n}`,
-      preview: () => React.createElement("div", { style: { padding: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "#f5f5f7", borderRadius: 12 } },
-        React.createElement("div", { style: { background: "#fff", borderRadius: 14, padding: 20, boxShadow: "0 12px 24px rgba(0,0,0,0.06)", maxWidth: 220 } },
-          React.createElement("div", { style: { display: "inline-block", background: "#e8efff", color: "#3b5bdb", fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 10, marginBottom: 12 } }, "New"),
-          React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 } },
-            React.createElement("div", { style: { width: 28, height: 28, background: "#5a5ce6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" } },
-              React.createElement("svg", { viewBox: "0 0 24 24", width: "16", height: "16", stroke: "#fff", strokeWidth: "2", fill: "none" }, React.createElement("circle", { cx: "12", cy: "12", r: "10" }))
-            ),
-            React.createElement("span", { style: { fontSize: 13, fontWeight: 800, color: "#111" } }, "Sigma Nuts")
-          ),
-          React.createElement("div", { style: { fontSize: 15, fontWeight: 800, color: "#111", lineHeight: 1.2, marginBottom: 8 } }, "Cool title"),
-          React.createElement("button", { style: { width: "100%", background: "#5a5ce6", color: "#fff", border: "none", borderRadius: 6, padding: "8px", fontSize: 11, fontWeight: 600, marginTop: 10 } }, "Subscribe")
-        )
-      )
-    },
-
-    // Additional cards...
-    {
-      id: "card-3d-holographic",
-      name: "Holographic 3D Card",
-      vibe: "Neon & Cyber",
-      difficulty: "Advanced",
-      desc: "A stunning 3D card with holographic shimmer, perspective tilt, floating layers, and dynamic lighting that responds to mouse movement. Features a glassmorphic header, animated gradient border, and depth shadows that create an immersive floating effect.",
-      prompt: `Create a React 3D holographic card component called Holographic3DCard. Dark background #0a0a0f. Card has perspective wrapper with 1000px perspective. Main card: background linear-gradient(135deg, rgba(20,20,30,0.9), rgba(10,10,20,0.95)), border-radius 24px, padding 32px, border 1px solid rgba(255,255,255,0.08). 3D tilt effect on mousemove: rotateX and rotateY based on cursor position. Multiple layered shadows: primary (0 20px 60px rgba(0,0,0,0.5)), secondary (0 40px 80px rgba(0,0,0,0.3)), accent glow (0 0 80px rgba(0,255,178,0.1)). Holographic shimmer: animated gradient overlay that sweeps across on hover. Glassmorphic header with blur effect. Animated gradient border using conic-gradient. Floating inner elements with subtle parallax. Content: badge, title, description, stats row, CTA button. Smooth cubic-bezier transitions. Export as default function Holographic3DCard.`,
-      code: `import { useState, useRef } from "react";
-
-export default function Holographic3DCard() {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [rotate, setRotate] = useState({ x: 0, y: 0 });
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    setRotate({
-      x: ((y - centerY) / centerY) * -8,
-      y: ((x - centerX) / centerX) * 8,
-    });
-    setMousePos({
-      x: (x / rect.width) * 100,
-      y: (y / rect.height) * 100,
-    });
-  };
-
-  return (
-    <div style={{ perspective: "1000px", display: "inline-block", padding: 32 }}>
-      <div
-        ref={cardRef}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => { setIsHovered(false); setRotate({ x: 0, y: 0 }); }}
-        onMouseMove={handleMouseMove}
-        style={{
-          position: "relative",
-          background: "linear-gradient(135deg, rgba(20,20,30,0.9), rgba(10,10,20,0.95))",
-          borderRadius: 24,
-          padding: 32,
-          width: 380,
-          border: "1px solid rgba(255,255,255,0.08)",
-          transform: isHovered
-            ? \`rotateX(\${rotate.x}deg) rotateY(\${rotate.y}deg) translateZ(20px)\`
-            : "rotateX(0deg) rotateY(0deg) translateZ(0px)",
-          transformStyle: "preserve-3d",
-          transition: isHovered ? "transform 0.1s ease-out" : "transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
-          boxShadow: isHovered
-            ? "0 20px 60px rgba(0,0,0,0.5), 0 40px 80px rgba(0,0,0,0.3), 0 0 80px rgba(0,255,178,0.15), 0 0 120px rgba(0,204,255,0.1)"
-            : "0 10px 40px rgba(0,0,0,0.4), 0 20px 60px rgba(0,0,0,0.2)",
-          overflow: "hidden",
-        }}
-      >
-        {/* Holographic shimmer overlay */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: \`radial-gradient(circle at \${mousePos.x}% \${mousePos.y}%, rgba(0,255,178,0.15) 0%, transparent 50%)\`,
-            opacity: isHovered ? 1 : 0,
-            transition: "opacity 0.3s ease",
-            pointerEvents: "none",
-          }}
-        />
-        
-        {/* Animated gradient border */}
-        <div
-          style={{
-            position: "absolute",
-            inset: -1,
-            borderRadius: 25,
-            background: \`conic-gradient(from \${mousePos.x * 3.6}deg at 50% 50%, rgba(0,255,178,0.3), rgba(0,204,255,0.3), rgba(167,139,250,0.3), rgba(0,255,178,0.3))\`,
-            opacity: isHovered ? 0.6 : 0,
-            transition: "opacity 0.3s ease",
-            zIndex: -1,
-          }}
-        />
-        
-        {/* Glassmorphic header */}
-        <div
-          style={{
-            background: "rgba(255,255,255,0.03)",
-            backdropFilter: "blur(10px)",
-            borderRadius: 16,
-            padding: 20,
-            marginBottom: 24,
-            border: "1px solid rgba(255,255,255,0.05)",
-            transform: "translateZ(30px)",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 12,
-                background: "linear-gradient(135deg, #00ff88, #00ccff)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: "0 8px 24px rgba(0,255,178,0.3)",
-              }}
-            >
-              <svg viewBox="0 0 24 24" width="24" height="24" stroke="#fff" strokeWidth="2" fill="none">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-              </svg>
-            </div>
-            <div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em", marginBottom: 4 }}>QUANTUM SERIES</div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>Holographic Pro</div>
-            </div>
-          </div>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", lineHeight: 1.6, margin: 0 }}>
-            Next-generation 3D interface with real-time holographic rendering and quantum depth perception.
-          </p>
-        </div>
-        
-        {/* Stats row */}
-        <div style={{ display: "flex", gap: 16, marginBottom: 24, transform: "translateZ(20px)" }}>
-          {[{ label: "FPS", value: "120" }, { label: "Layers", value: "8" }, { label: "Depth", value: "∞" }].map((stat) => (
-            <div
-              key={stat.label}
-              style={{
-                flex: 1,
-                background: "rgba(255,255,255,0.03)",
-                borderRadius: 12,
-                padding: 16,
-                textAlign: "center",
-                border: "1px solid rgba(255,255,255,0.05)",
-              }}
-            >
-              <div style={{ fontSize: 24, fontWeight: 800, color: "#00ff88", marginBottom: 4 }}>{stat.value}</div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em" }}>{stat.label}</div>
-            </div>
-          ))}
-        </div>
-        
-        {/* CTA Button */}
-        <button
-          style={{
-            width: "100%",
-            background: "linear-gradient(135deg, #00ff88, #00ccff)",
-            color: "#000",
-            border: "none",
-            borderRadius: 12,
-            padding: "16px",
-            fontSize: 14,
-            fontWeight: 800,
-            cursor: "pointer",
-            letterSpacing: "0.04em",
-            transform: "translateZ(40px)",
-            boxShadow: "0 8px 32px rgba(0,255,178,0.3)",
-            transition: "all 0.3s ease",
-          }}
-        >
-          Activate Hologram
-        </button>
-      </div>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: 32, display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0f", borderRadius: 12 } },
-        React.createElement("div", { style: { perspective: "800px" } },
-          React.createElement("div", { style: { position: "relative", background: "linear-gradient(135deg, rgba(20,20,30,0.9), rgba(10,10,20,0.95))", borderRadius: 18, padding: 24, width: 280, border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 10px 40px rgba(0,0,0,0.4), 0 20px 60px rgba(0,0,0,0.2)" } },
-            React.createElement("div", { style: { background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 16, marginBottom: 16, border: "1px solid rgba(255,255,255,0.05)" } },
-              React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 12 } },
-                React.createElement("div", { style: { width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg, #00ff88, #00ccff)", display: "flex", alignItems: "center", justifyContent: "center" } },
-                  React.createElement("svg", { viewBox: "0 0 24 24", width: "18", height: "18", stroke: "#fff", strokeWidth: "2", fill: "none" },
-                    React.createElement("path", { d: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" })
-                  )
-                ),
-                React.createElement("div", null,
-                  React.createElement("div", { style: { fontSize: 9, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em", marginBottom: 2 } }, "QUANTUM SERIES"),
-                  React.createElement("div", { style: { fontSize: 15, fontWeight: 800, color: "#fff" } }, "Holographic Pro")
-                )
-              ),
-              React.createElement("p", { style: { fontSize: 11, color: "rgba(255,255,255,0.5)", lineHeight: 1.5, margin: 0 } }, "Next-generation 3D interface with real-time holographic rendering.")
-            ),
-            React.createElement("div", { style: { display: "flex", gap: 12, marginBottom: 16 } },
-              [{ label: "FPS", value: "120" }, { label: "Layers", value: "8" }, { label: "Depth", value: "∞" }].map((stat) =>
-                React.createElement("div", { key: stat.label, style: { flex: 1, background: "rgba(255,255,255,0.03)", borderRadius: 10, padding: 12, textAlign: "center", border: "1px solid rgba(255,255,255,0.05)" } },
-                  React.createElement("div", { style: { fontSize: 18, fontWeight: 800, color: "#00ff88", marginBottom: 2 } }, stat.value),
-                  React.createElement("div", { style: { fontSize: 8, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em" } }, stat.label)
-                )
-              )
-            ),
-            React.createElement("button", { style: { width: "100%", background: "linear-gradient(135deg, #00ff88, #00ccff)", color: "#000", border: "none", borderRadius: 10, padding: "12px", fontSize: 12, fontWeight: 800, cursor: "pointer", letterSpacing: "0.04em", boxShadow: "0 6px 24px rgba(0,255,178,0.3)" } }, "Activate Hologram")
-          )
-        )
-      )
-    },
     {
       id: "card-pricing-dark",
       name: "Dark Pricing Card",
@@ -1394,455 +443,16 @@ export default function PastelCard({
         React.createElement("div", { style: { fontSize: 11, color: "#6b7280", lineHeight: 1.6 } }, "Every feature backed by Claude for insane results.")
       ),
     },
-    {
-      id: "card-x-tweet",
-      name: "X / Tweet Card",
-      vibe: "Dark & Minimal",
-      difficulty: "Simple",
-      desc: "A glassmorphic Twitter/X-style card with gradient border, verified badge, and stat row — perfect for social proof sections.",
-      prompt: `Create a React component called XCard. Dark glassmorphic card: outer wrapper with linear-gradient border (rgba(255,255,255,0.15) to rgba(255,255,255,0.03)) via padding:1px + inner div with background linear-gradient(135deg, #16181c, #0a0a0b), border-radius 16px, padding 20px. Header: circular avatar with gradient, author name + verified checkmark SVG (fill #1d9bf0), handle in muted white. Content: array of text lines, white/90%. Stats row: replies, retweets, likes with emoji icons and hover color transition. X logo SVG top-right. Props: author, handle, content (string[]), verified, likes, retweets, replies. Export XCard.`,
-      code: `interface XCardProps {
-  author?: string; handle?: string; content?: string[];
-  verified?: boolean; likes?: number; retweets?: number; replies?: number;
-}
-
-export function XCard({ author = "Mohammed Barbar", handle = "@mohammedbarbar", content = ["Just shipped something insane 🚀", "The future is being built right now."], verified = true, likes = 2400, retweets = 847, replies = 128 }: XCardProps) {
-  return (
-    <div style={{ position: "relative", maxWidth: 360, borderRadius: 18, padding: "1px", background: "linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03))" }}>
-      <div style={{ borderRadius: 17, padding: 20, background: "linear-gradient(135deg, #16181c, #0a0a0b)" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#00FFB2,#38BDF8)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#000" }}>{author[0]}</div>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                <span style={{ color: "#fff", fontSize: 14, fontWeight: 600 }}>{author}</span>
-                {verified && <svg viewBox="0 0 24 24" style={{ width: 16, height: 16, fill: "#1d9bf0" }}><path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91-1.01-1-2.52-1.27-3.91-.81-.66-1.31-1.91-2.19-3.34-2.19-1.43 0-2.68.88-3.34 2.19-1.39-.46-2.9-.2-3.91.81-1 1.01-1.27 2.52-.81 3.91-1.31.67-2.19 1.91-2.19 3.34 0 1.43.88 2.67 2.19 3.34-.46 1.39-.2 2.9.81 3.91 1.01 1 2.52 1.27 3.91.81.66 1.31 1.91 2.19 3.34 2.19 1.43 0 2.67-.88 3.34-2.19 1.39.46 2.9.2 3.91-.81 1-1.01 1.27-2.52.81-3.91 1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z" /></svg>}
-              </div>
-              <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>{handle}</div>
-            </div>
-          </div>
-          <svg viewBox="0 0 24 24" style={{ width: 18, height: 18, fill: "rgba(255,255,255,0.5)" }}><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-        </div>
-        <div style={{ marginBottom: 14 }}>
-          {content.map((line, i) => <p key={i} style={{ color: "rgba(255,255,255,0.88)", fontSize: 14, lineHeight: 1.6, margin: "0 0 4px" }}>{line}</p>)}
-        </div>
-        <div style={{ display: "flex", gap: 20, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-          {[["💬", replies], ["🔁", retweets], ["♥", likes]].map(([icon, val]) => (
-            <button key={String(icon)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: "rgba(255,255,255,0.4)", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>
-              <span>{icon}</span><span>{Number(val).toLocaleString()}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: "1px", borderRadius: 16, background: "linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03))", maxWidth: 220 } },
-        React.createElement("div", { style: { borderRadius: 15, padding: 14, background: "linear-gradient(135deg, #16181c, #0a0a0b)" } },
-          React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 10 } },
-            React.createElement("div", { style: { width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#00FFB2,#38BDF8)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#000" } }, "M"),
-            React.createElement("div", null,
-              React.createElement("div", { style: { color: "#fff", fontSize: 11, fontWeight: 600 } }, "Mohammed"),
-              React.createElement("div", { style: { color: "rgba(255,255,255,0.4)", fontSize: 10 } }, "@mohammedbarbar")
-            )
-          ),
-          React.createElement("p", { style: { color: "rgba(255,255,255,0.85)", fontSize: 11, lineHeight: 1.5, margin: "0 0 8px" } }, "Just shipped something insane 🚀"),
-          React.createElement("div", { style: { display: "flex", gap: 12, fontSize: 10, color: "rgba(255,255,255,0.35)" } },
-            React.createElement("span", null, "💬 128"),
-            React.createElement("span", null, "🔁 847"),
-            React.createElement("span", null, "♥ 2.4k")
-          )
-        )
-      ),
-    },
-    {
-      id: "card-modal-pricing",
-      name: "Modal Pricing",
-      vibe: "Dark & Minimal",
-      difficulty: "Medium",
-      desc: "A dialog-based plan selector with three tiers, feature lists, and a gradient CTA — no external deps, pure React state.",
-      prompt: `Create a React component called ModalPricing. A trigger button opens a full-screen overlay (fixed, rgba(0,0,0,0.8) backdrop, blur 12px). Modal content: #0c0c0e background, border rgba(255,255,255,0.08), border-radius 20px, max-width 560px. Header: monospace label "PRICING", large title "Choose your plan". Three plan cards in a 3-col grid (Free $0, Pro $19, Founder $49) — each selectable with highlight border on selection. Below: feature list for selected plan. Full-width gradient CTA button. Close on overlay click. No external libraries, pure useState. Export ModalPricing.`,
-      code: `"use client";
-import { useState } from "react";
-
-const PLANS = [
-  { id: "free", name: "Free", price: "$0", desc: "Side projects", features: ["5 projects", "Basic elements", "Community support"], color: "rgba(255,255,255,0.1)" },
-  { id: "pro", name: "Pro", price: "$19", desc: "Serious builders", features: ["Unlimited projects", "All elements", "AI features", "Priority support"], color: "#00FFB2", highlight: true },
-  { id: "founder", name: "Founder", price: "$49", desc: "Scale without limits", features: ["Everything in Pro", "Team access", "Custom elements", "White-label"], color: "#38BDF8" },
-];
-
-export function ModalPricing() {
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("pro");
-
-  return (
-    <>
-      <button onClick={() => setOpen(true)} style={{ background: "linear-gradient(135deg,#00FFB2,#38BDF8)", color: "#000", border: "none", borderRadius: 10, padding: "12px 24px", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>View Pricing</button>
-      {open && (
-        <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(12px)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: "#0c0c0e", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, padding: 32, width: "100%", maxWidth: 560, boxShadow: "0 40px 80px rgba(0,0,0,0.8)" }}>
-            <div style={{ textAlign: "center", marginBottom: 28 }}>
-              <div style={{ fontSize: 10, color: "#00FFB2", letterSpacing: "0.2em", fontWeight: 600, marginBottom: 8, fontFamily: "monospace" }}>PRICING</div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: "#fff", letterSpacing: "-0.03em" }}>Choose your plan</div>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 24 }}>
-              {PLANS.map(plan => (
-                <button key={plan.id} onClick={() => setSelected(plan.id)} style={{ background: selected === plan.id ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.02)", border: selected === plan.id ? \`1px solid \${plan.color}\` : "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "16px 12px", cursor: "pointer", textAlign: "left", transition: "all 0.2s", fontFamily: "inherit" }}>
-                  <div style={{ fontSize: 11, color: (plan as any).highlight ? "#00FFB2" : "rgba(255,255,255,0.5)", fontWeight: 600, marginBottom: 6 }}>{plan.name}</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 4 }}>{plan.price}<span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 400 }}>/mo</span></div>
-                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>{plan.desc}</div>
-                </button>
-              ))}
-            </div>
-            <div style={{ marginBottom: 24 }}>
-              {PLANS.find(p => p.id === selected)?.features.map(f => (
-                <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: "1px solid rgba(255,255,255,0.04)", fontSize: 13, color: "rgba(255,255,255,0.65)" }}><span style={{ color: "#00FFB2" }}>✓</span> {f}</div>
-              ))}
-            </div>
-            <button style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#00FFB2,#38BDF8)", border: "none", borderRadius: 12, fontSize: 14, fontWeight: 700, color: "#000", cursor: "pointer", fontFamily: "inherit" }}>
-              Get Started with {PLANS.find(p => p.id === selected)?.name}
-            </button>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "center" } },
-        React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10, width: 200 } },
-          React.createElement("div", { style: { display: "flex", gap: 6 } },
-            ...["Free", "Pro", "Founder"].map((name, i) =>
-              React.createElement("div", {
-                key: name,
-                style: { flex: 1, background: i === 1 ? "rgba(0,255,178,0.08)" : "rgba(255,255,255,0.03)", border: i === 1 ? "1px solid #00FFB2" : "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "8px 6px", textAlign: "center" }
-              },
-                React.createElement("div", { style: { fontSize: 9, color: i === 1 ? "#00FFB2" : "rgba(255,255,255,0.45)", fontWeight: 600, marginBottom: 2 } }, name),
-                React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: "#fff" } }, ["$0", "$19", "$49"][i])
-              )
-            )
-          ),
-          React.createElement("button", {
-            style: { width: "100%", padding: "8px", background: "linear-gradient(135deg,#00FFB2,#38BDF8)", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, color: "#000", cursor: "pointer" }
-          }, "Get Started")
-        )
-      ),
-    },
   ],
 
   hero: [
-
-    {
-      id: "hero-flowing-vectors",
-      name: "Vector Streams Hero",
-      vibe: "Dark & Minimal",
-      difficulty: "Advanced",
-      desc: "A massive, typography-driven hero overlaying undulating, animated SVG vector paths that simulate fluid motion.",
-      prompt: `Create a React component VectorHero. Full width/height (minHeight '100vh') with background #0a0a0c. In the background layer (z-index 0, opacity 0.4), render a responsive SVG covering the container with 5 overlapping <path> elements (stroke rgba(255,255,255,0.15), fill none) representing wavy flowing lines. Animate their strokeDashoffset using requestAnimationFrame. Over this, centered: massive h1 text "Background Paths" in white, weight 800, tight tracking. Below it: a black pill button "Discover Excellence ->".`,
-      code: `"use client";\nimport { useEffect, useState } from "react";\n\nexport function VectorHero() {\n  const [offset, setOffset] = useState(0);\n\n  useEffect(() => {\n    let animationId: number;\n    const animate = () => {\n      setOffset(prev => (prev - 1) % 1000);\n      animationId = requestAnimationFrame(animate);\n    };\n    animate();\n    return () => cancelAnimationFrame(animationId);\n  }, []);\n\n  const paths = [\n    "M-100,500 C200,300 400,700 800,400 C1200,100 1600,600 2000,300",\n    "M-100,400 C200,200 500,600 900,300 C1300,00 1700,500 2100,200",\n    "M-100,600 C250,400 350,800 950,500 C1550,200 1650,700 2200,400",\n    "M-100,550 C300,450 450,750 850,450 C1250,150 1800,650 2000,350",\n    "M-100,450 C150,250 550,650 850,350 C1150,50 1750,550 2200,250"\n  ];\n\n  return (\n    <div style={{\n      position: "relative", minHeight: "80vh", width: "100%",\n      background: "#0a0a0c", display: "flex", flexDirection: "column",\n      alignItems: "center", justifyContent: "center", overflow: "hidden",\n      fontFamily: "inherit"\n    }}>\n      {/* Background Vectors */}\n      <svg \n        viewBox="0 0 1440 800"\n        preserveAspectRatio="xMidYMid slice"\n        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.6 }}\n      >\n        {paths.map((d, i) => (\n          <path\n            key={i} d={d}\n            stroke="rgba(255,255,255,0.15)" strokeWidth={1 + (i % 2)} fill="none"\n            strokeDasharray="400 200"\n            strokeDashoffset={offset * (1 + (i * 0.2))}\n          />\n        ))}\n      </svg>\n      \n      {/* Content */}\n      <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "0 20px" }}>\n        <h1 style={{\n          fontSize: "clamp(48px, 10vw, 120px)", fontWeight: 800, margin: "0 0 40px",\n          color: "#fff", letterSpacing: "-0.04em", lineHeight: 0.9,\n          textShadow: "0 20px 40px rgba(0,0,0,0.5)"\n        }}>\n          Background<br />Paths\n        </h1>\n        \n        <button style={{\n          background: "#000", border: "1px solid rgba(255,255,255,0.1)",\n          borderRadius: 30, padding: "14px 32px", color: "#fff",\n          fontSize: 16, fontWeight: 500, cursor: "pointer",\n          boxShadow: "0 0 20px rgba(255,255,255,0.05)",\n          transition: "all 0.3s ease", fontFamily: "inherit"\n        }}\n        onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 30px rgba(255,255,255,0.15)"}\n        onMouseLeave={e => e.currentTarget.style.boxShadow = "0 0 20px rgba(255,255,255,0.05)"}\n        >\n          Discover Excellence &rarr;\n        </button>\n      </div>\n    </div>\n  );\n}`,
-      preview: () => React.createElement("div", { style: { position: "relative", padding: 24, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#0a0a0c", overflow: "hidden", minHeight: 140, borderRadius: 12 } },
-        React.createElement("svg", { viewBox: "0 0 200 100", style: { position: "absolute", inset: 0, opacity: 0.4 } },
-          React.createElement("path", { d: "M-20,60 C40,20 80,100 120,50 C160,0 180,90 220,40", stroke: "rgba(255,255,255,0.2)", fill: "none", strokeWidth: 1 }),
-          React.createElement("path", { d: "M-20,50 C50,10 90,90 140,40 C190,-10 170,80 220,30", stroke: "rgba(255,255,255,0.1)", fill: "none", strokeWidth: 1 })
-        ),
-        React.createElement("div", { style: { position: "relative", fontSize: 24, fontWeight: 800, color: "#fff", letterSpacing: "-0.05em", textAlign: "center", marginBottom: 12 } }, "Background", React.createElement("br"), "Paths"),
-        React.createElement("div", { style: { position: "relative", background: "#000", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 10, padding: "4px 10px", color: "#fff", fontSize: 8 } }, "Discover ->")
-      )
-    },
-
-    // Premium v2 Heroes (Actually Beautiful)
-    ...HERO_V2.hero,
-    {
-      id: "hero-3d-quantum-portal",
-      name: "Quantum Portal Hero",
-      vibe: "Neon & Cyber",
-      difficulty: "Advanced",
-      desc: "A mind-bending 3D hero section with a rotating portal, floating particles, parallax layers, and holographic text that responds to mouse movement. Features depth-based blur, animated gradient rings, and a floating CTA that orbits the portal.",
-      prompt: `Create a React 3D hero section called QuantumPortalHero. Dark background #050508 with perspective 1200px. Central portal: concentric rotating rings (3 rings with different rotation speeds, conic-gradient borders, blur effects). Floating particles: 20+ small dots with random positions, sizes, and pulse animations. Parallax layers: background grid, mid-layer glow, foreground content. Mouse tracking: portal glow follows cursor, text has subtle parallax. Holographic text: gradient text with animated background-position. Floating CTA button with orbit animation. Stats row with 3D depth. Multiple layered shadows and glows. Smooth 60fps animations using requestAnimationFrame. Export as default function QuantumPortalHero.`,
-      code: `import { useState, useEffect, useRef } from "react";
-
-export default function QuantumPortalHero() {
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-  const [rotation, setRotation] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let animationId: number;
-    const animate = () => {
-      setRotation(prev => (prev + 0.3) % 360);
-      animationId = requestAnimationFrame(animate);
-    };
-    animate();
-    return () => cancelAnimationFrame(animationId);
-  }, []);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    setMousePos({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    });
-  };
-
-  const particles = Array.from({ length: 25 }, (_, i) => ({
-    id: i,
-    left: Math.random() * 100 + "%",
-    top: Math.random() * 100 + "%",
-    size: 2 + Math.random() * 4,
-    delay: Math.random() * 3,
-    duration: 2 + Math.random() * 3,
-  }));
-
-  return (
-    <div
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
-      style={{
-        position: "relative",
-        minHeight: "100vh",
-        background: "#050508",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "system-ui, -apple-system, sans-serif",
-        perspective: "1200px",
-      }}
-    >
-      {/* Background grid */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundImage: \`radial-gradient(circle at \${mousePos.x}% \${mousePos.y}%, rgba(0,255,178,0.03) 0%, transparent 50%), linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px)\`,
-          backgroundSize: "100% 100%, 60px 60px, 60px 60px",
-          transform: \`translateZ(-200px) scale(1.5)\`,
-        }}
-      />
-
-      {/* Floating particles */}
-      {particles.map((p) => (
-        <div
-          key={p.id}
-          style={{
-            position: "absolute",
-            left: p.left,
-            top: p.top,
-            width: p.size,
-            height: p.size,
-            borderRadius: "50%",
-            background: "rgba(0,255,178,0.6)",
-            boxShadow: \`0 0 \${p.size * 3}px rgba(0,255,178,0.4)\`,
-            animation: \`pulse \${p.duration}s ease-in-out infinite \${p.delay}s\`,
-            pointerEvents: "none",
-          }}
-        />
-      ))}
-
-      {/* Portal rings */}
-      <div
-        style={{
-          position: "absolute",
-          width: 500,
-          height: 500,
-          transform: \`translateZ(50px) rotateX(60deg) rotateZ(\${rotation}deg)\`,
-          transformStyle: "preserve-3d",
-        }}
-      >
-        {[0, 1, 2].map((ring) => (
-          <div
-            key={ring}
-            style={{
-              position: "absolute",
-              inset: ring * 60,
-              borderRadius: "50%",
-              border: \`2px solid rgba(0,255,178,\${0.3 - ring * 0.08})\`,
-              boxShadow: \`0 0 \${30 + ring * 20}px rgba(0,255,178,\${0.2 - ring * 0.05}), inset 0 0 \${20 + ring * 15}px rgba(0,255,178,\${0.1 - ring * 0.03})\`,
-              animation: \`spin \${8 + ring * 4}s linear infinite \${ring % 2 === 0 ? "" : "reverse"}\`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Central glow */}
-      <div
-        style={{
-          position: "absolute",
-          width: 300,
-          height: 300,
-          borderRadius: "50%",
-          background: \`radial-gradient(circle, rgba(0,255,178,0.15) 0%, transparent 70%)\`,
-          filter: "blur(40px)",
-          transform: \`translateZ(100px) translate(\${(mousePos.x - 50) * 0.5}px, \${(mousePos.y - 50) * 0.5}px)\`,
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Content */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          textAlign: "center",
-          padding: "0 32px",
-          transform: \`translateZ(150px) translate(\${(mousePos.x - 50) * -0.2}px, \${(mousePos.y - 50) * -0.2}px)\`,
-        }}
-      >
-        <div
-          style={{
-            display: "inline-block",
-            background: "rgba(0,255,178,0.1)",
-            border: "1px solid rgba(0,255,178,0.25)",
-            borderRadius: 20,
-            padding: "6px 16px",
-            fontSize: 11,
-            color: "#00FFB2",
-            letterSpacing: "0.1em",
-            marginBottom: 32,
-          }}
-        >
-          QUANTUM · PORTAL
-        </div>
-
-        <h1
-          style={{
-            fontSize: "clamp(48px, 8vw, 96px)",
-            fontWeight: 900,
-            color: "#fff",
-            letterSpacing: "-0.04em",
-            lineHeight: 1,
-            margin: "0 0 24px",
-            background: "linear-gradient(135deg, #fff 0%, #00ff88 50%, #00ccff 100%)",
-            backgroundSize: "200% 200%",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-            animation: "gradientShift 4s ease infinite",
-          }}
-        >
-          Enter the
-          <br />
-          Quantum Realm
-        </h1>
-
-        <p
-          style={{
-            fontSize: 18,
-            color: "rgba(255,255,255,0.4)",
-            maxWidth: 500,
-            margin: "0 auto 48px",
-            lineHeight: 1.7,
-          }}
-        >
-          Experience next-generation 3D interfaces with real-time holographic rendering and quantum depth perception.
-        </p>
-
-        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-          <button
-            style={{
-              background: "linear-gradient(135deg, #00ff88, #00ccff)",
-              color: "#000",
-              border: "none",
-              borderRadius: 12,
-              padding: "16px 40px",
-              fontSize: 15,
-              fontWeight: 800,
-              cursor: "pointer",
-              letterSpacing: "0.04em",
-              boxShadow: "0 8px 32px rgba(0,255,178,0.3), 0 0 80px rgba(0,255,178,0.15)",
-              transition: "all 0.3s ease",
-            }}
-          >
-            Launch Portal
-          </button>
-          <button
-            style={{
-              background: "transparent",
-              color: "rgba(255,255,255,0.6)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              borderRadius: 12,
-              padding: "16px 32px",
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-            }}
-          >
-            Explore
-          </button>
-        </div>
-
-        {/* Stats */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 48,
-            marginTop: 80,
-            paddingTop: 40,
-            borderTop: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
-          {[{ value: "∞", label: "Dimensions" }, { value: "120", label: "FPS" }, { value: "0ms", label: "Latency" }].map((stat) => (
-            <div key={stat.label} style={{ textAlign: "center" }}>
-              <div
-                style={{
-                  fontSize: 32,
-                  fontWeight: 900,
-                  color: "#00ff88",
-                  marginBottom: 8,
-                  textShadow: "0 0 20px rgba(0,255,178,0.5)",
-                }}
-              >
-                {stat.value}
-              </div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em" }}>
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <style>{\`
-        @keyframes pulse {
-          0%, 100% { opacity: 0.3; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.5); }
-        }
-        @keyframes spin {
-          from { transform: rotateZ(0deg); }
-          to { transform: rotateZ(360deg); }
-        }
-        @keyframes gradientShift {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-      \`}</style>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { position: "relative", padding: 32, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#050508", overflow: "hidden", minHeight: 200, borderRadius: 12 } },
-        React.createElement("div", { style: { position: "absolute", width: 120, height: 120, borderRadius: "50%", border: "2px solid rgba(0,255,178,0.3)", boxShadow: "0 0 30px rgba(0,255,178,0.2)", animation: "spin 8s linear infinite" } }),
-        React.createElement("div", { style: { position: "absolute", width: 80, height: 80, borderRadius: "50%", border: "2px solid rgba(0,255,178,0.2)", boxShadow: "0 0 20px rgba(0,255,178,0.15)", animation: "spin 12s linear infinite reverse" } }),
-        React.createElement("div", { style: { position: "relative", zIndex: 10, textAlign: "center" } },
-          React.createElement("div", { style: { fontSize: 9, color: "#00FFB2", letterSpacing: "0.1em", marginBottom: 12 } }, "QUANTUM · PORTAL"),
-          React.createElement("div", { style: { fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1, marginBottom: 8, background: "linear-gradient(135deg, #fff, #00ff88, #00ccff)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" } }, "Enter the Quantum Realm"),
-          React.createElement("div", { style: { display: "flex", gap: 12, justifyContent: "center", marginTop: 16 } },
-            React.createElement("button", { style: { background: "linear-gradient(135deg, #00ff88, #00ccff)", color: "#000", border: "none", borderRadius: 8, padding: "8px 20px", fontSize: 11, fontWeight: 800, cursor: "pointer" } }, "Launch Portal"),
-            React.createElement("button", { style: { background: "transparent", color: "rgba(255,255,255,0.6)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 8, padding: "8px 16px", fontSize: 11, fontWeight: 600, cursor: "pointer" } }, "Explore")
-          )
-        ),
-        React.createElement("style", null, `@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`)
-      )
-    },
     {
       id: "hero-dark",
       name: "Dark SaaS Hero",
       vibe: "Dark & Minimal",
       difficulty: "Medium",
       desc: "Full-viewport dark hero with dot grid, gradient glow, badge, and social proof.",
-      prompt: `Create a full - viewport React hero section for a SaaS product.Background #070707 with radial - gradient dot pattern(radial- gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px), background - size 36px 36px).Radial glow overlay(rgba(0, 255, 178, 0.05) at top center).Content max - width 700px centered.Elements top to bottom: small badge pill(bg rgba(0, 255, 178, 0.1), border rgba(0, 255, 178, 0.25), accent dot + "Now in public beta"), headline clamp(38px, 6vw, 70px) weight 800 white tight letter - spacing - 0.035em(split across two lines with second line in accent color #00FFB2), subtitle 18px rgba(255,255,255,0.42) line- height 1.75, two CTAs(primary: accent color bg + black text, secondary: transparent + muted border), stats row(3 metrics, separated by thin border - top).Fade -in + translateY animation on load using useState + useEffect.Export as default function HeroSection.`,
+      prompt: `Create a full-viewport React hero section for a SaaS product. Background #070707 with radial-gradient dot pattern (radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), background-size 36px 36px). Radial glow overlay (rgba(0,255,178,0.05) at top center). Content max-width 700px centered. Elements top to bottom: small badge pill (bg rgba(0,255,178,0.1), border rgba(0,255,178,0.25), accent dot + "Now in public beta"), headline clamp(38px,6vw,70px) weight 800 white tight letter-spacing -0.035em (split across two lines with second line in accent color #00FFB2), subtitle 18px rgba(255,255,255,0.42) line-height 1.75, two CTAs (primary: accent color bg + black text, secondary: transparent + muted border), stats row (3 metrics, separated by thin border-top). Fade-in + translateY animation on load using useState + useEffect. Export as default function HeroSection.`,
       code: `import { useState, useEffect } from "react";
 
 export default function HeroSection() {
@@ -1850,97 +460,89 @@ export default function HeroSection() {
   useEffect(() => { setTimeout(() => setVisible(true), 50); }, []);
 
   return (
-    <div style= {{
-    background: "#070707",
+    <div style={{
+      background: "#070707",
       backgroundImage: "radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px)",
-        backgroundSize: "36px 36px",
-          minHeight: "100vh",
-            display: "flex", alignItems: "center", justifyContent: "center",
-              position: "relative", overflow: "hidden",
-    }
-}>
-  {/* Glow overlay */ }
-  < div style = {{
-  position: "absolute", inset: 0,
-    background: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0,255,178,0.05) 0%, transparent 60%)",
-      pointerEvents: "none",
+      backgroundSize: "36px 36px",
+      minHeight: "100vh",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      position: "relative", overflow: "hidden",
+    }}>
+      {/* Glow overlay */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0,255,178,0.05) 0%, transparent 60%)",
+        pointerEvents: "none",
       }} />
 
-  < div style = {{
-  maxWidth: 700, textAlign: "center", padding: "0 24px",
-    position: "relative",
-      opacity: visible ? 1 : 0,
+      <div style={{
+        maxWidth: 700, textAlign: "center", padding: "0 24px",
+        position: "relative",
+        opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(20px)",
-          transition: "opacity 0.7s ease, transform 0.7s ease",
+        transition: "opacity 0.7s ease, transform 0.7s ease",
       }}>
-  {/* Badge */ }
-  < div style = {{
-  display: "inline-flex", alignItems: "center", gap: 6,
-    background: "rgba(0,255,178,0.08)", border: "1px solid rgba(0,255,178,0.2)",
-      borderRadius: 20, padding: "5px 14px", fontSize: 12, color: "#00FFB2",
-        marginBottom: 28,
+        {/* Badge */}
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          background: "rgba(0,255,178,0.08)", border: "1px solid rgba(0,255,178,0.2)",
+          borderRadius: 20, padding: "5px 14px", fontSize: 12, color: "#00FFB2",
+          marginBottom: 28,
         }}>
-  <span style={ { width: 6, height: 6, borderRadius: "50%", background: "#00FFB2", display: "inline-block" } } />
-Now in public beta
-  </div>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#00FFB2", display: "inline-block" }} />
+          Now in public beta
+        </div>
 
-{/* Headline */ }
-<h1 style={
-  {
-    fontSize: "clamp(38px, 6vw, 70px)", fontWeight: 800, color: "#fff",
-      letterSpacing: "-0.035em", lineHeight: 1.05, margin: "0 0 20px",
-        }
-}>
-  Ship your SaaS < br />
-    <span style={ { color: "#00FFB2" } }> 10x faster.</span>
-      </h1>
+        {/* Headline */}
+        <h1 style={{
+          fontSize: "clamp(38px, 6vw, 70px)", fontWeight: 800, color: "#fff",
+          letterSpacing: "-0.035em", lineHeight: 1.05, margin: "0 0 20px",
+        }}>
+          Ship your SaaS<br />
+          <span style={{ color: "#00FFB2" }}>10x faster.</span>
+        </h1>
 
-{/* Subtitle */ }
-<p style={
-  {
-    fontSize: 18, color: "rgba(255,255,255,0.42)",
-      lineHeight: 1.75, margin: "0 auto 36px", maxWidth: 520,
-        }
-}>
-  The AI chief of staff for founders who vibe code.Stop getting stuck — start shipping.
+        {/* Subtitle */}
+        <p style={{
+          fontSize: 18, color: "rgba(255,255,255,0.42)",
+          lineHeight: 1.75, margin: "0 auto 36px", maxWidth: 520,
+        }}>
+          The AI chief of staff for founders who vibe code. Stop getting stuck — start shipping.
         </p>
 
-{/* CTAs */ }
-<div style={ { display: "flex", gap: 12, justifyContent: "center", marginBottom: 56 } }>
-  <a href="#" style = {{
-  background: "#00FFB2", color: "#000", border: "none",
-    borderRadius: 10, padding: "13px 28px", fontWeight: 700, fontSize: 14,
-      cursor: "pointer", textDecoration: "none", display: "inline-block",
+        {/* CTAs */}
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 56 }}>
+          <a href="#" style={{
+            background: "#00FFB2", color: "#000", border: "none",
+            borderRadius: 10, padding: "13px 28px", fontWeight: 700, fontSize: 14,
+            cursor: "pointer", textDecoration: "none", display: "inline-block",
           }}>
-  Start Free →
-</a>
-  < a href = "#" style = {{
-  background: "transparent", color: "rgba(255,255,255,0.5)",
-    border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10,
-      padding: "13px 28px", fontWeight: 500, fontSize: 14,
-        cursor: "pointer", textDecoration: "none", display: "inline-block",
+            Start Free →
+          </a>
+          <a href="#" style={{
+            background: "transparent", color: "rgba(255,255,255,0.5)",
+            border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10,
+            padding: "13px 28px", fontWeight: 500, fontSize: 14,
+            cursor: "pointer", textDecoration: "none", display: "inline-block",
           }}>
-  Watch Demo
-    </a>
-    </div>
+            Watch Demo
+          </a>
+        </div>
 
-{/* Stats */ }
-<div style={
-  {
-    borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 32,
-      display: "flex", justifyContent: "center", gap: 48,
-        }
-}>
-{
-  [["500+", "Founders"], ["10x", "Faster shipping"], ["$0", "to start"]].map(([val, label]) => (
-    <div key= { label } style = {{ textAlign: "center" }} >
-  <div style={ { fontSize: 24, fontWeight: 700, color: "#fff" } }> { val } </div>
-    < div style = {{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 4 }}> { label } </div>
-      </div>
+        {/* Stats */}
+        <div style={{
+          borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 32,
+          display: "flex", justifyContent: "center", gap: 48,
+        }}>
+          {[["500+", "Founders"], ["10x", "Faster shipping"], ["$0", "to start"]].map(([val, label]) => (
+            <div key={label} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 24, fontWeight: 700, color: "#fff" }}>{val}</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 4 }}>{label}</div>
+            </div>
           ))}
-</div>
-  </div>
-  </div>
+        </div>
+      </div>
+    </div>
   );
 }`,
       preview: () => React.createElement("div", { style: { background: "#070707", backgroundImage: "radial-gradient(rgba(255,255,255,0.035) 1px,transparent 1px)", backgroundSize: "16px 16px", padding: "20px 16px", minHeight: 130, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" } },
@@ -1960,80 +562,72 @@ Now in public beta
       vibe: "Soft & Pastel",
       difficulty: "Medium",
       desc: "Centered hero with radial gradient background, badge, and gradient CTA.",
-      prompt: `Create a centered React hero section with pastel gradient.Background radial - gradient(ellipse at center, #f3e8ff 0 %, #fce7f3 40 %, #fff 100 %), min - height 80vh flex column centered.Content: pill badge(white bg, #e9d5ff border, purple text "✨ Loved by 1,200+ founders"), headline clamp(36px, 5vw, 60px) weight 800 dark #1a1a2e tight letter - spacing, subtitle 18px #6b7280, gradient pill CTA button(gradient linear - gradient(135deg, #7c3aed, #db2777), white text, border - radius 50px, padding 14px 32px, box - shadow), ghost secondary CTA.Below buttons: social proof row "Trusted by teams at [company names]".All inline styles.Export as default function GradientHero.`,
+      prompt: `Create a centered React hero section with pastel gradient. Background radial-gradient(ellipse at center, #f3e8ff 0%, #fce7f3 40%, #fff 100%), min-height 80vh flex column centered. Content: pill badge (white bg, #e9d5ff border, purple text "✨ Loved by 1,200+ founders"), headline clamp(36px,5vw,60px) weight 800 dark #1a1a2e tight letter-spacing, subtitle 18px #6b7280, gradient pill CTA button (gradient linear-gradient(135deg, #7c3aed, #db2777), white text, border-radius 50px, padding 14px 32px, box-shadow), ghost secondary CTA. Below buttons: social proof row "Trusted by teams at [company names]". All inline styles. Export as default function GradientHero.`,
       code: `export default function GradientHero() {
   return (
-    <div style= {{
-    background: "radial-gradient(ellipse at center, #f3e8ff 0%, #fce7f3 40%, #fff 100%)",
+    <div style={{
+      background: "radial-gradient(ellipse at center, #f3e8ff 0%, #fce7f3 40%, #fff 100%)",
       minHeight: "80vh",
-        display: "flex", flexDirection: "column" as const,
-          alignItems: "center", justifyContent: "center",
-            textAlign: "center", padding: "0 24px",
-    }
-}>
-  {/* Badge */ }
-  < div style = {{
-  background: "white", border: "1px solid #e9d5ff",
-    borderRadius: 20, padding: "5px 14px", fontSize: 13,
-      color: "#7c3aed", marginBottom: 24, display: "inline-block",
+      display: "flex", flexDirection: "column" as const,
+      alignItems: "center", justifyContent: "center",
+      textAlign: "center", padding: "0 24px",
+    }}>
+      {/* Badge */}
+      <div style={{
+        background: "white", border: "1px solid #e9d5ff",
+        borderRadius: 20, padding: "5px 14px", fontSize: 13,
+        color: "#7c3aed", marginBottom: 24, display: "inline-block",
       }}>
-        ✨ Loved by 1, 200 + founders
-  </div>
+        ✨ Loved by 1,200+ founders
+      </div>
 
-{/* Headline */ }
-<h1 style={
-  {
-    fontSize: "clamp(36px, 5vw, 60px)", fontWeight: 800, color: "#1a1a2e",
-      letterSpacing: "-0.03em", lineHeight: 1.1, margin: "0 0 20px",
+      {/* Headline */}
+      <h1 style={{
+        fontSize: "clamp(36px, 5vw, 60px)", fontWeight: 800, color: "#1a1a2e",
+        letterSpacing: "-0.03em", lineHeight: 1.1, margin: "0 0 20px",
         maxWidth: 640,
-      }
-}>
-  Build beautiful products, <br />faster than ever.
-    </h1>
+      }}>
+        Build beautiful products,<br />faster than ever.
+      </h1>
 
-{/* Subtitle */ }
-<p style={
-  {
-    fontSize: 18, color: "#6b7280",
-      lineHeight: 1.7, margin: "0 auto 36px", maxWidth: 480,
-      }
-}>
-  The design toolkit that turns ideas into stunning interfaces in minutes, not days.
+      {/* Subtitle */}
+      <p style={{
+        fontSize: 18, color: "#6b7280",
+        lineHeight: 1.7, margin: "0 auto 36px", maxWidth: 480,
+      }}>
+        The design toolkit that turns ideas into stunning interfaces in minutes, not days.
       </p>
 
-{/* CTAs */ }
-<div style={ { display: "flex", gap: 12, justifyContent: "center", marginBottom: 48 } }>
-  <button style={
-  {
-    background: "linear-gradient(135deg, #7c3aed, #db2777)",
-      color: "white", border: "none", borderRadius: 50,
-        padding: "14px 32px", fontWeight: 600, fontSize: 15,
+      {/* CTAs */}
+      <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 48 }}>
+        <button style={{
+          background: "linear-gradient(135deg, #7c3aed, #db2777)",
+          color: "white", border: "none", borderRadius: 50,
+          padding: "14px 32px", fontWeight: 600, fontSize: 15,
           cursor: "pointer", boxShadow: "0 8px 25px rgba(124,58,237,0.3)",
-        }
-}>
-  Get Started Free →
-</button>
-  < button style = {{
-  background: "transparent", color: "#7c3aed",
-    border: "1px solid #e9d5ff", borderRadius: 50,
-      padding: "14px 32px", fontWeight: 500, fontSize: 15, cursor: "pointer",
         }}>
-  See Examples
-    </button>
-    </div>
+          Get Started Free →
+        </button>
+        <button style={{
+          background: "transparent", color: "#7c3aed",
+          border: "1px solid #e9d5ff", borderRadius: 50,
+          padding: "14px 32px", fontWeight: 500, fontSize: 15, cursor: "pointer",
+        }}>
+          See Examples
+        </button>
+      </div>
 
-{/* Social proof */ }
-<div style={ { fontSize: 12, color: "#9ca3af" } }>
-  Trusted by teams at{ " " }
-{
-  ["Linear", "Vercel", "Loom", "Notion"].map((c, i, arr) => (
-    <span key= { c } >
-    <strong style={{ color: "#6b7280" }}> { c } </strong>
-{ i < arr.length - 1 ? ", " : "" }
-</span>
+      {/* Social proof */}
+      <div style={{ fontSize: 12, color: "#9ca3af" }}>
+        Trusted by teams at{" "}
+        {["Linear", "Vercel", "Loom", "Notion"].map((c, i, arr) => (
+          <span key={c}>
+            <strong style={{ color: "#6b7280" }}>{c}</strong>
+            {i < arr.length - 1 ? ", " : ""}
+          </span>
         ))}
-</div>
-  </div>
+      </div>
+    </div>
   );
 }`,
       preview: () => React.createElement("div", { style: { background: "radial-gradient(ellipse at center,#f3e8ff 0%,#fce7f3 50%,#fff 100%)", padding: "24px 16px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6 } },
@@ -2051,7 +645,7 @@ Now in public beta
       vibe: "Dark & Minimal",
       difficulty: "Simple",
       desc: "Sticky dark navbar with blur backdrop, center links, and CTA button.",
-      prompt: `Create a React navbar component for a dark SaaS product.Sticky top, background rgba(7, 7, 7, 0.92) with backdrop - filter blur(12px), border - bottom 1px solid #111, height 60px, padding 0 40px.Three sections: Left: logo(gradient square div 28x28 with emoji ⚡ + product name text 14px weight 700 white).Center: nav links(4 links, 13px #555, hover #fff, no underline, gap 28px).Right: "Sign in" text link #555 + CTA button(bg #00FFB2, black text, 13px, weight 700, border - radius 8px, padding 7px 16px).Use sticky top - 0 z - 50. Props: productName, links, ctaText, ctaHref.Export as default function Navbar.`,
+      prompt: `Create a React navbar component for a dark SaaS product. Sticky top, background rgba(7,7,7,0.92) with backdrop-filter blur(12px), border-bottom 1px solid #111, height 60px, padding 0 40px. Three sections: Left: logo (gradient square div 28x28 with emoji ⚡ + product name text 14px weight 700 white). Center: nav links (4 links, 13px #555, hover #fff, no underline, gap 28px). Right: "Sign in" text link #555 + CTA button (bg #00FFB2, black text, 13px, weight 700, border-radius 8px, padding 7px 16px). Use sticky top-0 z-50. Props: productName, links, ctaText, ctaHref. Export as default function Navbar.`,
       code: `interface NavbarProps {
   productName?: string;
   links?: { label: string; href: string }[];
@@ -2071,59 +665,55 @@ export default function Navbar({
   ctaHref = "#",
 }: NavbarProps) {
   return (
-    <nav style= {{
-    position: "sticky", top: 0, zIndex: 50,
+    <nav style={{
+      position: "sticky", top: 0, zIndex: 50,
       background: "rgba(7,7,7,0.92)",
-        backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-            borderBottom: "1px solid #111",
-              height: 60, padding: "0 40px",
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-    }
-}>
-  {/* Logo */ }
-  < div style = {{ display: "flex", alignItems: "center", gap: 8 }}>
-    <div style={
-  {
-    width: 28, height: 28,
-      background: "linear-gradient(135deg, #00FFB2, #38BDF8)",
-        borderRadius: 7, display: "flex", alignItems: "center",
+      backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
+      borderBottom: "1px solid #111",
+      height: 60, padding: "0 40px",
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+    }}>
+      {/* Logo */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{
+          width: 28, height: 28,
+          background: "linear-gradient(135deg, #00FFB2, #38BDF8)",
+          borderRadius: 7, display: "flex", alignItems: "center",
           justifyContent: "center", fontSize: 14,
-        }
-}>
-          ⚡
-</div>
-  < span style = {{ fontSize: 14, fontWeight: 700, color: "#fff" }}> { productName } </span>
-    </div>
-
-{/* Links */ }
-<div style={ { display: "flex", gap: 28 } }>
-{
-  links.map(l => (
-    <a key= { l.label } href = { l.href } style = {{
-    fontSize: 13, color: "#555", textDecoration: "none",
-    transition: "color 0.15s",
-  }}
-onMouseEnter = { e => (e.currentTarget.style.color = "#fff")}
-onMouseLeave = { e => (e.currentTarget.style.color = "#555")}
-          >
-  { l.label }
-  </a>
-        ))}
-</div>
-
-{/* Right */ }
-<div style={ { display: "flex", alignItems: "center", gap: 16 } }>
-  <a href="#" style = {{ fontSize: 13, color: "#555", textDecoration: "none" }}> Sign in </a>
-    < a href = { ctaHref } style = {{
-  background: "#00FFB2", color: "#000",
-    borderRadius: 8, padding: "7px 16px",
-      fontSize: 13, fontWeight: 700, textDecoration: "none",
         }}>
-  { ctaText }
-  </a>
-  </div>
-  </nav>
+          ⚡
+        </div>
+        <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{productName}</span>
+      </div>
+
+      {/* Links */}
+      <div style={{ display: "flex", gap: 28 }}>
+        {links.map(l => (
+          <a key={l.label} href={l.href} style={{
+            fontSize: 13, color: "#555", textDecoration: "none",
+            transition: "color 0.15s",
+          }}
+            onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
+            onMouseLeave={e => (e.currentTarget.style.color = "#555")}
+          >
+            {l.label}
+          </a>
+        ))}
+      </div>
+
+      {/* Right */}
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <a href="#" style={{ fontSize: 13, color: "#555", textDecoration: "none" }}>Sign in</a>
+        <a href={ctaHref} style={{
+          background: "#00FFB2", color: "#000",
+          borderRadius: 8, padding: "7px 16px",
+          fontSize: 13, fontWeight: 700, textDecoration: "none",
+        }}>
+          {ctaText}
+        </a>
+      </div>
+    </nav>
   );
 }`,
       preview: () => React.createElement("div", { style: { background: "rgba(7,7,7,0.95)", borderBottom: "1px solid #111", padding: "0 16px", height: 50, display: "flex", alignItems: "center", justifyContent: "space-between" } },
@@ -2143,7 +733,7 @@ onMouseLeave = { e => (e.currentTarget.style.color = "#555")}
       vibe: "Soft & Pastel",
       difficulty: "Simple",
       desc: "Clean white navbar with pill-shaped active nav items and avatar.",
-      prompt: `Create a minimal React navbar for a light - themed product.White background, border - bottom 1px solid #f0f0f0, height 64px, max - width 1200px centered.Left: wordmark logo(dark #1a1a2e, 20px, weight 700).Center: 4 - 5 pill - style navigation items using useState for active item — active item: background #f3e8ff, color #7c3aed, font - weight 500. Inactive: no background, color #6b7280.Each pill: border - radius 20px, padding 6px 14px, font - size 13px, cursor pointer.Right: notification bell icon(relative positioned with dot badge) + user avatar circle(36px, initials, bg #f3e8ff, color #7c3aed).Export as default function MinimalNav.`,
+      prompt: `Create a minimal React navbar for a light-themed product. White background, border-bottom 1px solid #f0f0f0, height 64px, max-width 1200px centered. Left: wordmark logo (dark #1a1a2e, 20px, weight 700). Center: 4-5 pill-style navigation items using useState for active item — active item: background #f3e8ff, color #7c3aed, font-weight 500. Inactive: no background, color #6b7280. Each pill: border-radius 20px, padding 6px 14px, font-size 13px, cursor pointer. Right: notification bell icon (relative positioned with dot badge) + user avatar circle (36px, initials, bg #f3e8ff, color #7c3aed). Export as default function MinimalNav.`,
       code: `import { useState } from "react";
 
 const NAV_ITEMS = ["Elements", "Prompts", "Templates", "Settings"];
@@ -2152,57 +742,53 @@ export default function MinimalNav({ logoText = "forge.", initials = "MO" }: { l
   const [active, setActive] = useState("Elements");
 
   return (
-    <nav style= {{
-    background: "white", borderBottom: "1px solid #f0f0f0",
+    <nav style={{
+      background: "white", borderBottom: "1px solid #f0f0f0",
       height: 64, display: "flex", alignItems: "center",
-        justifyContent: "space-between", padding: "0 24px",
-          maxWidth: 1200, margin: "0 auto",
-    }
-}>
-  {/* Logo */ }
-  < div style = {{ fontSize: 20, fontWeight: 700, color: "#1a1a2e" }}> { logoText } </div>
+      justifyContent: "space-between", padding: "0 24px",
+      maxWidth: 1200, margin: "0 auto",
+    }}>
+      {/* Logo */}
+      <div style={{ fontSize: 20, fontWeight: 700, color: "#1a1a2e" }}>{logoText}</div>
 
-{/* Pill nav */ }
-<div style={ { display: "flex", gap: 4 } }>
-{
-  NAV_ITEMS.map(item => (
-    <button key= { item } onClick = {() => setActive(item)} style = {{
-  background: active === item ? "#f3e8ff" : "transparent",
-    color: active === item ? "#7c3aed" : "#6b7280",
-      fontWeight: active === item ? 500 : 400,
-        border: "none", borderRadius: 20,
-          padding: "6px 14px", fontSize: 13, cursor: "pointer",
+      {/* Pill nav */}
+      <div style={{ display: "flex", gap: 4 }}>
+        {NAV_ITEMS.map(item => (
+          <button key={item} onClick={() => setActive(item)} style={{
+            background: active === item ? "#f3e8ff" : "transparent",
+            color: active === item ? "#7c3aed" : "#6b7280",
+            fontWeight: active === item ? 500 : 400,
+            border: "none", borderRadius: 20,
+            padding: "6px 14px", fontSize: 13, cursor: "pointer",
             fontFamily: "inherit", transition: "all 0.15s",
           }}>
-  { item }
-  </button>
+            {item}
+          </button>
         ))}
-</div>
+      </div>
 
-{/* Right */ }
-<div style={ { display: "flex", alignItems: "center", gap: 12 } }>
-  {/* Bell */ }
-  < div style = {{ position: "relative", cursor: "pointer" }}>
-    <span style={ { fontSize: 18, color: "#9ca3af" } }>🔔</span>
-      < span style = {{
-  position: "absolute", top: 0, right: 0,
-    width: 7, height: 7, background: "#7c3aed",
-      borderRadius: "50%", border: "1.5px solid white",
+      {/* Right */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {/* Bell */}
+        <div style={{ position: "relative", cursor: "pointer" }}>
+          <span style={{ fontSize: 18, color: "#9ca3af" }}>🔔</span>
+          <span style={{
+            position: "absolute", top: 0, right: 0,
+            width: 7, height: 7, background: "#7c3aed",
+            borderRadius: "50%", border: "1.5px solid white",
           }} />
-  </div>
-{/* Avatar */ }
-<div style={
-  {
-    width: 36, height: 36, borderRadius: "50%",
-      background: "#f3e8ff", color: "#7c3aed",
-        display: "flex", alignItems: "center", justifyContent: "center",
+        </div>
+        {/* Avatar */}
+        <div style={{
+          width: 36, height: 36, borderRadius: "50%",
+          background: "#f3e8ff", color: "#7c3aed",
+          display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: 12, fontWeight: 700, cursor: "pointer",
-        }
-}>
-  { initials }
-  </div>
-  </div>
-  </nav>
+        }}>
+          {initials}
+        </div>
+      </div>
+    </nav>
   );
 }`,
       preview: () => React.createElement("div", { style: { background: "white", borderBottom: "1px solid #f0f0f0", padding: "0 16px", height: 54, display: "flex", alignItems: "center", justifyContent: "space-between" } },
@@ -2217,38 +803,13 @@ export default function MinimalNav({ logoText = "forge.", initials = "MO" }: { l
   ],
 
   forms: [
-
-    {
-      id: "form-omni-command",
-      name: "Omni-Command Palette",
-      vibe: "Dark & Minimal",
-      difficulty: "Advanced",
-      desc: "A highly engineered AI command palette with glowing border states, integrated attachments, and responsive staggered quick-action pills.",
-      prompt: `Create a React component OmniCommandInput.A dark - themed AI prompt input.Main wrapper: bg #111, radius 16px, padding 12px, border 1px solid #222. On focus: border transitions to rgba(255, 255, 255, 0.2) + soft white inner glow.Inside: transparent textarea.Bottom row: paperclip icon(left), "+ Project" dashed pill and an up - arrow button(right).Below input: row of 3 quick action pills(Clone a Screenshot, Import from Figma, Landing Page) with border 1px solid #333, color #888, border - radius 20px, hover border #fff.`,
-      code: `"use client"; \nimport { useState } from "react"; \n\nconst ACTIONS = [\n  { icon: "⎘", label: "Clone a Screenshot" }, \n  { icon: "✧", label: "Import from Figma" }, \n  { icon: "↑", label: "Upload a Project" }, \n  { icon: "□", label: "Landing Page" }\n]; \n\nexport function OmniCommandInput() { \n  const [focused, setFocused] = useState(false); \n  const [val, setVal] = useState(""); \n\n  return (\n < div style = {{ maxWidth: 700, width: "100%", fontFamily: "inherit" } }>\n < div style = {{ \n        background: "#121212", \n        borderRadius: 16, \n        padding: "16px", \n        border: focused ? "1px solid rgba(255,255,255,0.15)" : "1px solid #222", \n        boxShadow: focused ? "0 0 0 2px rgba(255,255,255,0.05), inset 0 0 20px rgba(255,255,255,0.02)" : "0 4px 12px rgba(0,0,0,0.5)", \n        transition: "all 0.3s ease", \n        marginBottom: 16\n }}>\n < textarea \n          value = { val }\n          onChange = { e => setVal(e.target.value) }\n          onFocus = {() => setFocused(true)}\n          onBlur = {() => setFocused(false)}\n          placeholder = "Ask v0 a question..."\n          style = {{ \n            width: "100%", minHeight: 60, background: "transparent", border: "none", \n            color: "#fff", fontSize: 15, outline: "none", resize: "none", fontFamily: "inherit"\n }}\n />\n < div style = {{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12 }}>\n < button style = {{ background: "none", border: "none", color: "#666", cursor: "pointer", display: "flex", alignItems: "center", padding: 4 }}>\n < svg viewBox = "0 0 24 24" width = "20" height = "20" stroke = "currentColor" strokeWidth = "2" fill = "none" strokeLinecap = "round" strokeLinejoin = "round" > <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" > </path></svg >\n < /button>\n          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>\n            <button style={{ background: "transparent", border: "1px dashed #444", borderRadius: 20, color: "#888", fontSize: 13, padding: "6px 12px", cursor: "pointer", transition: "all 0.2s" }}\n              onMouseEnter={e => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "#fff"; }}\n              onMouseLeave={e => { e.currentTarget.style.color = "#888"; e.currentTarget.style.borderColor = "#444"; }}\n            >\n              + Project\n            </button >\n < button style = {{ background: val.length > 0 ? "#fff" : "#222", color: val.length > 0 ? "#000" : "#555", border: "none", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s" }}>\n < svg viewBox = "0 0 24 24" width = "16" height = "16" stroke = "currentColor" strokeWidth = "2" fill = "none" > <line x1="12" y1 = "19" x2 = "12" y2 = "5" > </line><polyline points="5 12 12 5 19 12"></polyline > </svg>\n            </button >\n < /div>\n        </div >\n < /div>\n      \n      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>\n        {ACTIONS.map((action, i) => (\n          <button key={i} style={{\n            background: "#161616", border: "1px solid #2a2a2a", borderRadius: 20,\n            padding: "8px 16px", color: "#888", fontSize: 13, display: "flex", alignItems: "center", gap: 6,\n            cursor: "pointer", transition: "all 0.2s ease"\n          }}\n          onMouseEnter={e => { e.currentTarget.style.borderColor = "#fff"; e.currentTarget.style.color = "#fff"; }}\n          onMouseLeave={e => { e.currentTarget.style.borderColor = "#2a2a2a"; e.currentTarget.style.color = "#888"; }}\n          >\n            <span style={{ fontSize: 14 }}>{action.icon}</span > { action.label }\n < /button>\n        ))}\n      </div >\n </div>\n  ); \n}`,
-      preview: () => React.createElement("div", { style: { padding: 20, display: "flex", flexDirection: "column", gap: 10, background: "#0a0a0c", borderRadius: 12 } },
-        React.createElement("div", { style: { background: "#121212", borderRadius: 12, padding: 12, border: "1px solid #222" } },
-          React.createElement("div", { style: { color: "#555", fontSize: 12, marginBottom: 20 } }, "Ask v0 a question..."),
-          React.createElement("div", { style: { display: "flex", justifyContent: "space-between" } },
-            React.createElement("div", { style: { width: 14, height: 14, border: "1px solid #444", borderRadius: "50%" } }),
-            React.createElement("div", { style: { width: 20, height: 20, background: "#222", borderRadius: 4 } })
-          )
-        ),
-        React.createElement("div", { style: { display: "flex", gap: 6, opacity: 0.6 } },
-          React.createElement("div", { style: { padding: "4px 8px", background: "#161616", border: "1px solid #2a2a2a", borderRadius: 10, fontSize: 9, color: "#888" } }, "Clone Image"),
-          React.createElement("div", { style: { padding: "4px 8px", background: "#161616", border: "1px solid #2a2a2a", borderRadius: 10, fontSize: 9, color: "#888" } }, "Figma")
-        )
-      )
-    },
-
-    // Additional forms...
     {
       id: "form-auth-dark",
       name: "Dark Auth Form",
       vibe: "Dark & Minimal",
       difficulty: "Medium",
       desc: "Complete dark login form with show/hide password and Google OAuth.",
-      prompt: `Create a React dark login form component.Card: background #111, border 1px solid #1e1e1e, border - radius 20px, padding 40px, max - width 400px centered on dark #0a0a0a background.Content: logo icon(gradient 42x42 border - radius 11px) + product name centered.Heading "Welcome back" + subtitle.Email input(full - width, bg #0d0d0d, border #1e1e1e, br 8px, white text, padding 11px 14px).Password input with eye show / hide toggle button(absolute right 12px). "Forgot password?" right - aligned link.Primary submit button(full - width, bg #00FFB2, black bold text).Divider "or".Google OAuth button(full - width, transparent, border #1e1e1e, gray text). "No account? Sign up" footer.Use useState for showPassword and screen state(login / signup / forgot).Export as default function AuthForm.`,
+      prompt: `Create a React dark login form component. Card: background #111, border 1px solid #1e1e1e, border-radius 20px, padding 40px, max-width 400px centered on dark #0a0a0a background. Content: logo icon (gradient 42x42 border-radius 11px) + product name centered. Heading "Welcome back" + subtitle. Email input (full-width, bg #0d0d0d, border #1e1e1e, br 8px, white text, padding 11px 14px). Password input with eye show/hide toggle button (absolute right 12px). "Forgot password?" right-aligned link. Primary submit button (full-width, bg #00FFB2, black bold text). Divider "or". Google OAuth button (full-width, transparent, border #1e1e1e, gray text). "No account? Sign up" footer. Use useState for showPassword and screen state (login/signup/forgot). Export as default function AuthForm.`,
       code: `import { useState } from "react";
 
 const inputStyle = {
@@ -2265,92 +826,83 @@ export default function AuthForm() {
   const [screen, setScreen] = useState<"login" | "signup">("login");
 
   return (
-    <div style= {{ background: "#0a0a0a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }
-}>
-  <div style={
-  {
-    background: "#111", border: "1px solid #1e1e1e",
-      borderRadius: 20, padding: 40, width: "100%", maxWidth: 400,
-      }
-}>
-  {/* Logo */ }
-  < div style = {{ textAlign: "center", marginBottom: 28 }}>
-    <div style={
-  {
-    width: 42, height: 42, background: "linear-gradient(135deg, #00FFB2, #38BDF8)",
-      borderRadius: 11, display: "inline-flex", alignItems: "center",
-        justifyContent: "center", fontSize: 20, marginBottom: 10,
-          }
-}>
+    <div style={{ background: "#0a0a0a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div style={{
+        background: "#111", border: "1px solid #1e1e1e",
+        borderRadius: 20, padding: 40, width: "100%", maxWidth: 400,
+      }}>
+        {/* Logo */}
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{
+            width: 42, height: 42, background: "linear-gradient(135deg, #00FFB2, #38BDF8)",
+            borderRadius: 11, display: "inline-flex", alignItems: "center",
+            justifyContent: "center", fontSize: 20, marginBottom: 10,
+          }}>
             ⚡
-</div>
-  < div style = {{ fontSize: 15, fontWeight: 700, color: "#fff" }}> Vibe OS </div>
-    </div>
+          </div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Vibe OS</div>
+        </div>
 
-    < h2 style = {{ color: "#fff", fontSize: 22, fontWeight: 700, margin: "0 0 6px", textAlign: "center" }}>
-      { screen === "login" ? "Welcome back" : "Create account"}
-</h2>
-  < p style = {{ color: "#444", fontSize: 13, textAlign: "center", margin: "0 0 28px" }}>
-    { screen === "login" ? "Sign in to your account" : "Start for free, no card needed"}
-</p>
+        <h2 style={{ color: "#fff", fontSize: 22, fontWeight: 700, margin: "0 0 6px", textAlign: "center" }}>
+          {screen === "login" ? "Welcome back" : "Create account"}
+        </h2>
+        <p style={{ color: "#444", fontSize: 13, textAlign: "center", margin: "0 0 28px" }}>
+          {screen === "login" ? "Sign in to your account" : "Start for free, no card needed"}
+        </p>
 
-  < div style = {{ display: "flex", flexDirection: "column" as const, gap: 12 }}>
-    <input type="email" placeholder = "you@example.com" style = { inputStyle } />
+        <div style={{ display: "flex", flexDirection: "column" as const, gap: 12 }}>
+          <input type="email" placeholder="you@example.com" style={inputStyle} />
 
-      <div style={ { position: "relative" } }>
-        <input type={ showPassword ? "text" : "password" } placeholder = "Password" style = {{ ...inputStyle, paddingRight: 44 }} />
-          < button onClick = {() => setShowPassword(p => !p)} style = {{
-  position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
-    background: "none", border: "none", color: "#444", cursor: "pointer", fontSize: 14,
+          <div style={{ position: "relative" }}>
+            <input type={showPassword ? "text" : "password"} placeholder="Password" style={{ ...inputStyle, paddingRight: 44 }} />
+            <button onClick={() => setShowPassword(p => !p)} style={{
+              position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+              background: "none", border: "none", color: "#444", cursor: "pointer", fontSize: 14,
             }}>
-  { showPassword? "🙈": "👁" }
-  </button>
-  </div>
-
-{
-  screen === "login" && (
-    <div style={ { textAlign: "right" } }>
-      <a href="#" style = {{ fontSize: 12, color: "#444", textDecoration: "none" }
-}> Forgot password ? </a>
-  </div>
-          )}
-
-<button style={
-  {
-    width: "100%", background: "#00FFB2", border: "none",
-      borderRadius: 8, padding: 12, fontWeight: 700,
-        fontSize: 14, color: "#000", cursor: "pointer",
-          }
-}>
-  { screen === "login" ? "Sign In →" : "Create Account →"}
-</button>
-
-  < div style = {{ display: "flex", alignItems: "center", gap: 10 }}>
-    <div style={ { flex: 1, height: 1, background: "#1e1e1e" } } />
-      < span style = {{ fontSize: 11, color: "#333" }}> or </span>
-        < div style = {{ flex: 1, height: 1, background: "#1e1e1e" }} />
+              {showPassword ? "🙈" : "👁"}
+            </button>
           </div>
 
-          < button style = {{
-  width: "100%", background: "transparent",
-    border: "1px solid #1e1e1e", borderRadius: 8,
-      padding: 11, fontSize: 13, color: "#666", cursor: "pointer", fontFamily: "inherit",
+          {screen === "login" && (
+            <div style={{ textAlign: "right" }}>
+              <a href="#" style={{ fontSize: 12, color: "#444", textDecoration: "none" }}>Forgot password?</a>
+            </div>
+          )}
+
+          <button style={{
+            width: "100%", background: "#00FFB2", border: "none",
+            borderRadius: 8, padding: 12, fontWeight: 700,
+            fontSize: 14, color: "#000", cursor: "pointer",
+          }}>
+            {screen === "login" ? "Sign In →" : "Create Account →"}
+          </button>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ flex: 1, height: 1, background: "#1e1e1e" }} />
+            <span style={{ fontSize: 11, color: "#333" }}>or</span>
+            <div style={{ flex: 1, height: 1, background: "#1e1e1e" }} />
+          </div>
+
+          <button style={{
+            width: "100%", background: "transparent",
+            border: "1px solid #1e1e1e", borderRadius: 8,
+            padding: 11, fontSize: 13, color: "#666", cursor: "pointer", fontFamily: "inherit",
           }}>
             🔵 Continue with Google
-</button>
-</div>
+          </button>
+        </div>
 
-< p style = {{ textAlign: "center", fontSize: 12, color: "#444", marginTop: 20 }}>
-  { screen === "login" ? "No account? " : "Already have an account? "}
-<button onClick={ () => setScreen(s => s === "login" ? "signup" : "login") } style = {{
-  background: "none", border: "none", color: "#00FFB2",
-    cursor: "pointer", fontSize: 12, fontFamily: "inherit",
+        <p style={{ textAlign: "center", fontSize: 12, color: "#444", marginTop: 20 }}>
+          {screen === "login" ? "No account? " : "Already have an account? "}
+          <button onClick={() => setScreen(s => s === "login" ? "signup" : "login")} style={{
+            background: "none", border: "none", color: "#00FFB2",
+            cursor: "pointer", fontSize: 12, fontFamily: "inherit",
           }}>
-  { screen === "login" ? "Sign up" : "Sign in"}
-</button>
-  </p>
-  </div>
-  </div>
+            {screen === "login" ? "Sign up" : "Sign in"}
+          </button>
+        </p>
+      </div>
+    </div>
   );
 }`,
       preview: () => React.createElement("div", { style: { background: "#0a0a0a", padding: 16, display: "flex", justifyContent: "center" } },
@@ -2371,7 +923,7 @@ export default function AuthForm() {
       vibe: "Soft & Pastel",
       difficulty: "Medium",
       desc: "Input with animated floating label — label rises to top on focus.",
-      prompt: `Create a React floating label input component using useState.When input is focused or has value, the label floats above the input (top position, smaller font, colored). When empty and unfocused, label sits centered in the input like a placeholder.Style: white bg, border 1.5px solid #e5e7eb, border - radius 12px, focus border 1.5px solid #a78bfa.Label starts at vertical center(font - size 14px, color #9ca3af), on focus / value: float to top(font - size 11px, color #a78bfa, background white padding 0 4px to cover border).Include error variant(red border + error message below).Include success variant(green border).Export as default function FloatingInput with props: label, type, error, success.`,
+      prompt: `Create a React floating label input component using useState. When input is focused or has value, the label floats above the input (top position, smaller font, colored). When empty and unfocused, label sits centered in the input like a placeholder. Style: white bg, border 1.5px solid #e5e7eb, border-radius 12px, focus border 1.5px solid #a78bfa. Label starts at vertical center (font-size 14px, color #9ca3af), on focus/value: float to top (font-size 11px, color #a78bfa, background white padding 0 4px to cover border). Include error variant (red border + error message below). Include success variant (green border). Export as default function FloatingInput with props: label, type, error, success.`,
       code: `import { useState } from "react";
 
 interface FloatingInputProps {
@@ -2390,18 +942,17 @@ export function FloatingInput({ label = "Email address", type = "text", error, s
   const labelColor = error ? "#f87171" : success ? "#4ade80" : "#a78bfa";
 
   return (
-    <div style= {{ marginBottom: 4 }
-}>
-  <div style={ { position: "relative" } }>
-    <input
-          type={ type }
-value = { value }
-onChange = { e => setValue(e.target.value) }
-onFocus = {() => setFocused(true)}
-onBlur = {() => setFocused(false)}
-style = {{
-  width: "100%", background: "white",
-    border: \`1.5px solid \${borderColor}\`,
+    <div style={{ marginBottom: 4 }}>
+      <div style={{ position: "relative" }}>
+        <input
+          type={type}
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          style={{
+            width: "100%", background: "white",
+            border: \`1.5px solid \${borderColor}\`,
             borderRadius: 12, padding: "18px 13px 7px",
             fontSize: 14, outline: "none", color: "#1a1a2e",
             boxSizing: "border-box" as const, fontFamily: "inherit",
@@ -2450,244 +1001,6 @@ export default function FloatingInputDemo() {
           React.createElement("input", { type: "text", placeholder: " ", style: { width: "100%", border: "1.5px solid #f87171", borderRadius: 10, padding: "17px 13px 7px", fontSize: 14, outline: "none", color: "#1a1a2e", background: "white", boxSizing: "border-box" as const } }),
           React.createElement("label", { style: { position: "absolute", left: 13, top: "45%", transform: "translateY(-90%)", fontSize: 11, color: "#f87171", background: "white", padding: "0 3px", pointerEvents: "none" as const } }, "Username"),
           React.createElement("div", { style: { fontSize: 11, color: "#f87171", marginTop: 5, paddingLeft: 3 } }, "⚠ Username already taken")
-        )
-      ),
-    },
-    {
-      id: "form-split-signup",
-      name: "Split Screen Signup",
-      vibe: "Dark & Minimal",
-      difficulty: "Medium",
-      desc: "Two-panel signup: dark brand panel left, light form right. Email/password validation, glass blur strips, and orange accent.",
-      prompt: `Create a split-screen React signup form. Two equal halves side by side. LEFT HALF: black background, white text brand tagline (font-size 22px, weight 500, line-height 1.4, max-width 280px), 6 vertical glass blur strip overlays (each 64px wide, backdrop-filter blur(20px), gradient fill black 60%, opacity 0.3, absolute positioned), gradient overlay from black to transparent top-down, large orange circle blob (200px, border-radius 50%, bottom-left absolute, overflow hidden). RIGHT HALF: #f9f9f9 background, flex column, padding 48px 40px. Content: orange sun/burst icon (36px), "Get Started" heading (28px weight 500 tight tracking), subtitle text, email input (white bg, border #d1d5db, border-radius 8px, focus border accent + ring), password input same, red inline error messages, submit button full-width (orange bg, white text, hover opacity). "Already have account? Login" link below. Props: brandName, tagline, accentColor (default #f97316). Export as default function SplitSignup.`,
-      code: `import { useState } from "react";
-import { Sun } from "lucide-react";
-
-interface SplitSignupProps {
-  brandName?: string;
-  tagline?: string;
-  accentColor?: string;
-  onSubmit?: (email: string, password: string) => void;
-}
-
-export default function SplitSignup({
-  brandName = "YourBrand",
-  tagline = "Design and dev partner for startups and founders.",
-  accentColor = "#f97316",
-  onSubmit,
-}: SplitSignupProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    let valid = true;
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
-      setEmailError("Please enter a valid email address.");
-      valid = false;
-    } else setEmailError("");
-    if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters.");
-      valid = false;
-    } else setPasswordError("");
-    if (valid) onSubmit?.(email, password);
-  };
-
-  const inputStyle = (hasError: boolean): React.CSSProperties => ({
-    width: "100%", padding: "9px 12px", fontSize: 13,
-    background: "white", color: "#111",
-    border: \`1px solid \${hasError ? "#ef4444" : "#d1d5db"}\`,
-    borderRadius: 8, outline: "none",
-    boxSizing: "border-box", fontFamily: "inherit",
-    transition: "border-color 0.15s, box-shadow 0.15s",
-  });
-
-  const focusInput = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.currentTarget.style.borderColor = accentColor;
-    e.currentTarget.style.boxShadow = \`0 0 0 3px \${accentColor}22\`;
-  };
-  const blurInput = (e: React.FocusEvent<HTMLInputElement>, hasError: boolean) => {
-    e.currentTarget.style.borderColor = hasError ? "#ef4444" : "#d1d5db";
-    e.currentTarget.style.boxShadow = "none";
-  };
-
-  return (
-    <div style={{ display: "flex", minHeight: "100vh", alignItems: "center", justifyContent: "center", background: "#f0f0f0", padding: 24 }}>
-      <div style={{ display: "flex", width: "100%", maxWidth: 900, borderRadius: 20, overflow: "hidden", boxShadow: "0 24px 80px rgba(0,0,0,0.18)" }}>
-
-        {/* ── Left dark panel ── */}
-        <div style={{ flex: 1, background: "#000", padding: "48px 40px", position: "relative", overflow: "hidden", minHeight: 480 }}>
-          {/* Glass blur strips */}
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} style={{
-              position: "absolute", top: 0, left: i * 64, width: 64, height: "100%",
-              backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
-              background: "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 69%, rgba(255,255,255,0.05) 100%)",
-              opacity: 0.3,
-            }} />
-          ))}
-          {/* Top gradient overlay */}
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%)" }} />
-          {/* Orange blob */}
-          <div style={{ position: "absolute", bottom: -40, left: -20, width: 220, height: 220, background: accentColor, borderRadius: "50%" }} />
-          <div style={{ position: "absolute", bottom: -10, left: 30, width: 110, height: 75, background: "white", borderRadius: "50%", opacity: 0.1 }} />
-          {/* Tagline */}
-          <p style={{ position: "relative", zIndex: 1, fontSize: 22, fontWeight: 500, color: "#fff", lineHeight: 1.4, letterSpacing: "-0.02em", maxWidth: 280, margin: 0 }}>
-            {tagline}
-          </p>
-        </div>
-
-        {/* ── Right form panel ── */}
-        <div style={{ flex: 1, background: "#f9f9f9", padding: "48px 40px", display: "flex", flexDirection: "column" as const }}>
-          <div style={{ marginBottom: 28 }}>
-            <div style={{ color: accentColor, marginBottom: 14 }}>
-              <Sun size={36} strokeWidth={1.5} />
-            </div>
-            <h2 style={{ fontSize: 28, fontWeight: 500, letterSpacing: "-0.025em", margin: "0 0 6px", color: "#111" }}>
-              Get Started
-            </h2>
-            <p style={{ fontSize: 13, color: "#777", margin: 0 }}>
-              Welcome to {brandName} — Let's get started
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column" as const, gap: 14 }}>
-            <div>
-              <label style={{ display: "block", fontSize: 12, color: "#444", marginBottom: 5, fontFamily: "inherit" }}>
-                Your email
-              </label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                style={inputStyle(!!emailError)}
-                onFocus={focusInput}
-                onBlur={e => blurInput(e, !!emailError)}
-              />
-              {emailError && <p style={{ fontSize: 11, color: "#ef4444", margin: "4px 0 0" }}>{emailError}</p>}
-            </div>
-
-            <div>
-              <label style={{ display: "block", fontSize: 12, color: "#444", marginBottom: 5, fontFamily: "inherit" }}>
-                Create new password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                style={inputStyle(!!passwordError)}
-                onFocus={focusInput}
-                onBlur={e => blurInput(e, !!passwordError)}
-              />
-              {passwordError && <p style={{ fontSize: 11, color: "#ef4444", margin: "4px 0 0" }}>{passwordError}</p>}
-            </div>
-
-            <button type="submit" style={{
-              width: "100%", background: accentColor, color: "#fff",
-              border: "none", borderRadius: 8, padding: "10px 16px",
-              fontSize: 14, fontWeight: 500, cursor: "pointer",
-              fontFamily: "inherit", transition: "opacity 0.15s",
-            }}
-              onMouseOver={e => (e.currentTarget.style.opacity = "0.88")}
-              onMouseOut={e => (e.currentTarget.style.opacity = "1")}
-            >
-              Create a new account
-            </button>
-
-            <p style={{ textAlign: "center", fontSize: 13, color: "#999", margin: 0 }}>
-              Already have an account?{" "}
-              <a href="/login" style={{ color: "#333", fontWeight: 500, textDecoration: "underline" }}>
-                Login
-              </a>
-            </p>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { display: "flex", width: "100%", borderRadius: 8, overflow: "hidden", boxShadow: "0 8px 28px rgba(0,0,0,0.3)" } },
-        // Left dark panel
-        React.createElement("div", { style: { flex: 1, background: "#000", padding: "14px 12px", position: "relative", overflow: "hidden", minHeight: 130 } },
-          React.createElement("div", { style: { position: "absolute", bottom: -14, left: -6, width: 64, height: 64, background: "#f97316", borderRadius: "50%" } }),
-          React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%)" } }),
-          React.createElement("p", { style: { position: "relative", zIndex: 1, fontSize: 8.5, color: "#fff", fontWeight: 500, lineHeight: 1.45, margin: 0, maxWidth: 90 } }, "Design partner for startups and founders.")
-        ),
-        // Right form panel
-        React.createElement("div", { style: { flex: 1, background: "#f9f9f9", padding: "14px 12px", display: "flex", flexDirection: "column" } },
-          React.createElement("div", { style: { width: 16, height: 16, borderRadius: "50%", background: "#f97316", marginBottom: 7 } }),
-          React.createElement("div", { style: { fontSize: 10.5, fontWeight: 600, color: "#111", marginBottom: 10, letterSpacing: "-0.01em" } }, "Get Started"),
-          React.createElement("div", { style: { background: "white", border: "1px solid #e5e7eb", borderRadius: 5, padding: "3px 7px", fontSize: 7.5, color: "#bbb", marginBottom: 5 } }, "you@example.com"),
-          React.createElement("div", { style: { background: "white", border: "1px solid #e5e7eb", borderRadius: 5, padding: "3px 7px", fontSize: 7.5, color: "#bbb", marginBottom: 7 } }, "••••••••"),
-          React.createElement("div", { style: { background: "#f97316", borderRadius: 5, padding: "3px 7px", textAlign: "center" as const, fontSize: 7.5, color: "#fff", fontWeight: 600 } }, "Create Account")
-        )
-      ),
-    },
-    {
-      id: "form-action-search",
-      name: "Action Search Bar",
-      vibe: "Dark & Minimal",
-      difficulty: "Medium",
-      desc: "An animated command palette search bar with real-time filtering, framer-motion dropdown, and keyboard shortcut badge.",
-      prompt: `Create a React component called ActionSearchBar using framer-motion. An input bar with search icon prefix and ⌘K badge suffix. On focus: box-shadow ring (rgba(0,255,178,0.12)), border brightens. Dropdown (AnimatePresence, motion.div) appears below with filtered results. Each result: icon box, label, category tag. Results animate in with stagger (0.03s delay per item). onMouseEnter/Leave for hover states. "✕" clear button appears when query is set. Props: placeholder, results (array of {id, label, category, icon}). Export ActionSearchBar.`,
-      code: `"use client";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-
-const DEFAULT_RESULTS = [
-  { id: "1", label: "Create new project", category: "Actions", icon: "+" },
-  { id: "2", label: "Open dashboard", category: "Navigate", icon: "⬡" },
-  { id: "3", label: "View analytics", category: "Navigate", icon: "◉" },
-  { id: "4", label: "Invite teammate", category: "Actions", icon: "◎" },
-  { id: "5", label: "Element Forge", category: "Tools", icon: "◈" },
-];
-
-export function ActionSearchBar({ placeholder = "Search actions...", results = DEFAULT_RESULTS }) {
-  const [query, setQuery] = useState("");
-  const [focused, setFocused] = useState(false);
-
-  const filtered = query ? results.filter(r => r.label.toLowerCase().includes(query.toLowerCase())) : results;
-
-  return (
-    <div style={{ position: "relative", width: "100%", maxWidth: 360 }}>
-      <div style={{ position: "relative", display: "flex", alignItems: "center", background: "rgba(255,255,255,0.04)", border: focused ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(255,255,255,0.08)", borderRadius: 12, transition: "all 0.2s", boxShadow: focused ? "0 0 0 3px rgba(0,255,178,0.12)" : "none" }}>
-        <span style={{ paddingLeft: 14, color: "rgba(255,255,255,0.3)", fontSize: 14 }}>⌕</span>
-        <input value={query} onChange={e => setQuery(e.target.value)} onFocus={() => setFocused(true)} onBlur={() => setTimeout(() => setFocused(false), 150)} placeholder={placeholder} style={{ flex: 1, background: "transparent", border: "none", outline: "none", padding: "10px 14px", fontSize: 13, color: "rgba(255,255,255,0.85)", fontFamily: "inherit" }} />
-        {query && <button onClick={() => setQuery("")} style={{ paddingRight: 12, color: "rgba(255,255,255,0.3)", background: "none", border: "none", cursor: "pointer", fontSize: 14 }}>✕</button>}
-        <div style={{ paddingRight: 12, color: "rgba(255,255,255,0.2)", fontSize: 10, fontFamily: "monospace" }}>⌘K</div>
-      </div>
-      <AnimatePresence>
-        {focused && filtered.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: -6, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.98 }} transition={{ duration: 0.15 }} style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, right: 0, background: "#111113", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden", zIndex: 50, boxShadow: "0 20px 40px rgba(0,0,0,0.6)" }}>
-            {filtered.map((r, i) => (
-              <motion.button key={r.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "9px 14px", background: "transparent", border: "none", borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}>
-                <span style={{ width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.06)", borderRadius: 6, fontSize: 11, color: "rgba(255,255,255,0.6)" }}>{r.icon}</span>
-                <span style={{ flex: 1, fontSize: 13, color: "rgba(255,255,255,0.8)" }}>{r.label}</span>
-                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.25)", fontFamily: "monospace" }}>{r.category}</span>
-              </motion.button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { padding: "20px 24px", display: "flex", flexDirection: "column" as const, gap: 6 } },
-        React.createElement("div", { style: { display: "flex", alignItems: "center", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10, padding: "8px 12px", boxShadow: "0 0 0 3px rgba(0,255,178,0.1)" } },
-          React.createElement("span", { style: { color: "rgba(255,255,255,0.3)", fontSize: 12, marginRight: 6 } }, "⌕"),
-          React.createElement("span", { style: { flex: 1, fontSize: 11, color: "rgba(255,255,255,0.35)" } }, "Search actions..."),
-          React.createElement("span", { style: { fontSize: 9, color: "rgba(255,255,255,0.2)", fontFamily: "monospace" } }, "⌘K")
-        ),
-        React.createElement("div", { style: { background: "#111113", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, overflow: "hidden" } },
-          ...["Create new project", "Open dashboard", "Element Forge"].map((label, i) =>
-            React.createElement("div", { key: label, style: { display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.04)" : "none", fontSize: 10, color: "rgba(255,255,255,0.7)" } },
-              React.createElement("span", { style: { width: 16, height: 16, background: "rgba(255,255,255,0.06)", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8 } }, ["+", "⬡", "◈"][i]),
-              label
-            )
-          )
         )
       ),
     },
@@ -3011,324 +1324,6 @@ export default function AnalyticsDashboard() {
             React.createElement("polyline", { points: "0,30 15,22 30,25 45,14 60,17 75,7 90,11 105,4 120,7", fill: "none", stroke: "#7c3aed", strokeWidth: "1.8" })
           )
         )
-      ),
-    },
-  ],
-
-  backgrounds: [
-    // Additional backgrounds...
-    {
-      id: "bg-neural-grid",
-      name: "Neural Grid",
-      vibe: "Neon & Cyber",
-      difficulty: "Medium",
-      desc: "An animated cyan grid where random intersection nodes fire like neurons. Mouse movement casts a spotlight, revealing the grid beneath the vignette.",
-      prompt: `Create a full-section background component called NeuralGrid. Dark background #020204. Grid lines using backgroundImage with two linear-gradients at rgba(0,255,178,0.055), 56px spacing. Animated glowing nodes: use useEffect with setInterval(300ms) to add random glowing dots at grid intersections (snap to 56px grid). Each node fades out over 1.5s using opacity calculated from (Date.now() - born) / 1500. Mouse tracking via useRef + onMouseMove: draws a radial-gradient spotlight at cursor position. Radial vignette (transparent center, #020204 at 80%) masks edges. Centered content: badge "GRID · LIVE", 58px headline with "Grid" in #00FFB2 with textShadow glow, subtitle, and two CTAs (solid green + ghost). Inline styles only.`,
-      code: `import { useState, useEffect, useRef } from "react";
-
-export default function NeuralGrid() {
-  const [mouse, setMouse] = useState({ x: 50, y: 50 });
-  const [nodes, setNodes] = useState([]);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      const now = Date.now();
-      setNodes(prev => {
-        const alive = prev.filter(n => now - n.born < 1500);
-        if (alive.length < 7) {
-          alive.push({
-            id: Math.random(),
-            x: (Math.floor(Math.random() * 11) + 1) * (100 / 12),
-            y: (Math.floor(Math.random() * 8) + 1) * (100 / 9),
-            born: now,
-          });
-        }
-        return alive;
-      });
-    }, 300);
-    return () => clearInterval(id);
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      onMouseMove={e => {
-        const r = ref.current?.getBoundingClientRect();
-        if (r) setMouse({ x: (e.clientX - r.left) / r.width * 100, y: (e.clientY - r.top) / r.height * 100 });
-      }}
-      style={{ position: "relative", width: "100%", minHeight: 580, background: "#020204", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}
-    >
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(0,255,178,0.055) 1px, transparent 1px), linear-gradient(to right, rgba(0,255,178,0.055) 1px, transparent 1px)", backgroundSize: "56px 56px" }} />
-
-      {nodes.map(n => {
-        const age = Math.min((Date.now() - n.born) / 1500, 1);
-        return (
-          <div key={n.id} style={{ position: "absolute", left: n.x + "%", top: n.y + "%", transform: "translate(-50%,-50%)", width: 8, height: 8, borderRadius: "50%", background: "#00FFB2", opacity: Math.max(0, 1 - age), boxShadow: "0 0 " + (12 + age * 24) + "px " + (4 + age * 12) + "px rgba(0,255,178," + (0.8 - age * 0.8) + ")", pointerEvents: "none" }} />
-        );
-      })}
-
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle 500px at " + mouse.x + "% " + mouse.y + "%, rgba(0,255,178,0.07) 0%, transparent 70%)", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, transparent 20%, #020204 80%)", pointerEvents: "none" }} />
-
-      <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 32px" }}>
-        <span style={{ display: "inline-block", fontFamily: "monospace", fontSize: 9, letterSpacing: "0.35em", color: "#00FFB2", background: "rgba(0,255,178,0.07)", border: "1px solid rgba(0,255,178,0.2)", borderRadius: 4, padding: "4px 14px", marginBottom: 24 }}>GRID · LIVE</span>
-        <h1 style={{ margin: "0 0 16px", fontSize: 58, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Neural <span style={{ color: "#00FFB2", textShadow: "0 0 60px rgba(0,255,178,0.5)" }}>Grid</span></h1>
-        <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 16, maxWidth: 380, margin: "0 auto 32px", lineHeight: 1.7 }}>Watch the grid fire as you move. Every node a pulse. Every cursor a signal.</p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-          <button style={{ background: "#00FFB2", color: "#000", border: "none", borderRadius: 8, padding: "12px 28px", fontSize: 13, fontWeight: 800, cursor: "pointer", letterSpacing: "0.04em" }}>Get Started</button>
-          <button style={{ background: "transparent", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "12px 24px", fontSize: 13, cursor: "pointer" }}>Explore</button>
-        </div>
-      </div>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#020204", position: "relative", overflow: "hidden" } },
-        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(0,255,178,0.1) 1px, transparent 1px), linear-gradient(to right, rgba(0,255,178,0.1) 1px, transparent 1px)", backgroundSize: "22px 22px" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(0,255,178,0.06) 0%, #020204 70%)" } }),
-        React.createElement("div", { style: { position: "absolute", left: "30%", top: "40%", width: 5, height: 5, borderRadius: "50%", background: "#00FFB2", boxShadow: "0 0 14px 6px rgba(0,255,178,0.5)" } }),
-        React.createElement("div", { style: { position: "absolute", left: "65%", top: "60%", width: 4, height: 4, borderRadius: "50%", background: "#00FFB2", boxShadow: "0 0 10px 4px rgba(0,255,178,0.35)" } }),
-        React.createElement("div", { style: { position: "absolute", left: "50%", top: "25%", width: 3, height: 3, borderRadius: "50%", background: "#00FFB2", boxShadow: "0 0 8px 3px rgba(0,255,178,0.4)" } })
-      ),
-    },
-
-    {
-      id: "bg-cosmic-dust",
-      name: "Cosmic Dust",
-      vibe: "Dark & Minimal",
-      difficulty: "Simple",
-      desc: "Three CSS-animated star layers drift at different speeds and scales, creating a deep-space parallax illusion. Zero JavaScript — pure CSS keyframes.",
-      prompt: `Create a full-section background called CosmicDust. Black background #000008. Three absolutely positioned layers using CSS backgroundImage radial-gradient dots: Layer 1 (1.5px dots, 80px spacing, opacity 0.55, 12s drift animation), Layer 2 (1px dots, 48px spacing, blue-tinted, offset 24px, 8s reverse drift), Layer 3 (0.6px dots, 28px spacing, faint, 5s drift). Use @keyframes inside a <style> tag for three translate animations. Radial vignette masks edges. Center glow in blue #38BDF8. Centered content: monospace badge, 58px headline with "Stars" in #38BDF8 with glow, subtitle, and ghost CTA button. Inline styles only.`,
-      code: `export default function CosmicDust() {
-  return (
-    <div style={{ position: "relative", width: "100%", minHeight: 580, background: "#000008", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <style>{\`
-        @keyframes cdrift1 { 0% { transform: translate(0,0); } 100% { transform: translate(-40px,-30px); } }
-        @keyframes cdrift2 { 0% { transform: translate(0,0); } 100% { transform: translate(30px,-50px); } }
-        @keyframes cdrift3 { 0% { transform: translate(0,0); } 100% { transform: translate(-20px,40px); } }
-      \`}</style>
-
-      <div style={{ position: "absolute", inset: "-60px", backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.55) 1.5px, transparent 1.5px)", backgroundSize: "80px 80px", animation: "cdrift1 12s ease-in-out infinite alternate" }} />
-      <div style={{ position: "absolute", inset: "-40px", backgroundImage: "radial-gradient(circle, rgba(160,220,255,0.35) 1px, transparent 1px)", backgroundSize: "48px 48px", backgroundPosition: "24px 24px", animation: "cdrift2 8s ease-in-out infinite alternate" }} />
-      <div style={{ position: "absolute", inset: "-30px", backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.18) 0.6px, transparent 0.6px)", backgroundSize: "28px 28px", backgroundPosition: "14px 7px", animation: "cdrift3 5s ease-in-out infinite alternate" }} />
-
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 70% 60% at center, transparent 0%, #000008 72%)" }} />
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 40% 30% at center, rgba(56,189,248,0.05) 0%, transparent 70%)" }} />
-
-      <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 32px" }}>
-        <div style={{ fontSize: 9, letterSpacing: "0.4em", color: "#38BDF8", marginBottom: 24, fontFamily: "monospace", opacity: 0.8 }}>COSMIC · DUST</div>
-        <h1 style={{ margin: "0 0 16px", fontSize: 58, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Among the <span style={{ color: "#38BDF8", textShadow: "0 0 60px rgba(56,189,248,0.55)" }}>Stars</span></h1>
-        <p style={{ color: "rgba(255,255,255,0.28)", fontSize: 16, maxWidth: 380, margin: "0 auto 32px", lineHeight: 1.7 }}>Three layers of stars drifting at different depths. A parallax universe — no libraries needed.</p>
-        <button style={{ background: "rgba(56,189,248,0.1)", color: "#38BDF8", border: "1px solid rgba(56,189,248,0.3)", borderRadius: 8, padding: "12px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: "0.04em" }}>Explore cosmos</button>
-      </div>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#000008", position: "relative", overflow: "hidden" } },
-        React.createElement("div", { style: { position: "absolute", inset: "-10px", backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px)", backgroundSize: "24px 24px" } }),
-        React.createElement("div", { style: { position: "absolute", inset: "-10px", backgroundImage: "radial-gradient(circle, rgba(160,220,255,0.3) 0.7px, transparent 0.7px)", backgroundSize: "13px 13px", backgroundPosition: "6px 6px" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, transparent 20%, #000008 72%)" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse 35% 25% at center, rgba(56,189,248,0.06) 0%, transparent 70%)" } })
-      ),
-    },
-
-    {
-      id: "bg-aurora-drift",
-      name: "Aurora Drift",
-      vibe: "Glassmorphism",
-      difficulty: "Medium",
-      desc: "Two layers of diagonal multi-color stripes animate in opposite directions behind a glassmorphic card. Cyan, violet, blue, and pink aurora light — pure CSS, no JS.",
-      prompt: `Create a full-section background called AuroraDrift. Dark background #06030f. Two absolutely-positioned divs with diagonal repeating-linear-gradient stripe patterns (135deg and -45deg), each with different rainbow stripe colors (rgba(0,255,178,0.04), rgba(167,139,250,0.05), rgba(56,189,248,0.04), rgba(249,168,212,0.04)) and different gap spacings. Animate each layer with background-position shift (@keyframes, 8s and 12s, opposite directions). Linear gradient fade top and bottom. Center: glassmorphic card (backdrop-filter blur(20px), rgba white border, inner top highlight), headline with gradient text clip on key word, subtitle, CTA. Inline styles only.`,
-      code: `export default function AuroraDrift() {
-  return (
-    <div style={{ position: "relative", width: "100%", minHeight: 580, background: "#06030f", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <style>{\`
-        @keyframes adrift { 0% { background-position: 0 0; } 100% { background-position: 400px 0; } }
-        @keyframes adrift2 { 0% { background-position: 0 0; } 100% { background-position: -320px 0; } }
-      \`}</style>
-
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(135deg, transparent, transparent 60px, rgba(0,255,178,0.04) 60px, rgba(0,255,178,0.04) 62px, transparent 62px, transparent 100px, rgba(167,139,250,0.05) 100px, rgba(167,139,250,0.05) 102px, transparent 102px, transparent 140px, rgba(56,189,248,0.04) 140px, rgba(56,189,248,0.04) 142px, transparent 142px, transparent 180px, rgba(249,168,212,0.04) 180px, rgba(249,168,212,0.04) 182px, transparent 182px, transparent 220px)", backgroundSize: "400px 400px", animation: "adrift 8s linear infinite" }} />
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(-45deg, transparent, transparent 80px, rgba(167,139,250,0.03) 80px, rgba(167,139,250,0.03) 82px, transparent 82px, transparent 120px, rgba(0,255,178,0.03) 120px, rgba(0,255,178,0.03) 122px, transparent 122px, transparent 160px)", backgroundSize: "320px 320px", animation: "adrift2 12s linear infinite" }} />
-
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(167,139,250,0.05) 0%, transparent 60%)" }} />
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #06030f 0%, transparent 15%, transparent 85%, #06030f 100%)" }} />
-
-      <div style={{ position: "relative", zIndex: 2, background: "rgba(255,255,255,0.03)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20, padding: "48px 56px", textAlign: "center", maxWidth: 520, boxShadow: "0 30px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)" }}>
-        <div style={{ fontSize: 9, letterSpacing: "0.35em", color: "#A78BFA", marginBottom: 22, fontFamily: "monospace", fontWeight: 600 }}>AURORA · DRIFT</div>
-        <h1 style={{ margin: "0 0 14px", fontSize: 52, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Beyond the <span style={{ background: "linear-gradient(135deg, #00FFB2, #A78BFA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Veil</span></h1>
-        <p style={{ color: "rgba(255,255,255,0.32)", fontSize: 15, margin: "0 0 28px", lineHeight: 1.7 }}>Diagonal aurora light stripes animate behind a glass card. Luxury, in motion.</p>
-        <button style={{ background: "linear-gradient(135deg, rgba(0,255,178,0.15), rgba(167,139,250,0.15))", color: "#fff", border: "1px solid rgba(255,255,255,0.14)", borderRadius: 9, padding: "12px 32px", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: "0.04em" }}>Experience it</button>
-      </div>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#06030f", position: "relative", overflow: "hidden" } },
-        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(135deg, transparent, transparent 18px, rgba(0,255,178,0.09) 18px, rgba(0,255,178,0.09) 19px, transparent 19px, transparent 28px, rgba(167,139,250,0.1) 28px, rgba(167,139,250,0.1) 29px, transparent 29px, transparent 38px, rgba(56,189,248,0.08) 38px, rgba(56,189,248,0.08) 39px)", backgroundSize: "100px 100px" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, #06030f 0%, transparent 25%, transparent 75%, #06030f 100%)" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(167,139,250,0.06) 0%, transparent 60%)" } })
-      ),
-    },
-
-    {
-      id: "bg-horizon-scanner",
-      name: "Horizon Scanner",
-      vibe: "Dark & Minimal",
-      difficulty: "Simple",
-      desc: "Horizontal scan lines with a neon beam that sweeps top-to-bottom on a 3.5s loop. The lines fade to the right with a gradient mask. Left-aligned content with a raw, radar-room aesthetic.",
-      prompt: `Create a full-section background called HorizonScanner. Dark background #030305. Horizontal lines via backgroundImage linear-gradient(to bottom, rgba(255,255,255,0.045) 1px, transparent 1px), 36px spacing. Animated scan beam: absolutely-positioned 2px-high div with linear-gradient (bright left, fading right) and green glow box-shadow. Keyframe 'scan' animates top from -4px to calc(100% + 4px) over 3.5s ease-in-out infinite. Fade-right mask: linear-gradient(to right, transparent 30%, #030305 75%). Subtle left-edge green glow. Left-aligned content (padding-left 72px): badge, 56px headline, subtitle, green solid CTA. Inline styles only.`,
-      code: `export default function HorizonScanner() {
-  return (
-    <div style={{ position: "relative", width: "100%", minHeight: 580, background: "#030305", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "flex-start", fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <style>{\`
-        @keyframes hscan { 0% { top: -4px; opacity: 0; } 5% { opacity: 1; } 92% { opacity: 1; } 100% { top: calc(100% + 4px); opacity: 0; } }
-      \`}</style>
-
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to bottom, rgba(255,255,255,0.045) 1px, transparent 1px)", backgroundSize: "100% 36px" }} />
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, transparent 30%, #030305 75%)" }} />
-      <div style={{ position: "absolute", left: 0, right: 0, height: 2, background: "linear-gradient(to right, rgba(0,255,178,0.95) 0%, rgba(0,255,178,0.5) 25%, rgba(0,255,178,0.15) 55%, transparent 75%)", boxShadow: "0 0 18px 5px rgba(0,255,178,0.28)", animation: "hscan 3.5s ease-in-out infinite" }} />
-      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 280, background: "linear-gradient(to right, rgba(0,255,178,0.035), transparent)" }} />
-
-      <div style={{ position: "relative", zIndex: 2, padding: "0 0 0 72px", maxWidth: 500 }}>
-        <span style={{ display: "inline-block", fontFamily: "monospace", fontSize: 9, letterSpacing: "0.35em", color: "#00FFB2", background: "rgba(0,255,178,0.07)", border: "1px solid rgba(0,255,178,0.2)", borderRadius: 4, padding: "4px 12px", marginBottom: 22 }}>SCANNING · HORIZON</span>
-        <h1 style={{ margin: "0 0 16px", fontSize: 56, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1.0 }}>Horizon<br /><span style={{ color: "#00FFB2" }}>Scanner</span></h1>
-        <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 16, margin: "0 0 32px", lineHeight: 1.7, maxWidth: 380 }}>Horizontal scan lines with a neon beam that sweeps forever. The grid fades right into nothing.</p>
-        <button style={{ background: "#00FFB2", color: "#000", border: "none", borderRadius: 8, padding: "12px 28px", fontSize: 13, fontWeight: 800, cursor: "pointer", letterSpacing: "0.04em" }}>Start Scanning</button>
-      </div>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#030305", position: "relative", overflow: "hidden" } },
-        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(to bottom, rgba(255,255,255,0.065) 1px, transparent 1px)", backgroundSize: "100% 14px" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to right, transparent 35%, #030305 75%)" } }),
-        React.createElement("div", { style: { position: "absolute", left: 0, right: 0, top: "38%", height: 1, background: "linear-gradient(to right, rgba(0,255,178,0.95), rgba(0,255,178,0.4) 30%, transparent 65%)", boxShadow: "0 0 8px 3px rgba(0,255,178,0.35)" } }),
-        React.createElement("div", { style: { position: "absolute", left: 0, top: 0, bottom: 0, width: 80, background: "linear-gradient(to right, rgba(0,255,178,0.03), transparent)" } })
-      ),
-    },
-
-    {
-      id: "bg-digital-rain",
-      name: "Digital Rain",
-      vibe: "Neon & Cyber",
-      difficulty: "Advanced",
-      desc: "Vertical grid lines with six independently animated neon streaks falling at staggered speeds and delays — a cinematic matrix-rain effect that fades into the void below.",
-      prompt: `Create a full-section background called DigitalRain. Very dark green-tinted background #020403. Vertical lines via backgroundImage linear-gradient(to right, rgba(0,255,100,0.05) 1px, transparent 1px), 44px spacing. Six animated 'rain drop' divs (1px wide, 55–100px tall) positioned at different left percentages. Each is a linear-gradient from transparent to bright rgba(0,255,100,0.9) to transparent, with green glow box-shadow. Three @keyframes (fall-1, fall-2, fall-3) animate top from -80px to 110%. Each drop uses a different keyframe + animation-delay for stagger. Fade-to-bottom mask: linear-gradient(to bottom, transparent 55%, #020403 100%). Top green glow. Content: centered, badge in monospace, 58px headline with "Rain" in bright green with glow, subtitle, ghost CTA. Inline styles only.`,
-      code: `export default function DigitalRain() {
-  return (
-    <div style={{ position: "relative", width: "100%", minHeight: 580, background: "#020403", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <style>{\`
-        @keyframes dfall1 { 0% { top: -80px; opacity: 0; } 8% { opacity: 1; } 90% { opacity: 0.7; } 100% { top: 110%; opacity: 0; } }
-        @keyframes dfall2 { 0% { top: -60px; opacity: 0; } 10% { opacity: 0.85; } 88% { opacity: 0.5; } 100% { top: 110%; opacity: 0; } }
-        @keyframes dfall3 { 0% { top: -40px; opacity: 0; } 6% { opacity: 1; } 92% { opacity: 0.8; } 100% { top: 110%; opacity: 0; } }
-      \`}</style>
-
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right, rgba(0,255,100,0.05) 1px, transparent 1px)", backgroundSize: "44px 100%" }} />
-
-      <div style={{ position: "absolute", left: "11%", width: 1, height: 90, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.95), rgba(0,255,100,0.4), transparent)", boxShadow: "0 0 7px 2px rgba(0,255,100,0.45)", animation: "dfall1 2.2s ease-in infinite" }} />
-      <div style={{ position: "absolute", left: "25%", width: 1, height: 65, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.7), transparent)", boxShadow: "0 0 4px 1px rgba(0,255,100,0.3)", animation: "dfall2 1.7s ease-in infinite 0.4s" }} />
-      <div style={{ position: "absolute", left: "43%", width: 1, height: 105, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,1), rgba(0,255,100,0.5), transparent)", boxShadow: "0 0 9px 2px rgba(0,255,100,0.55)", animation: "dfall3 1.9s ease-in infinite 0.2s" }} />
-      <div style={{ position: "absolute", left: "61%", width: 1, height: 75, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.85), transparent)", boxShadow: "0 0 5px 1px rgba(0,255,100,0.35)", animation: "dfall1 2.5s ease-in infinite 0.8s" }} />
-      <div style={{ position: "absolute", left: "79%", width: 1, height: 88, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.9), rgba(0,255,100,0.4), transparent)", boxShadow: "0 0 7px 2px rgba(0,255,100,0.45)", animation: "dfall2 2.1s ease-in infinite 1.1s" }} />
-      <div style={{ position: "absolute", left: "88%", width: 1, height: 55, background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.6), transparent)", boxShadow: "0 0 4px 1px rgba(0,255,100,0.28)", animation: "dfall3 1.6s ease-in infinite 0.6s" }} />
-
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, #020403 100%)" }} />
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 180, background: "linear-gradient(to bottom, rgba(0,255,100,0.03), transparent)" }} />
-
-      <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 32px", marginTop: -50 }}>
-        <div style={{ fontFamily: "monospace", fontSize: 9, color: "#00ff64", letterSpacing: "0.35em", marginBottom: 22, opacity: 0.8 }}>RAIN · VERTICAL</div>
-        <h1 style={{ margin: "0 0 16px", fontSize: 58, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Digital <span style={{ color: "#00ff64", textShadow: "0 0 50px rgba(0,255,100,0.6)" }}>Rain</span></h1>
-        <p style={{ color: "rgba(255,255,255,0.27)", fontSize: 16, maxWidth: 380, margin: "0 auto 28px", lineHeight: 1.7 }}>Six neon drops fall along vertical grid lines at staggered speeds. The grid fades into the void below.</p>
-        <button style={{ background: "rgba(0,255,100,0.1)", color: "#00ff64", border: "1px solid rgba(0,255,100,0.3)", borderRadius: 8, padding: "12px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: "0.04em" }}>Enter the matrix</button>
-      </div>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#020403", position: "relative", overflow: "hidden" } },
-        React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right, rgba(0,255,100,0.07) 1px, transparent 1px)", backgroundSize: "18px 100%" } }),
-        React.createElement("div", { style: { position: "absolute", left: "14%", width: 1, height: 55, top: "5%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.9), transparent)", boxShadow: "0 0 6px 2px rgba(0,255,100,0.4)" } }),
-        React.createElement("div", { style: { position: "absolute", left: "36%", width: 1, height: 70, top: "0%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,1), transparent)", boxShadow: "0 0 8px 2px rgba(0,255,100,0.5)" } }),
-        React.createElement("div", { style: { position: "absolute", left: "55%", width: 1, height: 45, top: "15%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.8), transparent)", boxShadow: "0 0 5px 1px rgba(0,255,100,0.35)" } }),
-        React.createElement("div", { style: { position: "absolute", left: "72%", width: 1, height: 60, top: "5%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.7), transparent)" } }),
-        React.createElement("div", { style: { position: "absolute", left: "88%", width: 1, height: 35, top: "20%", background: "linear-gradient(to bottom, transparent, rgba(0,255,100,0.6), transparent)" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, #020403 100%)" } })
-      ),
-    },
-
-    {
-      id: "bg-void-floor",
-      name: "Void Floor",
-      vibe: "Brutalist",
-      difficulty: "Medium",
-      desc: "A 3D perspective checkerboard floor vanishes toward the horizon using CSS perspective + rotateX. A content card floats above it with a gentle CSS float animation — raw, dramatic, bold.",
-      prompt: `Create a full-section background called VoidFloor. Background #050507. A 3D checkerboard floor: absolutely-positioned div (bottom: -80, left/right: -200, height: 65%) with CSS checkerboard backgroundImage (linear-gradient 45deg pattern, rgba(255,255,255,0.04) squares), backgroundSize 48px, transform: perspective(600px) rotateX(55deg), transformOrigin: bottom center. A vanishing-point glow line rising from bottom center (2px wide div, violet gradient). Linear gradient fades top (dark over floor) and bottom. Content card floats with @keyframes float (translateY -8px cycle, 4s). Card has centered text: monospace badge, 58px headline with "Floor" in #A78BFA with glow, subtitle, violet ghost CTA. Inline styles only.`,
-      code: `export default function VoidFloor() {
-  return (
-    <div style={{ position: "relative", width: "100%", minHeight: 580, background: "#050507", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <style>{\`
-        @keyframes vfloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-      \`}</style>
-
-      <div style={{ position: "absolute", bottom: -80, left: -200, right: -200, height: "65%", backgroundImage: "linear-gradient(45deg, rgba(255,255,255,0.045) 25%, transparent 25%), linear-gradient(-45deg, rgba(255,255,255,0.045) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.045) 75%), linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.045) 75%)", backgroundSize: "48px 48px", backgroundPosition: "0 0, 0 24px, 24px -24px, -24px 0px", transform: "perspective(600px) rotateX(55deg)", transformOrigin: "bottom center" }} />
-
-      <div style={{ position: "absolute", bottom: "18%", left: "50%", transform: "translateX(-50%)", width: 2, height: "45%", background: "linear-gradient(to top, rgba(167,139,250,0.7), rgba(167,139,250,0.1), transparent)", boxShadow: "0 0 30px 12px rgba(167,139,250,0.1)" }} />
-
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "48%", background: "linear-gradient(to bottom, #050507, transparent)" }} />
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "28%", background: "linear-gradient(to top, #050507, transparent)" }} />
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 80% 50% at 50% 35%, rgba(167,139,250,0.04) 0%, transparent 70%)" }} />
-
-      <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 32px", animation: "vfloat 4s ease-in-out infinite" }}>
-        <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: "0.35em", color: "#A78BFA", marginBottom: 22, opacity: 0.8 }}>DEPTH · BOARD</div>
-        <h1 style={{ margin: "0 0 16px", fontSize: 58, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Void <span style={{ color: "#A78BFA", textShadow: "0 0 60px rgba(167,139,250,0.65)" }}>Floor</span></h1>
-        <p style={{ color: "rgba(255,255,255,0.28)", fontSize: 16, maxWidth: 380, margin: "0 auto 32px", lineHeight: 1.7 }}>A 3D perspective checkerboard vanishes into the horizon. The card floats endlessly above.</p>
-        <button style={{ background: "rgba(167,139,250,0.1)", color: "#A78BFA", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 8, padding: "12px 28px", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: "0.04em" }}>Step inside</button>
-      </div>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#050507", position: "relative", overflow: "hidden" } },
-        React.createElement("div", { style: { position: "absolute", bottom: -30, left: -60, right: -60, height: "60%", backgroundImage: "linear-gradient(45deg, rgba(255,255,255,0.07) 25%, transparent 25%), linear-gradient(-45deg, rgba(255,255,255,0.07) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.07) 75%), linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.07) 75%)", backgroundSize: "20px 20px", backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px", transform: "perspective(200px) rotateX(52deg)", transformOrigin: "bottom center" } }),
-        React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: "55%", background: "linear-gradient(to bottom, #050507, transparent)" } }),
-        React.createElement("div", { style: { position: "absolute", bottom: 0, left: 0, right: 0, height: "20%", background: "linear-gradient(to top, #050507, transparent)" } }),
-        React.createElement("div", { style: { position: "absolute", bottom: "20%", left: "50%", transform: "translateX(-50%)", width: 1, height: "40%", background: "linear-gradient(to top, rgba(167,139,250,0.7), rgba(167,139,250,0.1), transparent)", boxShadow: "0 0 20px 8px rgba(167,139,250,0.08)" } }),
-        React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 40% at 50% 30%, rgba(167,139,250,0.05) 0%, transparent 70%)" } })
-      ),
-    },
-
-    {
-      id: "bg-clean-grid",
-      name: "Grid Background",
-      vibe: "Dark & Minimal",
-      difficulty: "Simple",
-      desc: "A crisp CSS grid on a near-black canvas, masked by a radial fade that dissolves the lines into darkness at the edges. Pure CSS — one div, zero JavaScript.",
-      prompt: `Create a section background component called GridBackground. Background #0c0c0e. Two CSS linear-gradients as backgroundImage: to-right and to-bottom, both rgba(255,255,255,0.07) 1px lines, transparent, 40px spacing. Apply maskImage (and WebkitMaskImage) with radial-gradient(ellipse 80% 80% at center, black 30%, transparent 100%) so lines fade into the edges. Centered content: small monospace label at top, large bold headline "Grid Background", monospace subtitle "With (fade-edges) Mask" in gray, and a minimal ghost CTA button. Use position relative, min-height 520. Inline styles only.`,
-      code: `export default function GridBackground() {
-  return (
-    <div style={{ position: "relative", width: "100%", minHeight: 520, background: "#0c0c0e", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <div style={{
-        position: "absolute", inset: 0,
-        backgroundImage: "linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px)",
-        backgroundSize: "40px 40px",
-        maskImage: "radial-gradient(ellipse 80% 80% at center, black 30%, transparent 100%)",
-        WebkitMaskImage: "radial-gradient(ellipse 80% 80% at center, black 30%, transparent 100%)",
-      }} />
-      <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 32px" }}>
-        <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: "0.35em", color: "rgba(255,255,255,0.3)", marginBottom: 22 }}>GRID · BACKGROUND</div>
-        <h1 style={{ margin: "0 0 14px", fontSize: 58, fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>Grid Background</h1>
-        <p style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.28)", fontSize: 15, margin: "0 auto 32px", lineHeight: 1.7, maxWidth: 380 }}>With (fade-edges) Mask</p>
-        <button style={{ background: "transparent", color: "rgba(255,255,255,0.4)", border: "1px solid rgba(255,255,255,0.14)", borderRadius: 8, padding: "12px 28px", fontSize: 13, cursor: "pointer", letterSpacing: "0.04em" }}>Discover more →</button>
-      </div>
-    </div>
-  );
-}`,
-      preview: () => React.createElement("div", { style: { width: "100%", height: "100%", minHeight: 160, background: "#0c0c0e", position: "relative", overflow: "hidden" } },
-        React.createElement("div", {
-          style: {
-            position: "absolute", inset: 0,
-            backgroundImage: "linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
-            maskImage: "radial-gradient(ellipse 80% 80% at center, black 30%, transparent 100%)",
-            WebkitMaskImage: "radial-gradient(ellipse 80% 80% at center, black 30%, transparent 100%)",
-          }
-        })
       ),
     },
   ],
